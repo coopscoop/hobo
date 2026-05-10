@@ -1,9 +1,6 @@
 import { getPlayerById, getPlayerGameLog } from '@/db/queries/players';
 import { PlayerDetail } from '@/components/players/PlayerDetail';
 import { notFound } from 'next/navigation';
-import { ArrowBackIosNewRounded } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
-import Link from 'next/link';
 import { BackButton } from '@/components/BackButton';
 
 export default async function PlayerPage({ params }: { params: Promise<{ id: string }> }) {

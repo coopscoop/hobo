@@ -10,7 +10,7 @@ export function BackButton() {
   return (
     <Button
       startIcon={<ArrowBackIcon />}
-      onClick={() => router.back()}
+      onClick={() => window.history.length > 1 ? router.back() : router.push('/')}
       size="small"
     >
       Back

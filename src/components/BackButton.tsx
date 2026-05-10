@@ -1,19 +1,26 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Box, Typography } from '@mui/material';
+import { ArrowBackIosNewRounded } from '@mui/icons-material';
 
 export function BackButton() {
   const router = useRouter();
 
   return (
-    <Button
-      startIcon={<ArrowBackIcon />}
+    <Box
       onClick={() => window.history.length > 1 ? router.back() : router.push('/')}
-      size="small"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        cursor: 'pointer',
+        width: 'fit-content',
+        '&:hover': { opacity: 0.7 },
+      }}
     >
-      Back
-    </Button>
+      <ArrowBackIosNewRounded fontSize="small" />
+      <Typography variant="button">Back</Typography>
+    </Box>
   );
 }

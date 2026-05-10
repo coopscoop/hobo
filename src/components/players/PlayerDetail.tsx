@@ -146,7 +146,7 @@ export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) 
           {currentYear} Season
         </Typography>
         {summaryStats ? (
-          <Paper variant="outlined">
+          <Paper variant="outlined" sx={{ width: 'fit-content' }}>
             <Stack
               direction="row"
               divider={<Divider orientation="vertical" flexItem />}

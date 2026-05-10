@@ -81,7 +81,7 @@ export function TeamDetail({ data, minYear, maxYear }: TeamDetailProps) {
         </Link>
       ),
     },
-    { field: 'year', headerName: 'Year', flex: 0.8, type: 'number' },
+    { field: 'year', headerName: 'Year', flex: 0.8, type: 'string' },
     { field: 'gamesPlayed', headerName: 'GP', flex: 0.6, type: 'number' },
     { field: 'atBats', headerName: 'AB', flex: 0.6, type: 'number' },
     { field: 'runs', headerName: 'R', flex: 0.6, type: 'number' },
@@ -127,11 +127,10 @@ export function TeamDetail({ data, minYear, maxYear }: TeamDetailProps) {
           {selectedYear} Season Record
         </Typography>
         {summaryStats ? (
-          <Paper variant="outlined">
+          <Paper variant="outlined" sx={{ width: 'fit-content' }}>
             <Stack
               direction="row"
               divider={<Divider orientation="vertical" flexItem />}
-              sx={{ overflowX: 'auto' }}
             >
               {summaryStats.map(({ label, value }) => (
                 <Box

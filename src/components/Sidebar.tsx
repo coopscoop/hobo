@@ -16,7 +16,7 @@ export default function Sidebar() {
           <li><Link href="/games">Games & Results</Link></li>
           <li><Link href="/players">Players</Link></li>
           <li><Link href="/executives">Executives</Link></li>
-          <li><Link href="/">Teams</Link></li>
+          <li><Link href="/teams">Teams</Link></li>
           <li><Link href="/">Rules</Link></li>
         </ul>
       </nav>

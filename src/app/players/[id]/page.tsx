@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowBackIosNewRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
+import { BackButton } from '@/components/BackButton';
 
 export default async function PlayerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,12 +24,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
 
   return (
     <>
-      <Link href="/players" passHref>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <ArrowBackIosNewRounded />
-          <Typography variant="button">Back</Typography>
-        </Box>
-      </Link>
+      <BackButton />
       <PlayerDetail data={data} gameLog={gameLog} currentYear={currentYear} />
     </>
   );

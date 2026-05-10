@@ -1,0 +1,21 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.th {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid #ccc;
+}
+
+.td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+}

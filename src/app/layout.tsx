@@ -1,0 +1,24 @@
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import ThemeRegistry from '@/components/ThemeRegistry';
+import Sidebar from '@/components/Sidebar';
+import styles from './layout.module.css';
+import './globals.css';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className={styles.body}>
+        <ThemeRegistry>
+          <NuqsAdapter>
+            <div className={styles.layout}>
+              <Sidebar />
+              <main className={styles.main}>
+                {children}
+              </main>
+            </div>
+          </NuqsAdapter>
+        </ThemeRegistry>
+      </body>
+    </html>
+  );
+}

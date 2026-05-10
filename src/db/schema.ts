@@ -1,0 +1,123 @@
+import {
+  pgTable, pgEnum, serial, varchar, text, date, customType,
+  integer, boolean, alias, unique
+} from 'drizzle-orm/pg-core';
+
+// ---- Enums ----
+
+export const announcementTypeEnum = pgEnum('announcement_type', ['news', 'event', 'update']);
+
+// ---- CustomType - daterange ----
+
+const daterange = customType<{ data: string }>({
+  dataType() {
+    return 'daterange';
+  },
+})
+
+// ---- Tables ----
+
+export const announcements = pgTable('announcements', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  date: date('date').notNull().defaultNow(),
+  content: text('content'),
+  type: announcementTypeEnum('type').notNull().default('news'),
+  pinned: boolean('pinned').notNull().default(false),
+});
+
+export const leagues = pgTable('leagues', {
+  id: serial('id').primaryKey(),
+  leagueName: varchar('league_name', { length: 32 }).notNull(),
+});
+
+export const teams = pgTable('teams', {
+  id: serial('id').primaryKey(),
+  teamName: varchar('team_name', { length: 32 }).notNull(),
+});
+
+export const players = pgTable('players', {
+  id: serial('id').primaryKey(),
+  firstName: varchar('first_name', { length: 64 }),
+  lastName: varchar('last_name', { length: 64 }),
+  currentTeam: integer('current_team').references(() => teams.id),
+});
+
+export const rosters = pgTable('rosters', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').notNull().references(() => teams.id),
+  playerId: integer('player_id').notNull().references(() => players.id),
+  activePeriod: daterange('active_period').notNull(),
+});
+
+export const games = pgTable('games', {
+  id: serial('id').primaryKey(),
+  date: date('date').notNull(),
+  location: text('location').notNull(),
+  homeTeamId: integer('home_team_id').notNull().references(() => teams.id),
+  awayTeamId: integer('away_team_id').notNull().references(() => teams.id),
+  leagueId: integer('league_id').notNull().references(() => leagues.id),
+  isPlayoff: boolean('is_playoff').notNull().default(false),
+  notes: text('notes'),
+  homeScore: integer('home_score'),
+  awayScore: integer('away_score'),
+});
+
+export const innings = pgTable('innings', {
+  id: serial('id').primaryKey(),
+  gameId: integer('game_id').notNull().references(() => games.id),
+  inning: integer('inning').notNull(),
+  homeRuns: integer('home_runs').notNull().default(0),
+  awayRuns: integer('away_runs').notNull().default(0),
+}, (t) => ({
+  uniqueGameInning: unique().on(t.gameId, t.inning),
+}));
+
+export const batting = pgTable('batting', {
+  id: serial('id').primaryKey(),
+  gameId: integer('game_id').notNull().references(() => games.id),
+  playerId: integer('player_id').notNull().references(() => players.id),
+  atBat: integer('at_bat'),
+  run: integer('run'),
+  walk: integer('walk'),
+  strikeout: integer('strikeout'),
+  secondBase: integer('second_base'),
+  hitByPitch: integer('hit_by_pitch'),
+  stolenBase: integer('stolen_base'),
+  runsBattedIn: integer('runs_batted_in'),
+  sacrifice: integer('sacrifice'),
+  singleHit: integer('single_hit'),
+  doubleHit: integer('double_hit'),
+  tripleHit: integer('triple_hit'),
+  homeRun: integer('home_run'),
+  roe: integer('roe'),
+});
+
+export const pitching = pgTable('pitching', {
+  id: serial('id').primaryKey(),
+  gameId: integer('game_id').notNull().references(() => games.id),
+  playerId: integer('player_id').notNull().references(() => players.id),
+  inningsPitched: integer('innings_pitched'),
+});
+
+export const substitutes = pgTable('substitutes', {
+  id: serial('id').primaryKey(),
+  gameId: integer('game_id').notNull().references(() => games.id),
+  playerId: integer('player_id').notNull().references(() => players.id),
+  fromTeamId: integer('from_team_id').notNull().references(() => teams.id),
+  newTeamId: integer('new_team_id').notNull().references(() => teams.id),
+});
+
+export const executives = pgTable('executives', {
+  id: serial('id').primaryKey(),
+  firstName: varchar('first_name', { length: 64 }),
+  lastName: varchar('last_name', { length: 64 }),
+  position: varchar('position', { length: 32 }),
+  year: integer('year').notNull(),
+});
+
+// ---- Aliases (for self-referencing joins on games) ----
+
+export const homeTeam = alias(teams, 'home_team');
+export const awayTeam = alias(teams, 'away_team');
+

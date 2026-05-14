@@ -4,8 +4,12 @@ import {
   TableRow, TableCell, TableContainer, Paper
 } from '@mui/material';
 import type { GameListItem } from '@/types';
+import { useRouter } from 'next/navigation';
 
 export function RecentGamesTable({ games }: { games: GameListItem[] }) {
+
+  const router = useRouter();
+
   return (
     <>
       <Typography variant="h6" gutterBottom>Recent Results</Typography>
@@ -26,7 +30,7 @@ export function RecentGamesTable({ games }: { games: GameListItem[] }) {
               </TableRow>
             ) : (
               games.map((g) => (
-                <TableRow key={g.id}>
+                <TableRow key={g.id} onClick={() => router.push(`/games/${g.id}`)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{g.date}</TableCell>
                   <TableCell>{g.homeTeam.name}</TableCell>
                   <TableCell>{g.awayTeam.name}</TableCell>
@@ -40,7 +44,7 @@ export function RecentGamesTable({ games }: { games: GameListItem[] }) {
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer >
     </>
   );
 }

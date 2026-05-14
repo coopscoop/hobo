@@ -15,15 +15,40 @@ interface PlayerDetailProps {
 
 export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) {
   const { player, statsByYear } = data;
-
   const currentSeason = statsByYear.find((s) => s.year === currentYear) ?? null;
-
   const router = useRouter();
+
+  // ---- Career totals derived from statsByYear ----
+  const totalHits = statsByYear.reduce((sum, s) => sum + Number(s.hits ?? 0), 0);
+  const totalAB = statsByYear.reduce((sum, s) => sum + Number(s.atBats ?? 0), 0);
+  const totalBB = statsByYear.reduce((sum, s) => sum + Number(s.walks ?? 0), 0);
+  const totalHBP = statsByYear.reduce((sum, s) => sum + Number(s.hitByPitch ?? 0), 0);
+  const total1B = statsByYear.reduce((sum, s) => sum + Number(s.singles ?? 0), 0);
+  const total2B = statsByYear.reduce((sum, s) => sum + Number(s.doubles ?? 0), 0);
+  const total3B = statsByYear.reduce((sum, s) => sum + Number(s.triples ?? 0), 0);
+  const totalHR = statsByYear.reduce((sum, s) => sum + Number(s.homeRuns ?? 0), 0);
+  const careerOBP = totalAB > 0 ? ((totalHits + totalBB + totalHBP) / totalAB).toFixed(3) : '—';
+  const careerSLG = totalAB > 0 ? ((total1B + total2B * 2 + total3B * 3 + totalHR * 4) / totalAB).toFixed(3) : '—';
+  const careerOPS = totalAB > 0 && totalAB > 0 ? (parseFloat(careerOBP) + parseFloat(careerSLG)).toFixed(3) : '—';
+
+  const allTime = statsByYear.length > 0 ? [
+    { label: 'GP', value: statsByYear.reduce((sum, s) => sum + Number(s.gamesPlayed ?? 0), 0) },
+    { label: 'AB', value: totalAB },
+    { label: 'H', value: totalHits },
+    { label: 'HR', value: totalHR },
+    { label: 'RBI', value: statsByYear.reduce((sum, s) => sum + Number(s.rbi ?? 0), 0) },
+    { label: 'R', value: statsByYear.reduce((sum, s) => sum + Number(s.runs ?? 0), 0) },
+    { label: 'BB', value: totalBB },
+    { label: 'K', value: statsByYear.reduce((sum, s) => sum + Number(s.strikeouts ?? 0), 0) },
+    { label: 'SB', value: statsByYear.reduce((sum, s) => sum + Number(s.stolenBases ?? 0), 0) },
+    { label: 'OBP', value: careerOBP },
+    { label: 'SLG', value: careerSLG },
+    { label: 'OPS', value: careerOPS },
+  ] : null;
 
   // ---- Game log rows ----
   const gameLogRows = gameLog.map((g) => {
-    const opponent =
-      g.rosterTeamId === g.homeTeamId ? g.awayTeamName : g.homeTeamName;
+    const opponent = g.rosterTeamId === g.homeTeamId ? g.awayTeamName : g.homeTeamName;
     return {
       id: g.gameId,
       date: g.date,
@@ -113,24 +138,42 @@ export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) 
   ];
 
   // ---- Stat strip items ----
-  const summaryStats = currentSeason
-    ? [
-      { label: 'GP', value: currentSeason.gamesPlayed },
-      { label: 'AB', value: currentSeason.atBats },
-      { label: 'H', value: currentSeason.hits },
-      { label: 'HR', value: currentSeason.homeRuns },
-      { label: 'RBI', value: currentSeason.rbi },
-      { label: 'R', value: currentSeason.runs },
-      { label: 'BB', value: currentSeason.walks },
-      { label: 'K', value: currentSeason.strikeouts },
-      { label: 'SB', value: currentSeason.stolenBases },
-      { label: 'OBP', value: currentSeason.obp ?? '—' },
-      { label: 'SLG', value: currentSeason.slg ?? '—' },
-      { label: 'OPS', value: currentSeason.ops ?? '—' },
-    ]
-    : null;
+  const summaryStats = currentSeason ? [
+    { label: 'GP', value: currentSeason.gamesPlayed },
+    { label: 'AB', value: currentSeason.atBats },
+    { label: 'H', value: currentSeason.hits },
+    { label: 'HR', value: currentSeason.homeRuns },
+    { label: 'RBI', value: currentSeason.rbi },
+    { label: 'R', value: currentSeason.runs },
+    { label: 'BB', value: currentSeason.walks },
+    { label: 'K', value: currentSeason.strikeouts },
+    { label: 'SB', value: currentSeason.stolenBases },
+    { label: 'OBP', value: currentSeason.obp ?? '—' },
+    { label: 'SLG', value: currentSeason.slg ?? '—' },
+    { label: 'OPS', value: currentSeason.ops ?? '—' },
+  ] : null;
 
-  // ---- Table rows ----
+  // move to its own component eventually?
+  const StatStrip = ({ stats }: { stats: { label: string; value: string | number }[] }) => (
+    <Paper variant="outlined" sx={{ width: 'fit-content' }}>
+      <Stack
+        direction="row"
+        divider={<Divider orientation="vertical" flexItem />}
+        sx={{ overflowX: 'auto' }}
+      >
+        {stats.map(({ label, value }) => (
+          <Box
+            key={label}
+            sx={{ px: 2.5, py: 1.5, textAlign: 'center', minWidth: 56, flexShrink: 0 }}
+          >
+            <Typography variant="caption">{label}</Typography>
+            <Typography variant="body1">{value}</Typography>
+          </Box>
+        ))}
+      </Stack>
+    </Paper>
+  );
+
   return (
     <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 4 }}>
       {/* Header */}
@@ -145,82 +188,55 @@ export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) 
 
       {/* Current Season Summary */}
       <Box>
-        <Typography variant="h6" gutterBottom>
-          {currentYear} Season
-        </Typography>
-        {summaryStats ? (
-          <Paper variant="outlined" sx={{ width: 'fit-content' }}>
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem />}
-              sx={{ overflowX: 'auto' }}
-            >
-              {summaryStats.map(({ label, value }) => (
-                <Box
-                  key={label}
-                  sx={{
-                    px: 2.5,
-                    py: 1.5,
-                    textAlign: 'center',
-                    minWidth: 56,
-                    flexShrink: 0,
-                  }}
-                >
-                  <Typography variant="caption">
-                    {label}
-                  </Typography>
-                  <Typography variant="body1">
-                    {value}
-                  </Typography>
-                </Box>
-              ))}
-            </Stack>
-          </Paper>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            No data for the {currentYear} season.
-          </Typography>
-        )}
+        <Typography variant="h6" gutterBottom>{currentYear} Season</Typography>
+        {summaryStats
+          ? <StatStrip stats={summaryStats} />
+          : <Typography variant="body2" color="text.secondary">No data for the {currentYear} season.</Typography>
+        }
       </Box>
 
       {/* Game Log */}
       <Box>
-        <Typography variant="h6" gutterBottom>
-          {currentYear} Game Log
-        </Typography>
-        {gameLog.length > 0 ? (
-          <DataGrid
-            rows={gameLogRows}
-            columns={gameLogColumns}
-            initialState={{
-              sorting: { sortModel: [{ field: 'date', sort: 'desc' }] },
-              pagination: { paginationModel: { pageSize: 5 } },
-            }}
-            pageSizeOptions={[5, 10, 25]}
-            sx={{ cursor: 'pointer' }}
-            onRowClick={(params) => { router.push(`/games/${params.row.id}`); }}
-          />
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            No games played in {currentYear}.
-          </Typography>
-        )}
+        <Typography variant="h6" gutterBottom>{currentYear} Game Log</Typography>
+        <DataGrid
+          rows={gameLogRows}
+          columns={gameLogColumns}
+          rowHeight={52}
+          scrollbarSize={0}
+          initialState={{
+            sorting: { sortModel: [{ field: 'date', sort: 'desc' }] },
+            pagination: { paginationModel: { pageSize: 5 } },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          onRowClick={(params) => { router.push(`/games/${params.row.id}`); }}
+          sx={{ cursor: 'pointer' }}
+        />
       </Box>
 
-      {/* Career Stats */}
+      {/* Career Summary */}
       <Box>
-        <Typography variant="h6" gutterBottom>
-          Year-by-Year
-        </Typography>
+        <Typography variant="h6" gutterBottom>Career Stats</Typography>
+        {allTime
+          ? <StatStrip stats={allTime} />
+          : <Typography variant="body2" color="text.secondary">No career data available.</Typography>
+        }
+      </Box>
+
+      {/* Year-by-Year */}
+      <Box>
+        <Typography variant="h6" gutterBottom>Year-by-Year</Typography>
         <DataGrid
           rows={careerRows}
           columns={careerColumns}
+          rowHeight={52}
+          scrollbarSize={0}
           initialState={{
             sorting: { sortModel: [{ field: 'year', sort: 'desc' }] },
             pagination: { paginationModel: { pageSize: 5 } },
           }}
           pageSizeOptions={[5, 10, 25]}
           disableRowSelectionOnClick
+          sx={{ cursor: 'pointer' }}
         />
       </Box>
     </Box>

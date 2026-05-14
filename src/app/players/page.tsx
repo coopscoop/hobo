@@ -9,13 +9,20 @@ interface PlayersPageProps {
   }>;
 }
 
-export default async function PlayersPage({ searchParams }: PlayersPageProps) {
-  const { yearFrom, yearTo } = await searchParams;
+export default async function PlayersPage({ searchParams }: { searchParams: Promise<{ yearFrom?: string; yearTo?: string }> }) {
+  const currentYear = new Date().getFullYear();
+  const params = await searchParams;
+
+  // default to current year if no year range is provided by the user
+  // const yearFrom = params.yearFrom ?? String(currentYear);
+  const yearFrom = 2025;
+  const yearTo = params.yearTo ?? String(currentYear);
 
   const [players, yearRange] = await Promise.all([
     getPlayersWithStats({ yearFrom: yearFrom ?? null, yearTo: yearTo ?? null }),
     getGameYearRange(),
   ]);
+
 
   return (
     <PlayersTable

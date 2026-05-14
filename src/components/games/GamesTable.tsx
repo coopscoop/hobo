@@ -11,7 +11,6 @@ interface GamesTableProps {
 }
 
 export function GamesTable({ games }: GamesTableProps) {
-
   const router = useRouter();
 
   const rows = games.map((g) => ({

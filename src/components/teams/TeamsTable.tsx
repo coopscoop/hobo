@@ -4,8 +4,7 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import type { Team } from '@/types';
-
-type Team = Awaited<ReturnType<typeof import('@/db/queries/teams').getTeams>>[number];
+import { useRouter } from 'next/navigation';
 
 interface TeamsTableProps {
   teams: Team[];
@@ -26,6 +25,8 @@ export function TeamsTable({ teams }: TeamsTableProps) {
     { field: 'ties', headerName: 'T', flex: 1, type: 'number' },
   ];
 
+  const router = useRouter();
+
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" gutterBottom>Teams</Typography>
@@ -38,6 +39,8 @@ export function TeamsTable({ teams }: TeamsTableProps) {
         hideFooter={teams.length <= 25}
         disableRowSelectionOnClick
         autoHeight
+        sx={{ cursor: 'pointer' }}
+        onRowClick={(params) => { router.push(`/teams/${params.row.id}`); }}
       />
     </Box>
   );

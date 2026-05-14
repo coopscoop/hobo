@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQueryState } from 'nuqs';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Box, Button, Checkbox, FormControlLabel, Stack, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Stack, Select, MenuItem, FormControl, InputLabel, InputAdornment, OutlinedInput } from '@mui/material';
+import Search from '@mui/icons-material/Search';
 import Link from 'next/link';
 import type { PlayerWithStats } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface PlayersTableProps {
   players: PlayerWithStats[];
@@ -16,7 +18,7 @@ interface PlayersTableProps {
 }
 
 export function PlayersTable({ players, yearFrom, yearTo, minYear, maxYear }: PlayersTableProps) {
-  // Replace hardcoded years array with:
+  // all years in range given
   const years = Array.from(
     { length: maxYear - minYear + 1 },
     (_, i) => maxYear - i
@@ -27,7 +29,17 @@ export function PlayersTable({ players, yearFrom, yearTo, minYear, maxYear }: Pl
   const [fromInput, setFromInput] = useState(yearFrom);
   const [toInput, setToInput] = useState(yearTo);
 
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(''); // for a delay with searching/debounce for search
   const [activeOnly, setActiveOnly] = useState(false);
+
+  const router = useRouter();
+
+  // debounce search, aleviates some of the lag when initially typing, first block out still jitters though
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   function handleApplyYears() {
     setYearFrom(fromInput || null);
@@ -60,6 +72,11 @@ export function PlayersTable({ players, yearFrom, yearTo, minYear, maxYear }: Pl
         ops: p.ops ?? '—',
       }));
   }, [players, activeOnly]);
+
+  const filteredRows = rows.filter((rows) => {
+    const full = `${rows.name}`.toLowerCase();
+    return full.includes(search.toLowerCase());
+  });
 
   const columns: GridColDef[] = [
     {
@@ -136,15 +153,31 @@ export function PlayersTable({ players, yearFrom, yearTo, minYear, maxYear }: Pl
           }
           label="Active players only"
         />
+
+        <OutlinedInput
+          size="small"
+          placeholder="Search players..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{ mb: 2, width: 300 }}
+          startAdornment={
+            <InputAdornment position="start">
+              <Search fontSize="small" />
+            </InputAdornment>
+          }
+        />
+
       </Stack>
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         initialState={{
           pagination: { paginationModel: { pageSize: 25 } },
         }}
         pageSizeOptions={[25, 50, 100]}
         disableRowSelectionOnClick
+        sx={{ cursor: 'pointer' }}
+        onRowClick={(params) => { router.push(`/players/${params.row.id}`); }}
         autoHeight
       />
     </Box>

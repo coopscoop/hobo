@@ -16,9 +16,6 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
 
   if (!data) notFound();
 
-  console.log('gameLog result:', gameLog);
-  console.log('getPlayerGameLog called with:', { id, currentYear });
-
   return (
     <>
       <BackButton />

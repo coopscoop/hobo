@@ -1,5 +1,6 @@
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import ThemeRegistry from '@/components/ThemeRegistry';
+import { LeagueProvider } from '@/context/LeagueContext';
 import Sidebar from '@/components/Sidebar';
 import styles from './layout.module.css';
 import './globals.css';
@@ -8,16 +9,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={styles.body}>
-        <ThemeRegistry>
-          <NuqsAdapter>
-            <div className={styles.layout}>
-              <Sidebar />
-              <main className={styles.main}>
-                {children}
-              </main>
-            </div>
-          </NuqsAdapter>
-        </ThemeRegistry>
+        <LeagueProvider>
+          <ThemeRegistry>
+            <NuqsAdapter>
+              <div className={styles.layout}>
+                <Sidebar />
+                <main className={styles.main}>
+                  {children}
+                </main>
+              </div>
+            </NuqsAdapter>
+          </ThemeRegistry>
+        </LeagueProvider>
       </body>
     </html>
   );

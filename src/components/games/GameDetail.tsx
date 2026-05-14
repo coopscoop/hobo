@@ -19,8 +19,6 @@ export function GameDetail({ data }: GameDetailProps) {
   const homeBatting = batting.filter((b) => b.teamId === game.homeTeam.id);
   const awayBatting = batting.filter((b) => b.teamId === game.awayTeam.id);
 
-  console.log('batting data: ', batting);
-
   return (
     <Box sx={{ p: 2, margin: '0 auto' }}>
 

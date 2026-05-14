@@ -122,29 +122,31 @@ export async function getGameYearRange() {
   return result;
 }
 
-export async function getUpcomingGames() {
-  return gameJoins(
-    db.select(gameSelect).from(games)
-  )
+export async function getUpcomingGames(leagueId?: string | null) {
+  return gameJoins(db.select(gameSelect).from(games))
     .where(
       and(
-        gte(games.date, sql`current_date`),
-        lte(games.date, sql`current_date + interval '7 days'`)
+        gte(games.date, sql`current_date - interval '1 year'`),
+        lte(games.date, sql`current_date - interval '1 year' + interval '7 days'`),
+        leagueId && leagueId !== 'all'
+          ? eq(games.leagueId, parseInt(leagueId))
+          : undefined
       )
     )
     .orderBy(games.date);
 }
 
-export async function getRecentGames() {
-  return gameJoins(
-    db.select(gameSelect).from(games)
-  )
+export async function getRecentGames(leagueId?: string | null) {
+  return gameJoins(db.select(gameSelect).from(games))
     .where(
       and(
         gte(games.date, sql`current_date - interval '30 days'`),
-        lt(games.date, sql`current_date`)
+        lt(games.date, sql`current_date`),
+        leagueId && leagueId !== 'all'
+          ? eq(games.leagueId, parseInt(leagueId))
+          : undefined
       )
     )
-    .orderBy(desc(games.date));
-  // .limit(10);
+    .orderBy(desc(games.date))
+    .limit(10);
 }

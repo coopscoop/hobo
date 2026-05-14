@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import type { TeamDetail } from '@/types';
+import { useRouter } from 'next/navigation';
 
 type TeamData = NonNullable<TeamDetail>;
 
@@ -101,6 +102,8 @@ export function TeamDetail({ data, minYear, maxYear }: TeamDetailProps) {
     { field: 'ops', headerName: 'OPS', flex: 0.7 },
   ];
 
+  const router = useRouter();
+
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" gutterBottom>{team.teamName}</Typography>
@@ -168,6 +171,8 @@ export function TeamDetail({ data, minYear, maxYear }: TeamDetailProps) {
         pageSizeOptions={[25, 50]}
         disableRowSelectionOnClick
         autoHeight
+        sx={{ cursor: 'pointer' }}
+        onRowClick={(params) => { router.push(`/players/${params.row.id}`); }}
       />
     </Box>
   );

@@ -3,6 +3,7 @@
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box, Typography, Chip, Stack, Paper, Divider } from '@mui/material';
 import type { PlayerById, PlayerGameLog } from '@/types';
+import { useRouter } from 'next/navigation';
 
 type PlayerData = NonNullable<PlayerById>;
 
@@ -16,6 +17,8 @@ export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) 
   const { player, statsByYear } = data;
 
   const currentSeason = statsByYear.find((s) => s.year === currentYear) ?? null;
+
+  const router = useRouter();
 
   // ---- Game log rows ----
   const gameLogRows = gameLog.map((g) => {
@@ -194,7 +197,8 @@ export function PlayerDetail({ data, gameLog, currentYear }: PlayerDetailProps) 
               pagination: { paginationModel: { pageSize: 5 } },
             }}
             pageSizeOptions={[5, 10, 25]}
-            disableRowSelectionOnClick
+            sx={{ cursor: 'pointer' }}
+            onRowClick={(params) => { router.push(`/games/${params.row.id}`); }}
           />
         ) : (
           <Typography variant="body2" color="text.secondary">

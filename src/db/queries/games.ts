@@ -97,7 +97,7 @@ export async function getGameById(id: number) {
         rosters,
         and(
           eq(rosters.playerId, players.id),
-          // sql`${rosters.activePeriod} @> ${game.date}::date`  // range containment
+          sql`${rosters.activePeriod} @> ${game.date}::date`  // range containment
         )
       )
       .where(eq(batting.gameId, id)),

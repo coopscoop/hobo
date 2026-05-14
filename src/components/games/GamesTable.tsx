@@ -4,12 +4,16 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import Link from 'next/link';
 import type { GameListItem } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface GamesTableProps {
   games: GameListItem[];
 }
 
 export function GamesTable({ games }: GamesTableProps) {
+
+  const router = useRouter();
+
   const rows = games.map((g) => ({
     id: g.id,
     date: g.date,
@@ -56,6 +60,8 @@ export function GamesTable({ games }: GamesTableProps) {
         pageSizeOptions={[25, 50, 100]}
         disableRowSelectionOnClick
         autoHeight
+        sx={{ cursor: 'pointer' }}
+        onRowClick={(params) => { router.push(`/games/${params.row.id}`); }}
       />
     </Box>
   );

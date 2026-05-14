@@ -4,19 +4,23 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import Link from 'next/link';
 import type { Announcement } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface AnnouncementsTableProps {
   announcements: Announcement[];
 }
 
 export function AnnouncementsTable({ announcements }: AnnouncementsTableProps) {
+
+  const router = useRouter();
+
   const columns: GridColDef[] = [
     {
       field: 'title',
       headerName: 'Title',
       flex: 1,
       renderCell: (params) => (
-        <Link href={`/announcements/${params.row.id}`}>{params.value}</Link>
+        <p>{params.value}</p>
       ),
     },
     { field: 'date', headerName: 'Date', width: 120 },
@@ -34,6 +38,8 @@ export function AnnouncementsTable({ announcements }: AnnouncementsTableProps) {
           sorting: { sortModel: [{ field: 'date', sort: 'desc' }] },
         }}
         pageSizeOptions={[25, 50]}
+        sx={{ cursor: 'pointer' }}
+        onRowClick={(params) => { router.push(`/announcements/${params.row.id}`); }}
         disableRowSelectionOnClick
         autoHeight
       />

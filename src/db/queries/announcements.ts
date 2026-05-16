@@ -26,16 +26,11 @@ export async function getPinnedAnnouncements() {
     .orderBy(desc(announcements.date));
 }
 
-export async function getSeasonAnnouncements() {
+export async function getGeneralAnnouncements() {
   return db
     .select()
     .from(announcements)
-    .where(
-      and(
-        eq(announcements.pinned, false),
-        // gte(announcements.date, sql`date_trunc('year', current_date)`)
-      )
-    )
+    .where(eq(announcements.pinned, false))
     .orderBy(desc(announcements.date))
     .limit(5);
 }

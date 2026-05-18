@@ -17,21 +17,25 @@ export default function HomePage() {
   const [seasonNews, setSeasonNews] = useState<Announcement[]>([]);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (leagueId !== 'all') params.set('leagueId', leagueId);
+    const fetchAllData = async () => {
+      const params = new URLSearchParams();
+      if (leagueId !== 'all') params.set('leagueId', leagueId);
 
-    Promise.all([
-      fetch(`/api/games/upcoming?${params}`).then((r) => r.json()),
-      fetch(`/api/games/recent?${params}`).then((r) => r.json()),
-      fetch('/api/announcements/pinned').then((r) => r.json()),
-      fetch('/api/announcements/season').then((r) => r.json()),
-    ]).then(([upcoming, recent, pinned, season]) => {
+      const [upcoming, recent, pinned, season] = await Promise.all([
+        fetch(`/api/games/upcoming?${params}`).then((r) => r.json()),
+        fetch(`/api/games/recent?${params}`).then((r) => r.json()),
+        fetch('/api/announcements/pinned').then((r) => r.json()),
+        fetch('/api/announcements/general').then((r) => r.json()),
+      ]);
+
       setUpcomingGames(upcoming);
       setRecentGames(recent);
       setPinnedNews(pinned);
       setSeasonNews(season);
-    });
-  }, [leagueId]);
+    };
+
+    fetchAllData();
+  }, [leagueId]); // make sure to reload the displayed data when the league filter changes
 
   return (
     <Box sx={{ p: 2 }}>

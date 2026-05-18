@@ -13,7 +13,7 @@ interface ExecutivesTableProps {
 
 export function ExecutivesTable({ executives }: ExecutivesTableProps) {
   const columns: GridColDef[] = [
-    { field: 'year', headerName: 'Year', width: 100, type: 'number' },
+    { field: 'year', headerName: 'Year', width: 100, type: 'string' },
     { field: 'firstName', headerName: 'First Name', flex: 1 },
     { field: 'lastName', headerName: 'Last Name', flex: 1 },
     { field: 'position', headerName: 'Position', flex: 1 },

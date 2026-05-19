@@ -172,9 +172,9 @@ export function PlayersTable({ players, yearFrom, yearTo, minYear, maxYear }: Pl
         rows={filteredRows}
         columns={columns}
         initialState={{
-          pagination: { paginationModel: { pageSize: 25 } },
+          pagination: { paginationModel: { pageSize: 10 } },
         }}
-        pageSizeOptions={[25, 50, 100]}
+        pageSizeOptions={[10, 15, 25]}
         disableRowSelectionOnClick
         sx={{ cursor: 'pointer' }}
         onRowClick={(params) => { router.push(`/players/${params.row.id}`); }}

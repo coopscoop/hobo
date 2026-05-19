@@ -53,10 +53,10 @@ export function GamesTable({ games }: GamesTableProps) {
         rows={rows}
         columns={columns}
         initialState={{
-          pagination: { paginationModel: { pageSize: 25 } },
+          pagination: { paginationModel: { pageSize: 10 } },
           sorting: { sortModel: [{ field: 'date', sort: 'desc' }] },
         }}
-        pageSizeOptions={[25, 50, 100]}
+        pageSizeOptions={[10, 15, 25]}
         disableRowSelectionOnClick
         autoHeight
         sx={{ cursor: 'pointer' }}

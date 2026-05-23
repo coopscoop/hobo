@@ -44,15 +44,13 @@ export default function HomePage() {
       </Typography>
       <Stack direction="row" spacing={3} sx={{ alignItems: 'flex-start' }}>
         <Box sx={{ flex: 2, minWidth: 0 }}>
+          <NewsList title="Pinned" announcements={pinnedNews} />
+          <NewsList title="Season News" announcements={seasonNews} />
+        </Box>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <UpcomingGamesTable games={upcomingGames} />
           <Box sx={{ mt: 3 }}>
             <RecentGamesTable games={recentGames} />
-          </Box>
-        </Box>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <NewsList title="Pinned" announcements={pinnedNews} />
-          <Box sx={{ mt: 3 }}>
-            <NewsList title="Season News" announcements={seasonNews} />
           </Box>
         </Box>
       </Stack>

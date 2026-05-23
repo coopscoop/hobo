@@ -28,9 +28,9 @@ export function GameDetail({ data }: GameDetailProps) {
           {game.homeTeam.name} vs {game.awayTeam.name}
         </Typography>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Typography variant="body2" color="text.secondary">{game.date}</Typography>
-          <Typography variant="body2" color="text.secondary">{game.location}</Typography>
-          <Typography variant="body2" color="text.secondary">{game.league.name}</Typography>
+          <Chip label={game.date} size="small" />
+          <Chip label={game.location} size="small" />
+          <Chip label={game.league.name} size="small" />
           {game.isPlayoff && <Chip label="Playoff" size="small" color="primary" />}
         </Stack>
       </Box>

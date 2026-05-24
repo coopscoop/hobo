@@ -27,7 +27,7 @@ export default function Sidebar() {
         <ul className={styles.navList}>
           {/* General */}
           <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '20px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Home</h3></li>
-          <li><Link href="/">Home</Link></li>
+          <li><Link href="/">Home Page</Link></li>
           <li><Link href="/announcements">Announcements</Link></li>
 
           {/* Stats */}

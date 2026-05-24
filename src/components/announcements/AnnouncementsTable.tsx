@@ -1,16 +1,17 @@
 'use client';
 
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import type { Announcement } from '@/types';
 import { useRouter } from 'next/navigation';
 
 interface AnnouncementsTableProps {
   announcements: Announcement[];
+  title: String;
 }
 
-export function AnnouncementsTable({ announcements }: AnnouncementsTableProps) {
+export function AnnouncementsTable({ announcements, title }: AnnouncementsTableProps) {
 
   const router = useRouter();
 
@@ -29,7 +30,7 @@ export function AnnouncementsTable({ announcements }: AnnouncementsTableProps) {
 
   return (
     <Box sx={{ p: 2 }}>
-      <h1>Announcements</h1>
+      <Typography variant="h4" sx={{ mb: 2 }}>{title}</Typography>
       <DataGrid
         rows={announcements}
         columns={columns}

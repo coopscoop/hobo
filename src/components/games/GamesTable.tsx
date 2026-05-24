@@ -1,10 +1,13 @@
 'use client';
 
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Box } from '@mui/material';
+import { Box, FormControl, InputAdornment, InputLabel, OutlinedInput, Select, Stack } from '@mui/material';
 import Link from 'next/link';
 import type { GameListItem } from '@/types';
 import { useRouter } from 'next/navigation';
+import DateRange from '@/components/DateRange';
+import { Search } from '@mui/icons-material';
+import { useState } from 'react';
 
 interface GamesTableProps {
   games: GameListItem[];
@@ -12,6 +15,8 @@ interface GamesTableProps {
 
 export function GamesTable({ games }: GamesTableProps) {
   const router = useRouter();
+
+  const [search, setSearch] = useState('');
 
   const rows = games.map((g) => ({
     id: g.id,
@@ -49,6 +54,22 @@ export function GamesTable({ games }: GamesTableProps) {
   return (
     <Box sx={{ p: 2 }}>
       <h1>Games & Results</h1>
+      <Stack direction="row" sx={{ mb: 2 }}>
+        <DateRange />
+
+        <OutlinedInput
+          size="small"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{ width: 300 }}
+          startAdornment={
+            <InputAdornment position="start">
+              <Search fontSize="small" />
+            </InputAdornment>
+          }
+        />
+      </Stack>
       <DataGrid
         rows={rows}
         columns={columns}

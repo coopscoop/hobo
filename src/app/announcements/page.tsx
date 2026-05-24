@@ -24,10 +24,8 @@ export default function AnnouncementsPage() {
 
   return (
     <>
-      <Typography variant="h4" sx={{ mb: 2 }}>Pinned Announcements</Typography>
-      <AnnouncementsTable announcements={pinned} />
-      <Typography variant="h4" sx={{ mt: 4, mb: 2 }}>General Announcements</Typography>
-      <AnnouncementsTable announcements={general} />
+      <AnnouncementsTable title={"Pinned Announcements"} announcements={pinned} />
+      <AnnouncementsTable title={"General Announcements"} announcements={general} />
     </>
   )
 }

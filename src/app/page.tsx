@@ -1,59 +1,19 @@
-'use client';
+import { HomePageClient } from '@/components/home/HomePageClient';
 
-import { useEffect, useState } from 'react';
-import { useLeague } from '@/context/LeagueContext';
-import { UpcomingGamesTable } from '@/components/home/UpcomingGamesTable';
-import { RecentGamesTable } from '@/components/home/RecentGamesTable';
-import { NewsList } from '@/components/home/NewsList';
-import { Box, Typography, Stack } from '@mui/material';
-import type { GameListItem } from '@/types';
-import type { Announcement } from '@/types';
+export default async function HomePage() {
+  const [upcomingGames, recentGames, pinnedNews, seasonNews] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/upcoming`).then((r) => r.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/recent`).then((r) => r.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/pinned`).then((r) => r.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/general`).then((r) => r.json()),
+  ]);
 
-export default function HomePage() {
-    const { leagueId } = useLeague();
-    const [upcomingGames, setUpcomingGames] = useState<GameListItem[]>([]);
-    const [recentGames, setRecentGames] = useState<GameListItem[]>([]);
-    const [pinnedNews, setPinnedNews] = useState<Announcement[]>([]);
-    const [seasonNews, setSeasonNews] = useState<Announcement[]>([]);
-
-    useEffect(() => {
-        const fetchAllData = async () => {
-            const params = new URLSearchParams();
-            if (leagueId !== 'all') params.set('leagueId', leagueId);
-
-            const [upcoming, recent, pinned, season] = await Promise.all([
-                fetch(`/api/games/upcoming?${params}`).then((r) => r.json()),
-                fetch(`/api/games/recent?${params}`).then((r) => r.json()),
-                fetch('/api/announcements/pinned').then((r) => r.json()),
-                fetch('/api/announcements/general').then((r) => r.json()),
-            ]);
-
-            setUpcomingGames(upcoming);
-            setRecentGames(recent);
-            setPinnedNews(pinned);
-            setSeasonNews(season);
-        };
-
-        fetchAllData();
-    }, [leagueId]); // make sure to reload the displayed data when the league filter changes
-
-    return (
-        <Box sx={{ p: 2 }}>
-            <Typography variant="h4" gutterBottom>
-                Hamilton Oldtimers Baseball
-            </Typography>
-            <Stack direction="row" spacing={3} sx={{ alignItems: 'flex-start' }}>
-                <Box sx={{ flex: 2, minWidth: 0 }}>
-                    <NewsList title="Pinned" announcements={pinnedNews} />
-                    <NewsList title="Season News" announcements={seasonNews} />
-                </Box>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <UpcomingGamesTable games={upcomingGames} />
-                    <Box sx={{ mt: 3 }}>
-                        <RecentGamesTable games={recentGames} />
-                    </Box>
-                </Box>
-            </Stack>
-        </Box>
-    );
+  return (
+    <HomePageClient
+      initialUpcoming={upcomingGames}
+      initialRecent={recentGames}
+      initialPinned={pinnedNews}
+      initialSeason={seasonNews}
+    />
+  );
 }

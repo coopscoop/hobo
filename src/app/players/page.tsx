@@ -1,4 +1,4 @@
-import { PlayersFilter } from '@/components/players/PlayersFilter';
+import { PlayersPageClient } from '@/components/players/PlayersPageClient';
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -19,7 +19,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   ]);
 
   return (
-    <PlayersFilter
+    <PlayersPageClient
       players={players}
       yearFrom={yearFrom ?? ''}
       yearTo={yearTo ?? ''}

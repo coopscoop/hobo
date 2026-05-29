@@ -20,3 +20,4 @@ export type PlayerById = Awaited<ReturnType<typeof getPlayerById>>;
 export type PlayerGameLog = Awaited<ReturnType<typeof getPlayerGameLog>>;
 export type Team = Awaited<ReturnType<typeof getTeams>>[number];
 export type TeamDetail = Awaited<ReturnType<typeof getTeamById>>;
+export type Player = Awaited<ReturnType<typeof getPlayersWithStats>>[number];

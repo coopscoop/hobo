@@ -1,6 +1,4 @@
-import { getPlayersWithStats } from '@/db/queries/players';
-import { getGameYearRange } from '@/db/queries/games';
-import { PlayersTable } from '@/components/players/PlayersTable';
+import { PlayersFilter } from '@/components/players/PlayersFilter';
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -9,23 +7,19 @@ interface PlayersPageProps {
   }>;
 }
 
-export default async function PlayersPage({ searchParams }: { searchParams: Promise<{ yearFrom?: string; yearTo?: string }> }) {
-  const currentYear = new Date().getFullYear();
-  const params = await searchParams;
-
-  // default to current year if no year range is provided by the user
-  // const yearFrom = params.yearFrom ?? String(currentYear);
-  const yearFrom = 2025;
-  const yearTo = params.yearTo ?? String(currentYear);
+export default async function PlayersPage({ searchParams }: PlayersPageProps) {
+  const { yearFrom, yearTo } = await searchParams;
 
   const [players, yearRange] = await Promise.all([
-    getPlayersWithStats({ yearFrom: yearFrom ?? null, yearTo: yearTo ?? null }),
-    getGameYearRange(),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players?${new URLSearchParams({
+      ...(yearFrom && { yearFrom }),
+      ...(yearTo   && { yearTo }),
+    })}`).then((r) => r.json()),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/yearrange`).then((r) => r.json()),
   ]);
 
-
   return (
-    <PlayersTable
+    <PlayersFilter
       players={players}
       yearFrom={yearFrom ?? ''}
       yearTo={yearTo ?? ''}

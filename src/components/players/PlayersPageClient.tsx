@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQueryState } from 'nuqs';
 import {
     Box, Stack, Button, FormControl, InputLabel, Select, MenuItem,
@@ -28,11 +28,6 @@ export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear 
     const [search, setSearch] = useState('');
     const [activeOnly, setActiveOnly] = useState(false);
 
-    function handleApplyDates() {
-        setYearFrom(startDate ? String(startDate.year()) : null);
-        setYearTo(endDate ? String(endDate.year()) : null);
-    }
-
     const filteredPlayers = useMemo(() => {
         return players.filter((p) => {
             if (activeOnly && !p.currentTeam) return false;
@@ -44,6 +39,14 @@ export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear 
         });
     }, [players, activeOnly, search]);
 
+    useEffect(() => {
+        setYearFrom(startDate ? String(startDate.year()) : null);
+    }, [startDate]);
+
+    useEffect(() => {
+        setYearTo(endDate ? String(endDate.year()) : null);
+    }, [endDate]);
+
     return (
         <Box sx={{ p: 2 }}>
             <h1>Players</h1>
@@ -54,13 +57,11 @@ export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear 
                         endDate={endDate}
                         onStartChange={setStartDate}
                         onEndChange={setEndDate}
-                        onApply={handleApplyDates}
                         minYear={minYear}
                         maxYear={maxYear}
                         yearOnly
                     />
                 </FormControl>
-
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -70,7 +71,6 @@ export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear 
                     }
                     label="Active players only"
                 />
-
                 <OutlinedInput
                     size="small"
                     placeholder="Search players..."

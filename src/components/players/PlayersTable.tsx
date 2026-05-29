@@ -61,9 +61,9 @@ export function PlayersTable({ players }: PlayersTableProps) {
       rows={rows}
       columns={columns}
       initialState={{
-        pagination: { paginationModel: { pageSize: 25 } },
+        pagination: { paginationModel: { pageSize: 10 } },
       }}
-      pageSizeOptions={[25, 50, 100]}
+      pageSizeOptions={[10, 15, 25]}
       disableRowSelectionOnClick
       onRowClick={(params) => router.push(`/players/${params.row.id}`)}
       sx={{ cursor: 'pointer' }}

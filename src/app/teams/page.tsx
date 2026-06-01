@@ -1,7 +1,12 @@
-import { getTeams } from '@/db/queries/teams';
-import { TeamsTable } from '@/components/teams/TeamsTable';
+import TeamsPageClient from '@/components/teams/TeamsPageClient';
 
 export default async function TeamsPage() {
-  const teams = await getTeams();
-  return <TeamsTable teams={teams} />;
+
+    const [teams] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/teams`).then((r) => r.json()),
+    ]);
+
+    return (
+        <TeamsPageClient teams={teams} />
+    );
 }

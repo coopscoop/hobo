@@ -1,0 +1,7 @@
+import { getTeams } from '@/db/queries/teams';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(req: NextRequest) {
+  const teams = await getTeams();
+  return NextResponse.json(teams);
+}

@@ -29,7 +29,6 @@ export function TeamsTable({ teams }: TeamsTableProps) {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>Teams</Typography>
       <DataGrid
         rows={teams}
         columns={columns}

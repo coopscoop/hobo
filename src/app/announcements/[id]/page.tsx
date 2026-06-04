@@ -8,8 +8,6 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
 
     const announcement = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/${id}`).then((r) => r.json());
 
-    console.log(announcement);
-
     return (
         <>
             <BackButton />

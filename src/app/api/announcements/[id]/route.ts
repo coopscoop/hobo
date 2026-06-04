@@ -5,7 +5,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
 
     try {
-        // getAnnouncementById now handles validation internally
         const resourceData = await getAnnouncementById(id);
 
         if (!resourceData) {

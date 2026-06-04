@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        // getAnnouncementById now handles validation internally
         const resourceData = await getGeneralAnnouncements();
 
         if (!resourceData) {

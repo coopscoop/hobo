@@ -1,14 +1,24 @@
 import { getPlayersWithStats } from '@/db/queries/players';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
-  const yearFrom = req.nextUrl.searchParams.get('yearFrom');
-  const yearTo   = req.nextUrl.searchParams.get('yearTo');
+export async function GET(request: Request) {
+    try {
 
-  const players = await getPlayersWithStats({
-    yearFrom: yearFrom ?? null,
-    yearTo:   yearTo ?? null,
-  });
+        const { searchParams } = new URL(request.url);
+        const yearFrom = searchParams.get('yearFrom') ?? '2015';
+        const yearTo = searchParams.get('yearTo') ?? String(new Date().getFullYear());
 
-  return NextResponse.json(players);
+        if (yearFrom > yearTo) {
+            return NextResponse.json({ message: 'yearFrom must be less than or equal to yearTo' }, { status: 400 });
+        }
+
+        const players = await getPlayersWithStats({
+            yearFrom: yearFrom,
+            yearTo: yearTo,
+        });
+
+        return NextResponse.json(players, { status: 200 });
+    } catch (error) {
+        return NextResponse.json([], { status: 400 });
+    }
 }

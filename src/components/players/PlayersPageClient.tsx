@@ -11,6 +11,7 @@ import { PlayersTable } from './PlayersTable';
 import type { PlayerWithStats } from '@/types';
 import DateRange from '@/components/DateRange';
 import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 interface PlayersPageClientProps {
     players: PlayerWithStats[];
@@ -23,8 +24,8 @@ interface PlayersPageClientProps {
 export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear }: PlayersPageClientProps) {
     const [, setYearFrom] = useQueryState('yearFrom', { shallow: false });
     const [, setYearTo] = useQueryState('yearTo', { shallow: false });
-    const [startDate, setStartDate] = useState<Dayjs | null>(null);
-    const [endDate, setEndDate] = useState<Dayjs | null>(null);
+    const [startDate, setStartDate] = useState<Dayjs | null>(yearFrom ? dayjs().year(Number(yearFrom)) : null);
+    const [endDate, setEndDate] = useState<Dayjs | null>(yearTo ? dayjs().year(Number(yearTo)) : null);
     const [search, setSearch] = useState('');
     const [activeOnly, setActiveOnly] = useState(false);
 
@@ -41,11 +42,11 @@ export function PlayersPageClient({ players, yearFrom, yearTo, minYear, maxYear 
 
     useEffect(() => {
         setYearFrom(startDate ? String(startDate.year()) : null);
-    }, [startDate]);
+    }, [startDate, setYearFrom]);
 
     useEffect(() => {
         setYearTo(endDate ? String(endDate.year()) : null);
-    }, [endDate]);
+    }, [endDate, setYearTo]);
 
     return (
         <Box sx={{ p: 2 }}>

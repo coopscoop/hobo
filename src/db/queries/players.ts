@@ -116,84 +116,77 @@ export async function getPlayerById(idString: string) {
     if (!player) return null;
 
     const statsByYear = await db
-        .select({
-            year: sql<number>`extract(year from ${games.date})::int`,
-            teamName: sql<string>`mode() within group (order by ${teams.teamName})`,
-            gamesPlayed: sql<number>`count(distinct ${batting.gameId})`,
-            atBats: sql<number>`sum(${batting.atBat})`,
-            runs: sql<number>`sum(${batting.run})`,
-            walks: sql<number>`sum(${batting.walk})`,
-            strikeouts: sql<number>`sum(${batting.strikeout})`,
-            hitByPitch: sql<number>`sum(${batting.hitByPitch})`,
-            stolenBases: sql<number>`sum(${batting.stolenBase})`,
-            rbi: sql<number>`sum(${batting.runsBattedIn})`,
-            sacrifice: sql<number>`sum(${batting.sacrifice})`,
-            singles: sql<number>`sum(${batting.singleHit})`,
-            doubles: sql<number>`sum(${batting.doubleHit})`,
-            triples: sql<number>`sum(${batting.tripleHit})`,
-            homeRuns: sql<number>`sum(${batting.homeRun})`,
-            roe: sql<number>`sum(${batting.roe})`,
-            hits: sql<number>`
-                sum(${batting.singleHit}) +
-                sum(${batting.doubleHit}) +
-                sum(${batting.tripleHit}) +
-                sum(${batting.homeRun})
-            `,
-            obp: sql<number>`
-                round(
-                    cast(
-                        sum(${batting.singleHit}) + sum(${batting.doubleHit}) +
-                        sum(${batting.tripleHit}) + sum(${batting.homeRun}) +
-                        sum(${batting.walk}) + sum(${batting.hitByPitch})
-                    as numeric) /
-                    nullif(
-                        sum(${batting.atBat}) + sum(${batting.walk}) +
-                        sum(${batting.hitByPitch}) + sum(${batting.sacrifice}),
-                    0),
-                3)
-            `,
-            slg: sql<number>`
-                round(
-                    cast(
-                        sum(${batting.singleHit}) +
-                        (sum(${batting.doubleHit}) * 2) +
-                        (sum(${batting.tripleHit}) * 3) +
-                        (sum(${batting.homeRun}) * 4)
-                    as numeric) /
-                    nullif(sum(${batting.atBat}), 0),
-                3)
-            `,
-            ops: sql<number>`
-                round(
-                    cast(
-                        sum(${batting.singleHit}) + sum(${batting.doubleHit}) +
-                        sum(${batting.tripleHit}) + sum(${batting.homeRun}) +
-                        sum(${batting.walk}) + sum(${batting.hitByPitch})
-                    as numeric) /
-                    nullif(
-                        sum(${batting.atBat}) + sum(${batting.walk}) +
-                        sum(${batting.hitByPitch}) + sum(${batting.sacrifice}),
-                    0) +
-                    cast(
-                        sum(${batting.singleHit}) +
-                        (sum(${batting.doubleHit}) * 2) +
-                        (sum(${batting.tripleHit}) * 3) +
-                        (sum(${batting.homeRun}) * 4)
-                    as numeric) /
-                    nullif(sum(${batting.atBat}), 0),
-                3)
-            `,
-        })
-        .from(batting)
-        .innerJoin(games, eq(games.id, batting.gameId))
-        .leftJoin(
-            rosters,
-            and(
-                eq(rosters.playerId, batting.playerId),
-                sql`${rosters.activePeriod} @> ${games.date}::date`
-            )
+        .select(
+            {
+                year: sql<number>`extract(year from ${games.date})::int`,
+                teamName: sql<string>`mode() within group (order by ${teams.teamName})`,
+                gamesPlayed: sql<number>`count(distinct ${batting.gameId})`,
+                atBats: sql<number>`sum(${batting.atBat})`,
+                runs: sql<number>`sum(${batting.run})`,
+                walks: sql<number>`sum(${batting.walk})`,
+                strikeouts: sql<number>`sum(${batting.strikeout})`,
+                hitByPitch: sql<number>`sum(${batting.hitByPitch})`,
+                stolenBases: sql<number>`sum(${batting.stolenBase})`,
+                rbi: sql<number>`sum(${batting.runsBattedIn})`,
+                sacrifice: sql<number>`sum(${batting.sacrifice})`,
+                singles: sql<number>`sum(${batting.singleHit})`,
+                doubles: sql<number>`sum(${batting.doubleHit})`,
+                triples: sql<number>`sum(${batting.tripleHit})`,
+                homeRuns: sql<number>`sum(${batting.homeRun})`,
+                roe: sql<number>`sum(${batting.roe})`,
+                hits: sql<number>`
+        sum(${batting.singleHit}) +
+        sum(${batting.doubleHit}) +
+        sum(${batting.tripleHit}) +
+        sum(${batting.homeRun})
+      `,
+                obp: sql<number>`
+        round(
+          cast(
+            sum(${batting.singleHit}) + sum(${batting.doubleHit}) +
+            sum(${batting.tripleHit}) + sum(${batting.homeRun}) +
+            sum(${batting.walk}) + sum(${batting.hitByPitch})
+          as numeric) /
+          nullif(
+            sum(${batting.atBat}) + sum(${batting.walk}) +
+            sum(${batting.hitByPitch}) + sum(${batting.sacrifice}),
+          0),
+        3)
+      `,
+                slg: sql<number>`
+        round(
+          cast(
+            sum(${batting.singleHit}) +
+            (sum(${batting.doubleHit}) * 2) +
+            (sum(${batting.tripleHit}) * 3) +
+            (sum(${batting.homeRun}) * 4)
+          as numeric) /
+          nullif(sum(${batting.atBat}), 0),
+        3)
+      `,
+                ops: sql<number>`
+        round(
+          cast(
+            sum(${batting.singleHit}) + sum(${batting.doubleHit}) +
+            sum(${batting.tripleHit}) + sum(${batting.homeRun}) +
+            sum(${batting.walk}) + sum(${batting.hitByPitch})
+          as numeric) /
+          nullif(
+            sum(${batting.atBat}) + sum(${batting.walk}) +
+            sum(${batting.hitByPitch}) + sum(${batting.sacrifice}),
+          0) +
+          cast(
+            sum(${batting.singleHit}) +
+            (sum(${batting.doubleHit}) * 2) +
+            (sum(${batting.tripleHit}) * 3) +
+            (sum(${batting.homeRun}) * 4)
+          as numeric) /
+          nullif(sum(${batting.atBat}), 0),
+        3)
+      `,
+            }
         )
-        .leftJoin(teams, eq(teams.id, rosters.teamId))
+        .from(batting)
         .where(eq(batting.playerId, id))
         .groupBy(sql`extract(year from ${games.date})::int`)
         .orderBy(sql`extract(year from ${games.date})::int desc`);
@@ -233,17 +226,6 @@ export async function getPlayerGameLog(idString: string, yearString: string) {
             roe: batting.roe,
         })
         .from(batting)
-        .innerJoin(games, eq(games.id, batting.gameId))
-        .leftJoin(
-            rosters,
-            and(
-                eq(rosters.playerId, batting.playerId),
-                sql`${rosters.activePeriod} @> ${games.date}::date`
-            )
-        )
-        .leftJoin(teams, eq(teams.id, rosters.teamId))
-        .leftJoin(homeTeam, eq(homeTeam.id, games.homeTeamId))
-        .leftJoin(awayTeam, eq(awayTeam.id, games.awayTeamId))
         .where(
             and(
                 eq(batting.playerId, id),

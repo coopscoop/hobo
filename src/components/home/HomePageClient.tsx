@@ -7,6 +7,7 @@ import { RecentGamesTable } from '@/components/home/RecentGamesTable';
 import { NewsList } from '@/components/home/NewsList';
 import { Box, Typography, Stack } from '@mui/material';
 import type { GameListItem, Announcement } from '@/types';
+import EditorClient from '@/components/editor/EditorClient'
 
 interface HomePageClientProps {
     initialUpcoming: GameListItem[];

@@ -17,7 +17,7 @@ const daterange = customType<{ data: string }>({
 
 // ---- Tables ----
 
-export const announcements = pgTable('announcements', {
+export const announcements = pgTable('Announcements', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   date: date('date').notNull().defaultNow(),
@@ -26,31 +26,31 @@ export const announcements = pgTable('announcements', {
   pinned: boolean('pinned').notNull().default(false),
 });
 
-export const leagues = pgTable('leagues', {
+export const leagues = pgTable('Leagues', {
   id: serial('id').primaryKey(),
   leagueName: varchar('league_name', { length: 32 }).notNull(),
 });
 
-export const teams = pgTable('teams', {
+export const teams = pgTable('Teams', {
   id: serial('id').primaryKey(),
   teamName: varchar('team_name', { length: 32 }).notNull(),
 });
 
-export const players = pgTable('players', {
+export const players = pgTable('Players', {
   id: serial('id').primaryKey(),
   firstName: varchar('first_name', { length: 64 }),
   lastName: varchar('last_name', { length: 64 }),
   currentTeam: integer('current_team').references(() => teams.id),
 });
 
-export const rosters = pgTable('rosters', {
+export const rosters = pgTable('Rosters', {
   id: serial('id').primaryKey(),
   teamId: integer('team_id').notNull().references(() => teams.id),
   playerId: integer('player_id').notNull().references(() => players.id),
   activePeriod: daterange('active_period').notNull(),
 });
 
-export const games = pgTable('games', {
+export const games = pgTable('Games', {
   id: serial('id').primaryKey(),
   date: date('date').notNull(),
   location: text('location').notNull(),
@@ -63,7 +63,7 @@ export const games = pgTable('games', {
   awayScore: integer('away_score'),
 });
 
-export const innings = pgTable('innings', {
+export const innings = pgTable('Innings', {
   id: serial('id').primaryKey(),
   gameId: integer('game_id').notNull().references(() => games.id),
   inning: integer('inning').notNull(),
@@ -73,7 +73,7 @@ export const innings = pgTable('innings', {
   uniqueGameInning: unique().on(t.gameId, t.inning),
 }));
 
-export const batting = pgTable('batting', {
+export const batting = pgTable('Batting', {
   id: serial('id').primaryKey(),
   gameId: integer('game_id').notNull().references(() => games.id),
   playerId: integer('player_id').notNull().references(() => players.id),
@@ -93,14 +93,14 @@ export const batting = pgTable('batting', {
   roe: integer('roe').default(0),
 });
 
-export const pitching = pgTable('pitching', {
+export const pitching = pgTable('Pitching', {
   id: serial('id').primaryKey(),
   gameId: integer('game_id').notNull().references(() => games.id),
   playerId: integer('player_id').notNull().references(() => players.id),
   inningsPitched: integer('innings_pitched'),
 });
 
-export const substitutes = pgTable('substitutes', {
+export const substitutes = pgTable('Substitutes', {
   id: serial('id').primaryKey(),
   gameId: integer('game_id').notNull().references(() => games.id),
   playerId: integer('player_id').notNull().references(() => players.id),
@@ -108,7 +108,7 @@ export const substitutes = pgTable('substitutes', {
   newTeamId: integer('new_team_id').notNull().references(() => teams.id),
 });
 
-export const executives = pgTable('executives', {
+export const executives = pgTable('Executives', {
   id: serial('id').primaryKey(),
   firstName: varchar('first_name', { length: 64 }),
   lastName: varchar('last_name', { length: 64 }),

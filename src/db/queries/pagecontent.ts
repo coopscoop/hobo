@@ -24,6 +24,15 @@ export async function getPageContentById(idString: string) {
     return results[0] ?? null;
 }
 
+export async function getPageContentByName(pageName: string) {
+    const results = await db
+        .select()
+        .from(pageContent)
+        .where(eq(pageContent.page_name, pageName));
+
+    return results[0] ?? null;
+}
+
 export async function createPageContent(pageName: string, content: string) {
     return db
         .insert(pageContent)

@@ -25,30 +25,34 @@ export default function Sidebar() {
       </div>
       <nav className={styles.centerVertically}>
         <ul className={styles.navList}>
-          {/* General */}
-          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '20px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Home</h3></li>
+          {/* Home */}
+          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '0px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Home</h3></li>
           <li><Link href="/">Home Page</Link></li>
           <li><Link href="/announcements">Announcements</Link></li>
 
           {/* Stats */}
-          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '20px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Stats</h3></li>
+          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '10px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Stats</h3></li>
           <li><Link href="/games">Games & Results</Link></li>
           <li><Link href="/players">Players</Link></li>
           <li><Link href="/teams">Teams</Link></li>
-          <li><Link href="/">League Champs</Link></li>
+          <li><Link href="/leagueChamps">League Champs</Link></li>
 
           {/* Rules */}
-          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '20px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Rules</h3></li>
-          <li><Link href="/">Rules</Link></li>
-          <li><Link href="/">How to Score</Link></li>
-          <li><Link href="/">101: For new players</Link></li>
-          <li><Link href="/">201: For returning players</Link></li>
+          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '10px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Rules</h3></li>
+          <li><Link href="/rules">Rules</Link></li>
+          <li><Link href="/howToScore">How to Score</Link></li>
+          <li><Link href="/101">101: For new players</Link></li>
+          <li><Link href="/201">201: For returning players</Link></li>
 
           {/* People */}
-          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '20px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Awards</h3></li>
-          <li><Link href="/">Hall of Fame</Link></li>
-          <li><Link href="/">Ed Bril Award</Link></li>
+          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '10px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Awards</h3></li>
+          <li><Link href="/hallOfFame">Hall of Fame</Link></li>
+          <li><Link href="/edBrilAward">Ed Bril Award</Link></li>
           <li><Link href="/executives">Executives</Link></li>
+
+          {/* Contact us */}
+          <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '10px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Contact Us</h3></li>
+          <li><Link href="/contact">Contact Us</Link></li>
         </ul
         ></nav>
     </aside>

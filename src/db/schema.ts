@@ -52,8 +52,9 @@ export const rosters = pgTable('Rosters', {
 
 export const games = pgTable('Games', {
     id: serial('id').primaryKey(),
-    date: date('date').notNull(),
-    location: text('location').notNull(),
+    date: date('date').notNull().defaultNow(),
+    location: text('location').notNull(), // DEPRECIATED USE ID - TODO: MIGRATE ALL GAMES OVER TO ID OVER TEXT LOCATION
+    fieldId: integer('field_id').notNull().references(() => fields.id).default(1),
     homeTeamId: integer('home_team_id').notNull().references(() => teams.id),
     awayTeamId: integer('away_team_id').notNull().references(() => teams.id),
     leagueId: integer('league_id').notNull().references(() => leagues.id),
@@ -61,7 +62,7 @@ export const games = pgTable('Games', {
     notes: text('notes'),
     homeScore: integer('home_score'),
     awayScore: integer('away_score'),
-    time: time('time').notNull().default('09:00:00'),
+    time: time('start_time').notNull().default('09:00:00'),
 });
 
 export const innings = pgTable('Innings', {

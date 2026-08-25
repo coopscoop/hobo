@@ -15,6 +15,27 @@
       "when": 1787297152637,
       "tag": "0001_remarkable_dreaming_celestial",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787691951806,
+      "tag": "0002_safe_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787693319977,
+      "tag": "0003_last_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787694497231,
+      "tag": "0004_complete_sugar_man",
+      "breakpoints": true
     }
   ]
 }

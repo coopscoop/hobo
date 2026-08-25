@@ -7,12 +7,6 @@ drizzle
 recharts + mui for data display
 nuqs -> URL params, useful for filtering/bookmarking
 
-### hours tracking (loose)
-
-5 hours on db
-10 hours scraper
-50 hours on site
-
 ## Site TODO
 
 - fix DB

@@ -63,8 +63,8 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
             <button
               key={n}
               onClick={() => onChange({ rbi: n })}
-              className={`h-8 w-8 rounded-full border text-sm font-semibold ${
-                pa.rbi === n ? "border-neutral-300 bg-neutral-200 text-neutral-900" : "border-neutral-600 text-neutral-300"
+              className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
+                pa.rbi === n ? "border-neutral-400 bg-neutral-500 text-white" : "border-neutral-600 text-neutral-300"
               }`}
             >
               {n}
@@ -103,7 +103,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
         >
           <span
             className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-              pa.scored ? "tranneutral-x-5" : "tranneutral-x-0"
+              pa.scored ? "translate-x-5" : "translate-x-0"
             }`}
           />
         </button>

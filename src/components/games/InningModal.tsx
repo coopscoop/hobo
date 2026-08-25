@@ -47,7 +47,7 @@ export function InningModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/80 p-4 backdrop-blur-sm">
-      <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-900 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-900 shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-neutral-700 bg-neutral-800 px-4 py-3 text-white">
           <button
             onClick={() => onMoveInning(-1)}

@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* white text in editor for now */
+.mdxeditor-root-contenteditable,
+.mdxeditor-root-contenteditable * {
+  color: white;
+}
+
+.mdxeditor-root-contenteditable {
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.mdxeditor-root-contenteditable h1 { font-size: 2em; font-weight: bold; }
+.mdxeditor-root-contenteditable h2 { font-size: 1.5em; font-weight: bold; }
+.mdxeditor-root-contenteditable h3 { font-size: 1.17em; font-weight: bold; }

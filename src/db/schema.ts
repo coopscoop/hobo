@@ -116,11 +116,11 @@ export const executives = pgTable('Executives', {
     year: integer('year').notNull(),
 });
 
-export const pageContent = pgTable('PageContent', {
-    id: serial('id').primaryKey(),
-    page_name: text('content'),
-    content: text('content'),
-})
+export const pages = pgTable("PageContent", {
+  id: serial("id").primaryKey(),
+  pageName: varchar("page_name", { length: 255 }).notNull().unique(),
+  content: text("content").notNull().default(""),
+});
 
 // ---- Aliases (for self-referencing joins on games) ----
 

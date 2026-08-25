@@ -1,6 +1,6 @@
 import {
     pgTable, pgEnum, serial, varchar, text, date, customType,
-    integer, boolean, alias, unique
+    integer, boolean, alias, unique, time, jsonb
 } from 'drizzle-orm/pg-core';
 
 // ---- Enums ----
@@ -61,6 +61,7 @@ export const games = pgTable('Games', {
     notes: text('notes'),
     homeScore: integer('home_score'),
     awayScore: integer('away_score'),
+    time: time('time').notNull().default('09:00:00'),
 });
 
 export const innings = pgTable('Innings', {
@@ -91,6 +92,7 @@ export const batting = pgTable('Batting', {
     tripleHit: integer('triple_hit').default(0),
     homeRun: integer('home_run').default(0),
     roe: integer('roe').default(0),
+    perInning: jsonb('per_inning'),
 });
 
 export const pitching = pgTable('Pitching', {
@@ -117,9 +119,15 @@ export const executives = pgTable('Executives', {
 });
 
 export const pages = pgTable("PageContent", {
-  id: serial("id").primaryKey(),
-  pageName: varchar("page_name", { length: 255 }).notNull().unique(),
-  content: text("content").notNull().default(""),
+    id: serial("id").primaryKey(),
+    pageName: varchar("page_name", { length: 255 }).notNull().unique(),
+    content: text("content").notNull().default(""),
+});
+
+export const fields = pgTable('Fields', {
+    id: serial('id').primaryKey(),
+    name: varchar('name').notNull(),
+    address: varchar('address'),
 });
 
 // ---- Aliases (for self-referencing joins on games) ----

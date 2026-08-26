@@ -140,7 +140,7 @@ export default function CreateGamePage() {
 
     if (loadingOptions) {
         return (
-            <Box display="flex" justifycontent="center" mt={8}>
+            <Box>
                 <CircularProgress />
             </Box>
         );
@@ -148,7 +148,7 @@ export default function CreateGamePage() {
 
     if (optionsError) {
         return (
-            <Box maxWidth={480} mx="auto" mt={8}>
+            <Box>
                 <Alert severity="error">{optionsError}</Alert>
             </Box>
         );
@@ -156,9 +156,9 @@ export default function CreateGamePage() {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box maxWidth={480} mx="auto" mt={4}>
+            <Box>
                 <Paper sx={{ p: 4 }}>
-                    <Typography variant="h5" mb={3}>
+                    <Typography variant="h5">
                         Schedule a Game
                     </Typography>
 
@@ -219,7 +219,7 @@ export default function CreateGamePage() {
 
                         {submitError && <Alert severity="error">{submitError}</Alert>}
 
-                        <Stack direction="row" spacing={2} justifycontent="flex-end">
+                        <Stack direction="row" spacing={2}>
                             <Button
                                 variant="outlined"
                                 onClick={handleSaveOnly}

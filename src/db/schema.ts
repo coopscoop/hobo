@@ -107,7 +107,7 @@ export const substitutes = pgTable('Substitutes', {
     id: serial('id').primaryKey(),
     gameId: integer('game_id').notNull().references(() => games.id),
     playerId: integer('player_id').notNull().references(() => players.id),
-    fromTeamId: integer('from_team_id').notNull().references(() => teams.id),
+    fromTeamId: integer('from_team_id').references(() => teams.id),
     newTeamId: integer('new_team_id').notNull().references(() => teams.id),
 });
 

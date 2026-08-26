@@ -36,6 +36,13 @@
       "when": 1787694497231,
       "tag": "0004_complete_sugar_man",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787708850229,
+      "tag": "0005_lame_roulette",
+      "breakpoints": true
     }
   ]
 }

@@ -7,6 +7,7 @@ import { InningModal } from "@/components/games/InningModal";
 import { AddSubstitute } from "@/components/games/AddSubstitute"
 import { PlayerName } from "@/types/types"
 import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA, isPAFilled, computeAutoRunsForInning } from "@/types/constants";
+import { useRouter } from "next/navigation";
 
 import type {
     LineScoreOverrides,
@@ -15,6 +16,7 @@ import type {
     TeamGameData,
     TeamKey,
 } from "@/types/types";
+import { Typography } from "@mui/material";
 
 interface Props {
     gameId: string;
@@ -31,6 +33,7 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
         home: new Set(),
         away: new Set(),
     });
+    const router = useRouter();
 
     function toggleDisabled(teamKey: TeamKey, playerId: string) {
         setDisabledPlayers((prev) => {
@@ -78,7 +81,7 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                 body: JSON.stringify({ innings, homeScore, awayScore }),
             });
             if (!res.ok) throw new Error(`save failed: ${res.status}`);
-            flashSaved();
+            router.push(`/games/${gameId}`);
         } catch (err) {
             console.error("Failed to save game score", err);
             alert("Failed to save final score — check console");
@@ -269,6 +272,7 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     }}
                 />
 
+                <Typography variant="h4" className="pb-4">{teams.home.name}</Typography>
                 <ScorecardTeam
                     teamKey="home"
                     team={teams.home}
@@ -286,6 +290,8 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     />
                 </div>
 
+
+                <Typography variant="h4" className="pb-4">{teams.away.name}</Typography>
                 <ScorecardTeam
                     teamKey="away"
                     team={teams.away}

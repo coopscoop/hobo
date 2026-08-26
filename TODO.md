@@ -7,6 +7,12 @@ drizzle
 recharts + mui for data display
 nuqs -> URL params, useful for filtering/bookmarking
 
+### hours tracking (loose)
+
+5 hours on db
+10 hours scraper
+50 hours on site
+
 ## Site TODO
 
 - fix DB
@@ -18,6 +24,7 @@ nuqs -> URL params, useful for filtering/bookmarking
     - add profile picture url column to players table
       - use google buckets for this (locally just make some dummy urls + images for now)
     - add a view on any games displayed for what league they are
+- add pages
 - add user sign up/sign in
   - jwt tokens for auth is the easiest
 - admin page notes
@@ -140,3 +147,26 @@ check emails from dad for corrections here, got 70% of them afaik so far
 - Scott Willaimson - 447 685
 - Dave (David) Wilson - 414 442
 - Ed Zinger - 543 627
+
+
+two sites or one?
+    - can compare stats across both leagues
+    - or just individual
+email list
+    - auto emails?
+    - manual but give you a list?
+    - <https://resend.com/pricing>
+    - free 3k a month
+    - 100/day
+admins
+    - one account?
+    - multiple?
+    - multiple tiers
+        - read only, can edit, etc
+issues that they have with the other system
+opinions on the new scorecard system
+    - handle subtitutes/spare player
+forum link
+    - two times
+
+

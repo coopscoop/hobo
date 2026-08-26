@@ -90,3 +90,11 @@ export interface BattingRow {
   tripleHit: number;
   homeRun: number;
 }
+
+export interface PlayerGameData {
+  playerId: string;
+  name: string;
+  innings: InningMap;
+  isSubstitute?: boolean;
+  subId?: number; // Substitutes.id — only present when isSubstitute is true, used for the remove-button DELETE call
+}

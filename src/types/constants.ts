@@ -1,6 +1,23 @@
-import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData, InningMap } from "./types";
-export const MAX_INNING = 9; // extra innings: derive from game data, don't hardcode past this in the UI
-export const INNINGS = Array.from({ length: MAX_INNING }, (_, i) => i + 1);
+import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData, InningMap, TeamKey } from "./types";
+export const DEFAULT_MAX_INNING = 9; // extra innings derrive from game data but playoffs can go >9 so handle the edge case but treat 9 as a default
+
+export function buildInningsArray(maxInning: number): number[] {
+  return Array.from({ length: maxInning }, (_, i) => i + 1);
+}
+
+/** Scans existing per-player inning data for the highest inning number present,
+ *  so a resumed 11-inning game reopens at 11 instead of snapping back to 9. */
+export function deriveInitialMaxInning(teams: Record<TeamKey, TeamGameData>): number {
+  let highest = DEFAULT_MAX_INNING;
+  for (const team of Object.values(teams)) {
+    for (const player of team.players) {
+      for (const inningKey of Object.keys(player.innings)) {
+        highest = Math.max(highest, Number(inningKey));
+      }
+    }
+  }
+  return highest;
+}
 
 export const RESULTS: { code: ResultCode; label: string; group: ResultGroup }[] = [
   { code: "OUT", label: "Out", group: "out" },

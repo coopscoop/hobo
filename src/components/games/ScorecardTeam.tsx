@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { CELL_BADGE_STYLE, INNINGS, computePlayerTotals, paLabel } from "@/types/constants";
+import { CELL_BADGE_STYLE, buildInningsArray, computePlayerTotals, paLabel } from "@/types/constants";
 import type { TeamGameData, TeamKey } from "@/types/types";
 
 interface Props {
   teamKey: TeamKey;
   team: TeamGameData;
+  maxInning: number;
   onOpenCell: (playerId: string, inning: number) => void;
   onReorderPlayers: (orderedPlayerIds: string[]) => void;
 }
 
-export function ScorecardTeam({ teamKey, team, onOpenCell, onReorderPlayers }: Props) {
+export function ScorecardTeam({ teamKey, team, maxInning, onOpenCell, onReorderPlayers }: Props) {
+  const innings = buildInningsArray(maxInning);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
 
@@ -45,7 +47,7 @@ export function ScorecardTeam({ teamKey, team, onOpenCell, onReorderPlayers }: P
               <th className="sticky left-0 z-10 min-w-[140px] bg-neutral-800/60 px-3 py-2 text-left font-medium">
                 Player
               </th>
-              {INNINGS.map((i) => (
+              {innings.map((i) => (
                 <th key={i} className="w-16 px-1 py-2 text-center font-medium">
                   {i}
                 </th>
@@ -86,7 +88,7 @@ export function ScorecardTeam({ teamKey, team, onOpenCell, onReorderPlayers }: P
                     <span className="mr-1 select-none text-neutral-500">⠿</span>
                     {player.name}
                   </td>
-                  {INNINGS.map((inning) => {
+                  {innings.map((inning) => {
                     const pas = player.innings[inning] ?? [];
                     return (
                       <td key={inning} className="px-1 py-1 text-center">

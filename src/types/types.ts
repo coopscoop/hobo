@@ -1,7 +1,7 @@
 import { InferSelectModel } from "drizzle-orm";
 import { announcements, games, batting, innings } from "@/db/schema";
 import { getGames, getGameById } from '@/db/queries/games';
-import { getPlayers, getPlayerById, getPlayerGameLog } from '@/db/queries/players';
+import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames } from '@/db/queries/players';
 import { getTeams, getTeamById } from '@/db/queries/teams';
 import { executives } from '@/db/schema';
 
@@ -21,6 +21,7 @@ export type PlayerGameLog = Awaited<ReturnType<typeof getPlayerGameLog>>;
 export type Team = Awaited<ReturnType<typeof getTeams>>[number];
 export type TeamDetail = Awaited<ReturnType<typeof getTeamById>>;
 export type Player = Awaited<ReturnType<typeof getPlayers>>[number];
+export type PlayerName = Awaited<ReturnType<typeof getPlayerNames>>[number];
 
 // ---- Score Sheet types ----
 export type ResultCode = "OUT" | "K" | "BB" | "HBP" | "1B" | "2B" | "3B" | "HR";

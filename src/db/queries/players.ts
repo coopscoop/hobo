@@ -234,3 +234,14 @@ export async function getPlayerGameLog(idString: string, yearString: string) {
         )
         .orderBy(desc(games.date));
 }
+
+export async function getPlayerNames() {
+    return db
+        .select({
+            id: players.id,
+            firstName: players.firstName,
+            lastName: players.lastName,
+        })
+        .from(players)
+        .orderBy(players.lastName, players.firstName);
+}

@@ -25,6 +25,54 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
     const [modal, setModal] = useState<ModalTarget | null>(null);
     const [savedFlash, setSavedFlash] = useState(false);
     const [maxInning, setMaxInning] = useState(() => deriveInitialMaxInning(initialTeams));
+    const [disabledPlayers, setDisabledPlayers] = useState<Record<TeamKey, Set<string>>>({
+        home: new Set(),
+        away: new Set(),
+    });
+
+    function toggleDisabled(teamKey: TeamKey, playerId: string) {
+        setDisabledPlayers((prev) => {
+            const next = { ...prev, [teamKey]: new Set(prev[teamKey]) };
+            if (next[teamKey].has(playerId)) next[teamKey].delete(playerId);
+            else next[teamKey].add(playerId);
+            return next;
+        });
+    }
+
+    async function saveBattingRow(teamKey: TeamKey, playerId: string) {
+        // disabled players never get a row pushed — this is the actual enforcement
+        // point for "skip pushing 0-stat rows", not just a visual toggle
+        if (disabledPlayers[teamKey].has(playerId)) return;
+        const player = teams[teamKey].players.find((p) => p.playerId === playerId);
+        if (!player) return;
+        try {
+            const res = await fetch(`/api/games/${gameId}/batting`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ playerId: Number(playerId), innings: player.innings }),
+            });
+            if (!res.ok) throw new Error(`save failed: ${res.status}`);
+            flashSaved();
+        } catch (err) {
+            console.error("Failed to save batting row", err);
+            // TODO: surface a real error state instead of failing silently — worth
+            // revisiting once there's a UX pattern elsewhere in the app for this
+        }
+    }
+
+    async function removeSubstitute(teamKey: TeamKey, playerId: string, subId: number) {
+        try {
+            const res = await fetch(`/api/games/${gameId}/substitutes/${subId}`, { method: "DELETE" });
+            if (!res.ok) throw new Error(`remove failed: ${res.status}`);
+            setTeams((prev) => {
+                const next = structuredClone(prev);
+                next[teamKey].players = next[teamKey].players.filter((p) => p.playerId !== playerId);
+                return next;
+            });
+        } catch (err) {
+            console.error("Failed to remove substitute", err);
+        }
+    }
 
     function addInning() {
         setMaxInning((m) => m + 1);
@@ -55,17 +103,6 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
     // to hold the raw per-inning PA array alongside the existing final-stat columns —
     // the two are allowed to disagree with the line score by design, per how the
     // rest of this schema already works.
-
-    async function saveBattingRow(teamKey: TeamKey, playerId: string) {
-        const player = teams[teamKey].players.find((p) => p.playerId === playerId);
-        if (!player) return;
-        const totals = computePlayerTotals(player);
-        // await fetch(`/api/games/${gameId}/batting`, {
-        //   method: "POST",
-        //   body: JSON.stringify({ playerId, gameId, totals, inningData: player.innings }),
-        // });
-        flashSaved();
-    }
 
     async function saveLineScoreCell(teamKey: TeamKey, inning: number, value: number | undefined) {
         // await fetch(`/api/games/${gameId}/line-score`, {
@@ -167,6 +204,22 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                             {teams.home.name} vs {teams.away.name}
                         </p>
                     </div>
+                    <div className="flex items-center gap-2 text-xs text-neutral-400">
+                        <span>{maxInning} innings</span>
+                        <button
+                            onClick={removeInning}
+                            disabled={maxInning <= DEFAULT_MAX_INNING}
+                            className="rounded border border-neutral-700 px-2 py-0.5 hover:bg-neutral-800 disabled:opacity-30"
+                        >
+                            −
+                        </button>
+                        <button
+                            onClick={addInning}
+                            className="rounded border border-neutral-700 px-2 py-0.5 hover:bg-neutral-800"
+                        >
+                            + Extra Inning
+                        </button>
+                    </div>
                     <div className={`text-xs font-medium transition-opacity duration-500 ${savedFlash ? "opacity-100 text-emerald-400" : "opacity-0"}`}>
                         Saved
                     </div>
@@ -186,15 +239,21 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     teamKey="home"
                     team={teams.home}
                     maxInning={maxInning}
+                    disabledPlayers={disabledPlayers.home}
                     onOpenCell={(playerId, inning) => openCell("home", playerId, inning)}
                     onReorderPlayers={(ids) => reorderPlayers("home", ids)}
+                    onToggleDisabled={(playerId: string) => toggleDisabled("home", playerId)}
+                    onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
                 <ScorecardTeam
                     teamKey="away"
-                    team={teams.away}
+                    team={teams.home}
                     maxInning={maxInning}
-                    onOpenCell={(playerId, inning) => openCell("away", playerId, inning)}
-                    onReorderPlayers={(ids) => reorderPlayers("away", ids)}
+                    disabledPlayers={disabledPlayers.home}
+                    onOpenCell={(playerId, inning) => openCell("home", playerId, inning)}
+                    onReorderPlayers={(ids) => reorderPlayers("home", ids)}
+                    onToggleDisabled={(playerId: string) => toggleDisabled("home", playerId)}
+                    onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
             </div>
 

@@ -83,7 +83,6 @@ export const batting = pgTable('Batting', {
     run: integer('run').default(0),
     walk: integer('walk').default(0),
     strikeout: integer('strikeout').default(0),
-    secondBase: integer('second_base').default(0),
     hitByPitch: integer('hit_by_pitch').default(0),
     stolenBase: integer('stolen_base').default(0),
     runsBattedIn: integer('runs_batted_in').default(0),
@@ -94,7 +93,9 @@ export const batting = pgTable('Batting', {
     homeRun: integer('home_run').default(0),
     roe: integer('roe').default(0),
     perInning: jsonb('per_inning'),
-});
+}, (t) => ({
+    uniqueGamePlayer: unique().on(t.gameId, t.playerId),
+}));
 
 export const pitching = pgTable('Pitching', {
     id: serial('id').primaryKey(),

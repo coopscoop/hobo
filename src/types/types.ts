@@ -75,3 +75,18 @@ export interface ModalTarget {
   playerId: string;
   inning: number;
 }
+
+export interface BattingRow {
+  atBat: number;
+  run: number;
+  walk: number;
+  strikeout: number;
+  hitByPitch: number;
+  stolenBase: number;
+  runsBattedIn: number;
+  sacrifice: number;
+  singleHit: number;
+  doubleHit: number;
+  tripleHit: number;
+  homeRun: number;
+}

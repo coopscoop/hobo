@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { substitutes } from '@/db/schema';
+import { substitutes, batting } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function DELETE(
@@ -32,6 +32,18 @@ export async function DELETE(
                 { status: 404 }
             );
         }
+
+        // sub is gone from the game — any batting stats entered for them
+        // under this game are now orphaned (no roster/sub link to justify
+        // them counting toward either team), so clean those up too
+        await db
+            .delete(batting)
+            .where(
+                and(
+                    eq(batting.gameId, gameId),
+                    eq(batting.playerId, deleted[0].playerId)
+                )
+            );
 
         return NextResponse.json({ success: true, id: subId }, { status: 200 });
     } catch (error) {

@@ -1,6 +1,4 @@
-import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData } from "./types";
-// NOTE: this file lives at src/types/constants.ts — "./types" resolves to src/types/types.ts
-
+import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData, InningMap } from "./types";
 export const MAX_INNING = 9; // extra innings: derive from game data, don't hardcode past this in the UI
 export const INNINGS = Array.from({ length: MAX_INNING }, (_, i) => i + 1);
 
@@ -84,4 +82,32 @@ export function computeAutoRunsForInning(team: TeamGameData, inning: number): nu
     }
   }
   return runs;
+}
+
+/** Full DB-column-shaped aggregate from a player's raw per-inning PA data.
+ *  Used both for the batting write endpoint and, if needed later, for
+ *  recomputing display totals from persisted perInning data. */
+export function computeBattingRow(innings: InningMap): BattingRow {
+  const row: BattingRow = {
+    atBat: 0, run: 0, walk: 0, strikeout: 0, hitByPitch: 0,
+    stolenBase: 0, runsBattedIn: 0, sacrifice: 0,
+    singleHit: 0, doubleHit: 0, tripleHit: 0, homeRun: 0,
+  };
+  for (const pas of Object.values(innings)) {
+    for (const pa of pas) {
+      if (isAB(pa)) row.atBat += 1;
+      if (pa.scored) row.run += 1;
+      if (pa.result === "BB") row.walk += 1;
+      if (pa.result === "K") row.strikeout += 1;
+      if (pa.result === "HBP") row.hitByPitch += 1;
+      if (pa.result === "1B") row.singleHit += 1;
+      if (pa.result === "2B") row.doubleHit += 1;
+      if (pa.result === "3B") row.tripleHit += 1;
+      if (pa.result === "HR") row.homeRun += 1;
+      if (pa.sac) row.sacrifice += 1;
+      row.runsBattedIn += pa.rbi;
+      row.stolenBase += (pa.sb2 ? 1 : 0) + (pa.sb3 ? 1 : 0) + (pa.sbHome ? 1 : 0);
+    }
+  }
+  return row;
 }

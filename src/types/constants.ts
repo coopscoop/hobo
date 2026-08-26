@@ -1,4 +1,4 @@
-import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData, InningMap, TeamKey } from "./types";
+import type { PlateAppearance, PlayerGameData, PlayerTotals, ResultCode, ResultGroup, TeamGameData, InningMap, TeamKey, BattingRow } from "./types";
 export const DEFAULT_MAX_INNING = 9; // extra innings derrive from game data but playoffs can go >9 so handle the edge case but treat 9 as a default
 
 export function buildInningsArray(maxInning: number): number[] {
@@ -54,6 +54,10 @@ export const CELL_BADGE_STYLE: Record<ResultCode, string> = {
 
 export function emptyPA(): PlateAppearance {
   return { result: null, sac: false, fc: false, rbi: 0, sb2: false, sb3: false, sbHome: false, scored: false };
+}
+
+export function isPAFilled(pa: PlateAppearance): boolean {
+  return pa.result !== null;
 }
 
 export function paLabel(pa: PlateAppearance): string | null {

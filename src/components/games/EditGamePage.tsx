@@ -4,7 +4,9 @@ import { useState } from "react";
 import { LineScore } from "@/components/games/LineScore";
 import { ScorecardTeam } from "@/components/games/ScorecardTeam";
 import { InningModal } from "@/components/games/InningModal";
-import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA } from "@/types/constants";
+import { AddSubstitute } from "@/components/games/AddSubstitute"
+import { PlayerName } from "@/types/types"
+import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA, isPAFilled, computeAutoRunsForInning } from "@/types/constants";
 
 import type {
     LineScoreOverrides,
@@ -60,6 +62,29 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
         }
     }
 
+    async function saveGameScore() {
+        const innings = buildInningsArray(maxInning).map((inning) => ({
+            inning,
+            homeRuns: overrides.home[inning] ?? computeAutoRunsForInning(teams.home, inning),
+            awayRuns: overrides.away[inning] ?? computeAutoRunsForInning(teams.away, inning),
+        }));
+        const homeScore = innings.reduce((sum, i) => sum + i.homeRuns, 0);
+        const awayScore = innings.reduce((sum, i) => sum + i.awayRuns, 0);
+
+        try {
+            const res = await fetch(`/api/games/${gameId}/score`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ innings, homeScore, awayScore }),
+            });
+            if (!res.ok) throw new Error(`save failed: ${res.status}`);
+            flashSaved();
+        } catch (err) {
+            console.error("Failed to save game score", err);
+            alert("Failed to save final score — check console");
+        }
+    }
+
     async function removeSubstitute(teamKey: TeamKey, playerId: string, subId: number) {
         try {
             const res = await fetch(`/api/games/${gameId}/substitutes/${subId}`, { method: "DELETE" });
@@ -79,11 +104,9 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
     }
 
     function removeInning() {
-        // guard: don't let the sheet shrink below the 9-inning floor, and don't
-        // silently delete data — refuse if the inning being dropped has anything in it
         if (maxInning <= DEFAULT_MAX_INNING) return;
         const hasData = (Object.values(teams) as TeamGameData[]).some((team) =>
-            team.players.some((p) => (p.innings[maxInning] ?? []).length > 0)
+            team.players.some((p) => (p.innings[maxInning] ?? []).some(isPAFilled))
         );
         if (hasData) {
             alert(`Inning ${maxInning} has data entered — clear it before removing the inning.`);
@@ -98,26 +121,33 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
         setTimeout(() => setSavedFlash(false), 900);
     }
 
-    // ---- persistence stubs -------------------------------------------------
-    // TODO: real endpoints. Batting table needs a new jsonb column (e.g. `inning_data`)
-    // to hold the raw per-inning PA array alongside the existing final-stat columns —
-    // the two are allowed to disagree with the line score by design, per how the
-    // rest of this schema already works.
-
-    async function saveLineScoreCell(teamKey: TeamKey, inning: number, value: number | undefined) {
-        // await fetch(`/api/games/${gameId}/line-score`, {
-        //   method: "POST",
-        //   body: JSON.stringify({ gameId, teamKey, inning, value }),
-        // });
-        flashSaved();
-    }
-
-    async function savePlayerOrder(teamKey: TeamKey, orderedPlayerIds: string[]) {
-        // await fetch(`/api/games/${gameId}/lineup`, {
-        //   method: "POST",
-        //   body: JSON.stringify({ gameId, teamKey, orderedPlayerIds }),
-        // });
-        flashSaved();
+    async function addSubstitute(teamKey: TeamKey, player: PlayerName) {
+        try {
+            const res = await fetch(`/api/games/${gameId}/substitutes`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ playerId: player.id, newTeamId: Number(teams[teamKey].teamId) }),
+            });
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                alert(body.error ?? "Failed to add substitute");
+                return;
+            }
+            const sub = await res.json();
+            setTeams((prev) => {
+                const next = structuredClone(prev);
+                next[teamKey].players.push({
+                    playerId: String(player.id),
+                    name: `${player.firstName ?? ""} ${player.lastName ?? ""}`.trim(),
+                    innings: {},
+                    isSubstitute: true,
+                    subId: sub.id,
+                });
+                return next;
+            });
+        } catch (err) {
+            console.error("Failed to add substitute", err);
+        }
     }
 
     // ---- batting grid state mutations --------------------------------------
@@ -169,7 +199,6 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
             next[teamKey].players = orderedPlayerIds.map((id) => byId.get(id)!);
             return next;
         });
-        savePlayerOrder(teamKey, orderedPlayerIds);
     }
 
     function openCell(teamKey: TeamKey, playerId: string, inning: number) {
@@ -223,6 +252,12 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     <div className={`text-xs font-medium transition-opacity duration-500 ${savedFlash ? "opacity-100 text-emerald-400" : "opacity-0"}`}>
                         Saved
                     </div>
+                    <button
+                        onClick={saveGameScore}
+                        className="rounded bg-emerald-700 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-600"
+                    >
+                        Save Final Score
+                    </button>
                 </header>
 
                 <LineScore
@@ -231,7 +266,6 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     maxInning={maxInning}
                     onSetOverride={(teamKey, inning, value) => {
                         setOverrides((prev) => ({ ...prev, [teamKey]: { ...prev[teamKey], [inning]: value } }));
-                        saveLineScoreCell(teamKey, inning, value);
                     }}
                 />
 
@@ -245,16 +279,29 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                     onToggleDisabled={(playerId: string) => toggleDisabled("home", playerId)}
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
+                <div className="px-1">
+                    <AddSubstitute
+                        excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))}
+                        onAdd={(p) => addSubstitute("home", p)}
+                    />
+                </div>
+
                 <ScorecardTeam
                     teamKey="away"
-                    team={teams.home}
+                    team={teams.away}
                     maxInning={maxInning}
-                    disabledPlayers={disabledPlayers.home}
-                    onOpenCell={(playerId, inning) => openCell("home", playerId, inning)}
-                    onReorderPlayers={(ids) => reorderPlayers("home", ids)}
-                    onToggleDisabled={(playerId: string) => toggleDisabled("home", playerId)}
-                    onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
+                    disabledPlayers={disabledPlayers.away}
+                    onOpenCell={(playerId, inning) => openCell("away", playerId, inning)}
+                    onReorderPlayers={(ids) => reorderPlayers("away", ids)}
+                    onToggleDisabled={(playerId: string) => toggleDisabled("away", playerId)}
+                    onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("away", playerId, subId)}
                 />
+                <div className="px-1">
+                    <AddSubstitute
+                        excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))}
+                        onAdd={(p) => addSubstitute("home", p)}
+                    />
+                </div>
             </div>
 
             {modal && (

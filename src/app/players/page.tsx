@@ -15,7 +15,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     if (yearTo) params.set('yearTo', yearTo);
 
     const [players, yearRange] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players?${params}`).then((r) => r.json()),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players/stats?${params}`).then((r) => r.json()),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/yearrange`).then((r) => r.json()),
     ]);
 

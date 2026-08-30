@@ -1,8 +1,8 @@
-import { db } from '@/db';
-import { announcements } from '@/db/schema';
-import { desc, eq, and, gte, sql } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { announcements } from '@/lib/db/schema';
+import { desc, eq } from 'drizzle-orm';
 
-export async function getAnnouncements() {
+export async function getAllAnnouncements() {
     return db
         .select()
         .from(announcements)
@@ -21,7 +21,7 @@ export async function getAnnouncementById(idString: string) {
         .from(announcements)
         .where(eq(announcements.id, id));
 
-    return results[0] ?? null; // return single record or null
+    return results[0] ?? null; // return single record or null if it doesn't exist
 }
 
 export async function getPinnedAnnouncements() {
@@ -38,5 +38,12 @@ export async function getGeneralAnnouncements() {
         .from(announcements)
         .where(eq(announcements.pinned, false))
         .orderBy(desc(announcements.date))
-        .limit(5);
+}
+
+export async function getLastAnnouncements() {
+    return db
+        .select()
+        .from(announcements)
+        .orderBy(desc(announcements.date))
+        .limit(10);
 }

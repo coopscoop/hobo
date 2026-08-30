@@ -7,12 +7,6 @@ drizzle
 recharts + mui for data display
 nuqs -> URL params, useful for filtering/bookmarking
 
-### hours tracking (loose)
-
-5 hours on db
-10 hours scraper
-50 hours on site
-
 ## Site TODO
 
 - fix DB
@@ -35,6 +29,22 @@ nuqs -> URL params, useful for filtering/bookmarking
   - access sign up forums data here
   - some excel/csv export options?
     - useful for moving data to other programs
+
+## standardize API calls
+
+db query > API > service > server page > client component
+
+- [ ] announcments
+- [ ] fields
+- [ ] games
+    - [ ] batting
+    - [ ] inning
+- [ ] players
+- [ ] teams
+- [ ] rosters
+- [ ] substitutes
+- [ ] leagues
+
 
 ### old pages
 
@@ -149,6 +159,26 @@ check emails from dad for corrections here, got 70% of them afaik so far
 - Ed Zinger - 543 627
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 two sites or one?
     - can compare stats across both leagues
     - or just individual
@@ -168,5 +198,10 @@ opinions on the new scorecard system
     - handle subtitutes/spare player
 forum link
     - two times
+
+
+one level of admin - can do all
+league standings on the home page
+
 
 

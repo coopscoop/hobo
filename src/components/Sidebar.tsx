@@ -29,7 +29,6 @@ export default function Sidebar() {
           <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '0px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Home</h3></li>
           <li><Link href="/">Home Page</Link></li>
           <li><Link href="/announcements">Announcements</Link></li>
-          <li><Link href="/demo">score sheet demo</Link></li>
 
           {/* Stats */}
           <li><h3 style={{ fontSize: '1.2em', borderBottom: '1px solid #ccc', paddingBottom: '5px', marginTop: '10px', marginBottom: '10px', display: 'block' }} className={styles.categoryTitle}>Stats</h3></li>

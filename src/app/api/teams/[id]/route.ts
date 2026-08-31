@@ -1,4 +1,4 @@
-import { getTeamById } from '@/db/queries/teams';
+import { getTeamById } from '@/lib/db/queries/teams';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

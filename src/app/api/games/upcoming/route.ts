@@ -1,4 +1,4 @@
-import { getUpcomingGames } from '@/db/queries/games';
+import { getUpcomingGames } from '@/lib/db/queries/games';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

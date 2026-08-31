@@ -1,4 +1,4 @@
-import { getPageContentByName } from '@/db/queries/pageContent';
+import { getPageContentByName } from '@/lib/db/queries/pageContent';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: Promise<{ name: string }> }) {

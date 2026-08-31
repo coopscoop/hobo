@@ -1,31 +1,19 @@
-import { getAnnouncementById } from '@/db/queries/announcements';
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
+import { getAnnouncementById, updateAnnouncement, deleteAnnouncement } from '@/lib/db/queries/announcements'
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  const data = await getAnnouncementById(Number(params.id))
+  if (!data) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json(data)
+}
 
-    try {
-        const resourceData = await getAnnouncementById(id);
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
+  const body = await request.json()
+  const [announcement] = await updateAnnouncement(Number(params.id), body)
+  return NextResponse.json(announcement)
+}
 
-        if (!resourceData) {
-            return new Response(JSON.stringify({ message: "Resource not found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-        }
-
-        return Response.json(resourceData, { status: 200 });
-    } catch (error) {
-        // Check if the error is the specific format error we are looking for
-        if (error instanceof Error && error.message === 'Invalid resource ID format.') {
-            return NextResponse.json(
-                { error: 'Invalid resource ID format.' },
-                { status: 400 }
-            );
-        }
-
-        // Handle other internal errors (e.g., database connection failure)
-        console.error("API Error:", error);
-        return NextResponse.json(
-            { error: 'Internal server error while retrieving announcement.' },
-            { status: 500 }
-        );
-    }
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  await deleteAnnouncement(Number(params.id))
+  return new NextResponse(null, { status: 204 })
 }

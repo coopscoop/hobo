@@ -18,6 +18,7 @@ nuqs -> URL params, useful for filtering/bookmarking
     - add profile picture url column to players table
       - use google buckets for this (locally just make some dummy urls + images for now)
     - add a view on any games displayed for what league they are
+- add pages
 - add user sign up/sign in
   - jwt tokens for auth is the easiest
 - admin page notes
@@ -28,6 +29,22 @@ nuqs -> URL params, useful for filtering/bookmarking
   - access sign up forums data here
   - some excel/csv export options?
     - useful for moving data to other programs
+
+## standardize API calls
+
+db query > API > service > server page > client component
+
+- [ ] announcments
+- [ ] fields
+- [ ] games
+    - [ ] batting
+    - [ ] inning
+- [ ] players
+- [ ] teams
+- [ ] rosters
+- [ ] substitutes
+- [ ] leagues
+
 
 ### old pages
 
@@ -140,3 +157,51 @@ check emails from dad for corrections here, got 70% of them afaik so far
 - Scott Willaimson - 447 685
 - Dave (David) Wilson - 414 442
 - Ed Zinger - 543 627
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+two sites or one?
+    - can compare stats across both leagues
+    - or just individual
+email list
+    - auto emails?
+    - manual but give you a list?
+    - <https://resend.com/pricing>
+    - free 3k a month
+    - 100/day
+admins
+    - one account?
+    - multiple?
+    - multiple tiers
+        - read only, can edit, etc
+issues that they have with the other system
+opinions on the new scorecard system
+    - handle subtitutes/spare player
+forum link
+    - two times
+
+
+one level of admin - can do all
+league standings on the home page
+
+
+

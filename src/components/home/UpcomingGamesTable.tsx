@@ -10,7 +10,7 @@ export function UpcomingGamesTable({ games }: { games: GameListItem[] }) {
   const router = useRouter();
 
   return (
-    <>
+    <div className="mt-8">
       <Typography variant="h6" gutterBottom>Upcoming Games</Typography>
       <TableContainer component={Paper}>
         <Table size="small">
@@ -44,6 +44,6 @@ export function UpcomingGamesTable({ games }: { games: GameListItem[] }) {
           </TableBody>
         </Table>
       </TableContainer >
-    </>
+    </div>
   );
 }

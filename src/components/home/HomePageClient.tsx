@@ -7,7 +7,7 @@ import { RecentGamesTable } from '@/components/home/RecentGamesTable';
 import { NewsList } from '@/components/home/NewsList';
 import { TeamStandings } from '@/components/home/TeamStandings';
 import { fetchUpcomingGames, fetchRecentGames } from '@/lib/services/games';
-import { fetchTeams } from '@/lib/services/teams';
+import { fetchStandings } from '@/lib/services/standings';
 import { Box, Typography, Stack } from '@mui/material';
 import type { GameListItem, Announcement, TeamWithPlayers } from '@/types';
 
@@ -34,25 +34,25 @@ export function HomePageClient({
     const [pinnedNews] = useState<Announcement[]>(initialPinned);
     const [seasonNews] = useState<Announcement[]>(initialSeason);
 
-    useEffect(() => {
-        // News isn't league-filtered, so only games/standings need to refetch.
-        if (leagueId === 'all') {
-            setUpcomingGames(initialUpcoming);
-            setRecentGames(initialRecent);
-            setStandings(initialStandings);
-            return;
-        }
-
-        Promise.all([
-            fetchUpcomingGames(leagueId),
-            fetchRecentGames(leagueId),
-            fetchTeams(leagueId),
-        ]).then(([upcoming, recent, teams]) => {
-            setUpcomingGames(upcoming);
-            setRecentGames(recent);
-            setStandings(teams);
-        });
-    }, [leagueId]);
+    // useEffect(() => {
+    //     // News isn't league-filtered, so only games/standings need to refetch.
+    //     if (leagueId === 'all') {
+    //         setUpcomingGames(initialUpcoming);
+    //         setRecentGames(initialRecent);
+    //         setStandings(initialStandings);
+    //         return;
+    //     }
+    //
+    //     Promise.all([
+    //         fetchUpcomingGames(leagueId),
+    //         fetchRecentGames(leagueId),
+    //         fetchStandings(leagueId),
+    //     ]).then(([upcoming, recent, teams]) => {
+    //         setUpcomingGames(upcoming);
+    //         setRecentGames(recent);
+    //         setStandings(teams);
+    //     });
+    // }, [leagueId]);
 
     return (
         <Box>
@@ -69,7 +69,7 @@ export function HomePageClient({
                         </Box>
                     </Box>
                     <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
-                        <Box sx={{ mt: 4 }}>
+                        <Box>
                             <TeamStandings teams={standings} />
                         </Box>
                         <UpcomingGamesTable games={upcomingGames} />

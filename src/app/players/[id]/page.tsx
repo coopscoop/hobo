@@ -1,23 +1,48 @@
-import { PlayerDetail } from '@/components/players/PlayerDetail';
 import { notFound } from 'next/navigation';
+
 import { BackButton } from '@/components/BackButton';
+import { PlayerDetail } from '@/components/players/PlayerDetail';
+import {
+    fetchPlayerById,
+    fetchPlayerStatsById,
+    fetchPlayerGameLog,
+} from '@/lib/services/players';
 
-export default async function PlayerPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PlayerPage({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
     const { id } = await params;
-    // const currentYear = String(new Date().getFullYear());
-    const currentYear = '2025'; // TODO: REMOVE THIS TO GET CURRENT YEAR - JUST PLACEHOLDER FOR NOW
 
-    const [data, gameLog] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players/${id}`).then((r) => r.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players/${id}?year=${currentYear}`).then((r) => r.json()),
+    const playerId = Number(id);
+
+    if (!Number.isInteger(playerId)) {
+        notFound();
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    const [player, statsByYear, gameLog] = await Promise.all([
+        fetchPlayerById(playerId),
+        fetchPlayerStatsById(playerId),
+        fetchPlayerGameLog(playerId, currentYear),
     ]);
 
-    if (!data) notFound();
+    if (!player) {
+        notFound();
+    }
 
     return (
         <>
             <BackButton />
-            <PlayerDetail data={data} gameLog={gameLog} currentYearString={currentYear} />
+
+            <PlayerDetail
+                player={player}
+                statsByYear={statsByYear}
+                gameLog={gameLog}
+                currentYear={currentYear}
+            />
         </>
     );
 }

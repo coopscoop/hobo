@@ -21,7 +21,7 @@ export function TeamStandings({ teams }: { teams: TeamWithPlayers[] }) {
       losses: Number(t.losses) || 0,
       ties: Number(t.ties) || 0,
     }))
-    .sort((a, b) => pct(b.wins, b.losses, b.ties) - pct(a.wins, a.losses, a.ties));
+    .sort((a, b) => pct(b.wins, b.losses, b.ties) - pct(a.wins, a.losses, a.ties)).splice(0,5);
 
   return (
     <>

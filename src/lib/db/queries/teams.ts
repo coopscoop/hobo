@@ -167,6 +167,69 @@ export async function getTeamById(idString: string) {
     return { team, recordByYear, rosterByYear };
 }
 
+export async function getLeagueStandings(leagueId?: number) {
+  // Get all games with scores for the specified league
+  const gamesQuery = db
+    .select({
+      homeTeamId: games.homeTeamId,
+      awayTeamId: games.awayTeamId,
+      homeScore: games.homeScore,
+      awayScore: games.awayScore,
+    })
+    .from(games)
+    .where(
+      and(
+        isNotNull(games.homeScore),
+        isNotNull(games.awayScore),
+        leagueId ? eq(games.leagueId, leagueId) : sql`1=1`
+      )
+    );
+
+  const allGames = await gamesQuery;
+  const allTeams = await db.select().from(teams);
+
+  // Calculate standings
+  const standings = allTeams.map(team => {
+    let wins = 0, losses = 0, ties = 0;
+
+    allGames.forEach(game => {
+      const isHome = game.homeTeamId === team.id;
+      const isAway = game.awayTeamId === team.id;
+
+      if (isHome || isAway) {
+        const teamScore = isHome ? game.homeScore : game.awayScore;
+        const opponentScore = isHome ? game.awayScore : game.homeScore;
+
+        if (teamScore !== null && opponentScore !== null) {
+          if (teamScore > opponentScore) wins++;
+          else if (teamScore < opponentScore) losses++;
+          else ties++;
+        }
+      }
+    });
+
+    const gamesPlayed = wins + losses + ties;
+    const winPercentage = gamesPlayed > 0 ? wins / gamesPlayed : 0;
+
+    return {
+      ...team,
+      wins,
+      losses,
+      ties,
+      gamesPlayed,
+      winPercentage,
+    };
+  });
+
+  // Sort by win% descending, then wins descending
+  return standings.sort((a, b) => {
+    if (a.winPercentage !== b.winPercentage) {
+      return b.winPercentage - a.winPercentage;
+    }
+    return b.wins - a.wins;
+  });
+}
+
 export async function createTeam(data: NewTeam) {
     return db.insert(teams).values(data).returning();
 }

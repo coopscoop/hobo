@@ -4,7 +4,7 @@ import {
   leagues, teams, players, rosters, executives, pages, fields
 } from "@/lib/db/schema";
 import { getGames, getGameById } from '@/lib/db/queries/games';
-import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames } from '@/lib/db/queries/players';
+import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames, getPlayersWithStats } from '@/lib/db/queries/players';
 import { getTeams, getTeamById } from '@/lib/db/queries/teams';
 
 // ---- Base types from schema ----
@@ -50,7 +50,7 @@ export type NewField = InferInsertModel<typeof fields>;
 // ---- Custom types from queries ----
 export type GameListItem = Awaited<ReturnType<typeof getGames>>[number];
 export type GameDetail = Awaited<ReturnType<typeof getGameById>>;
-export type PlayerWithStats = Awaited<ReturnType<typeof getPlayers>>[number];
+export type PlayerWithStats = Awaited<ReturnType<typeof getPlayersWithStats>>[number];
 export type PlayerById = Awaited<ReturnType<typeof getPlayerById>>;
 export type PlayerGameLog = Awaited<ReturnType<typeof getPlayerGameLog>>;
 export type TeamWithPlayers = Awaited<ReturnType<typeof getTeams>>[number];

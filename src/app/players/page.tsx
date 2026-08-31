@@ -1,4 +1,5 @@
 import { PlayersPageClient } from '@/components/players/PlayersPageClient';
+import { fetchPlayersWithStats } from '@/lib/services/players';
 
 interface PlayersPageProps {
     searchParams: Promise<{
@@ -7,25 +8,29 @@ interface PlayersPageProps {
     }>;
 }
 
-export default async function PlayersPage({ searchParams }: PlayersPageProps) {
-    const params = new URLSearchParams();
+export default async function PlayersPage({
+    searchParams,
+}: PlayersPageProps) {
     const { yearFrom, yearTo } = await searchParams;
 
-    if (yearFrom) params.set('yearFrom', yearFrom);
-    if (yearTo) params.set('yearTo', yearTo);
+    const parsedYearFrom = yearFrom
+        ? Number(yearFrom)
+        : undefined;
 
-    const [players, yearRange] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/players/stats?${params}`).then((r) => r.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/yearrange`).then((r) => r.json()),
-    ]);
+    const parsedYearTo = yearTo
+        ? Number(yearTo)
+        : undefined;
+
+    const players = await fetchPlayersWithStats(
+        parsedYearFrom,
+        parsedYearTo,
+    );
 
     return (
         <PlayersPageClient
             players={players}
             yearFrom={yearFrom ?? ''}
             yearTo={yearTo ?? ''}
-            minYear={yearRange.minYear}
-            maxYear={yearRange.maxYear}
         />
     );
 }

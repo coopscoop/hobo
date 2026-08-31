@@ -24,3 +24,13 @@ export async function fetchRecentGames(leagueId?: string | null): Promise<GameLi
   if (!res.ok) throw new Error('Failed to fetch recent games')
   return res.json()
 }
+
+export async function fetchAllGames(leagueId?: string | null): Promise<GameListItem[]> {
+  const params = new URLSearchParams()
+  if (leagueId && leagueId !== 'all') params.append('leagueId', leagueId)
+
+  const url = `${baseUrl()}/api/games/all${params.toString() ? '?' + params.toString() : ''}`
+  const res = await fetch(url, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch all ')
+  return res.json()
+}

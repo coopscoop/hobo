@@ -1,6 +1,7 @@
 'use client';
 
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { Oswald } from 'next/font/google';
 
 const oswald = Oswald({
@@ -76,9 +77,11 @@ export const headlineFontClass = oswald.className;
 
 export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <AppRouterCacheProvider options={{ key: 'mui' }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </AppRouterCacheProvider>
   );
 }

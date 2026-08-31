@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { batting } from '@/lib/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { computeBattingRow } from '@/lib/types/constants';
-import type { InningMap } from '@/lib/types/types';
+import { computeBattingRow } from '@/lib/constants';
+import type { InningMap } from '@/lib/types';
 
 export async function POST(
     request: NextRequest,

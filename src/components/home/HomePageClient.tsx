@@ -56,7 +56,7 @@ export function HomePageClient({
 
     return (
         <Box>
-            <Box sx={{ px: 4, py: 3, borderBottom: '4px solid', borderColor: 'primary.main' }}>
+            <Box sx={{ px: 4, py: 3, borderBottom: '4px solid', borderColor: 'primary.main', backgroundColor: '#ffffff' }}>
                 <Typography variant="h4">Hamilton Oldtimers Baseball</Typography>
             </Box>
 
@@ -67,11 +67,11 @@ export function HomePageClient({
                         <Box sx={{ mt: 4 }}>
                             <NewsList title="Season News" announcements={seasonNews} />
                         </Box>
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
                         <Box sx={{ mt: 4 }}>
                             <TeamStandings teams={standings} />
                         </Box>
-                    </Box>
-                    <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
                         <UpcomingGamesTable games={upcomingGames} />
                         <Box sx={{ mt: 4 }}>
                             <RecentGamesTable games={recentGames} />

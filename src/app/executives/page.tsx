@@ -1,4 +1,4 @@
-import { getExecutives } from '@/db/queries/executives';
+import { getExecutives } from '@/lib/db/queries/executives';
 import { ExecutivesTable } from '@/components/executives/ExecutivesTable';
 import { BackButton } from '@/components/BackButton';
 

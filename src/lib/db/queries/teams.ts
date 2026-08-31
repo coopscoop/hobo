@@ -1,8 +1,18 @@
 import { db } from '@/lib/db';
 import { teams, games, players, batting, rosters } from '@/lib/db/schema';
 import { eq, or, sql, and, isNotNull } from 'drizzle-orm';
+import type { NewTeam } from '@/lib/types';
 
-export async function getTeams() {
+export async function getTeams(leagueId?: string | null) {
+    const parsedLeagueId = leagueId ? parseInt(leagueId, 10) : undefined;
+
+    const joinCondition = parsedLeagueId
+        ? and(
+            or(eq(games.homeTeamId, teams.id), eq(games.awayTeamId, teams.id)),
+            eq(games.leagueId, parsedLeagueId)
+        )
+        : or(eq(games.homeTeamId, teams.id), eq(games.awayTeamId, teams.id));
+
     return db
         .select({
             id: teams.id,
@@ -22,10 +32,7 @@ export async function getTeams() {
       )`,
         })
         .from(teams)
-        .leftJoin(games, or(
-            eq(games.homeTeamId, teams.id),
-            eq(games.awayTeamId, teams.id)
-        ))
+        .leftJoin(games, joinCondition)
         .groupBy(teams.id, teams.teamName)
         .orderBy(teams.teamName);
 }
@@ -158,4 +165,8 @@ export async function getTeamById(idString: string) {
         );
 
     return { team, recordByYear, rosterByYear };
+}
+
+export async function createTeam(data: NewTeam) {
+    return db.insert(teams).values(data).returning();
 }

@@ -32,7 +32,14 @@ export function NewsList({ title, announcements, emptyMessage }: NewsListProps) 
                 disablePadding
                 divider={i < announcements.length - 1}
               >
-                <ListItemButton component={Link} href={`/announcements/${a.id}`}>
+                <ListItemButton
+                  component={Link}
+                  href={`/announcements/${a.id}`}
+                  sx={{
+                    borderLeft: '3px solid transparent',
+                    '&:hover': { borderLeftColor: 'primary.main', backgroundColor: 'action.hover' },
+                  }}
+                >
                   <ListItemText
                     primary={a.title}
                     secondary={a.date}

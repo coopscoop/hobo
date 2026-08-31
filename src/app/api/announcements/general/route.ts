@@ -1,9 +1,9 @@
-import { getGeneralAnnouncements } from '@/lib/db/queries/announcements';
+import { getAnnouncements } from '@/lib/db/queries/announcements';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        const resourceData = await getGeneralAnnouncements();
+        const resourceData = await getAnnouncements();
 
         if (!resourceData) {
             return new Response(JSON.stringify({ message: "Resource not found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });

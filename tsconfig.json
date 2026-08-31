@@ -27,7 +27,7 @@
         "./src/*"
       ],
       "@/types": [
-        "./src/types/types.ts"
+        "./src/lib/types.ts"
       ]
     }
   },

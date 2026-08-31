@@ -2,21 +2,12 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-/* @theme inline { */
-/*   --color-background: var(--background); */
-/*   --color-foreground: var(--foreground); */
-/*   --font-sans: var(--font-geist-sans); */
-/*   --font-mono: var(--font-geist-mono); */
-/* } */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #1c1e21;
+  --hobo-red: #c8102e;
+  --hobo-red-dark: #96001f;
+  --hobo-grey: #6b7280;
+  --hobo-panel: #f4f5f7;
+  --hobo-line: #e2e4e8;
 }
 
 body {
@@ -28,12 +19,12 @@ body {
 /* white text in editor for now */
 .mdxeditor-root-contenteditable,
 .mdxeditor-root-contenteditable * {
-  color: white;
+  color: var(--foreground);
 }
 
 .mdxeditor-root-contenteditable {
-  border: 1px solid #4b5563;
-  border-radius: 6px;
+  border: 1px solid var(--hobo-line);
+  border-radius: 4px;
   padding: 0.75rem;
 }
 

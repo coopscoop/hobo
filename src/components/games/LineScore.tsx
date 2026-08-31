@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Pencil } from "lucide-react";
-import { buildInningsArray, computeAutoRunsForInning } from "@/lib/types/constants";
-import type { LineScoreOverrides, TeamGameData, TeamKey } from "@/lib/types/types";
+import { buildInningsArray, computeAutoRunsForInning } from "@/lib/constants";
+import type { LineScoreOverrides, TeamGameData, TeamKey } from "@/lib/types";
 
 interface Props {
     teams: Record<TeamKey, TeamGameData>;

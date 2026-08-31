@@ -1,17 +1,18 @@
 import { getRecentGames } from '@/lib/db/queries/games';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
 
     try {
-        const announcements = await getRecentGames();
+        const leagueId = req.nextUrl.searchParams.get('leagueId');
+        const games = await getRecentGames(leagueId);
 
         // worst case return a 404 if no announcements are found
-        if (!announcements) {
+        if (!games) {
             return new Response(JSON.stringify({ message: "No announcements found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
         }
 
-        return NextResponse.json(announcements, { status: 200 });
+        return NextResponse.json(games, { status: 200 });
     } catch (error) {
         // on error, return a 400/500 with the error message
         if (error instanceof Error && error.message === 'Invalid resource ID format.') {

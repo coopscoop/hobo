@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
-import { RESULTS, RESULT_CHIP_STYLE } from "@/lib/types/constants";
-import type { PlateAppearance } from "@/lib/types/types";
+import { RESULTS, RESULT_CHIP_STYLE } from "@/lib/constants";
+import type { PlateAppearance } from "@/lib/types";
 
 interface Props {
   label: string;

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import {
   Typography, Table, TableHead, TableBody,
   TableRow, TableCell, TableContainer, Paper
@@ -20,7 +19,7 @@ export function RecentGamesTable({ games }: { games: GameListItem[] }) {
               <TableCell>Date</TableCell>
               <TableCell>Home</TableCell>
               <TableCell>Away</TableCell>
-              <TableCell>Score</TableCell>
+              <TableCell align="right">Score</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -30,14 +29,16 @@ export function RecentGamesTable({ games }: { games: GameListItem[] }) {
               </TableRow>
             ) : (
               games.map((g) => (
-                <TableRow key={g.id} onClick={() => router.push(`/games/${g.id}`)} sx={{ cursor: 'pointer' }}>
+                <TableRow
+                  key={g.id}
+                  onClick={() => router.push(`/games/${g.id}`)}
+                  sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}
+                >
                   <TableCell>{g.date}</TableCell>
                   <TableCell>{g.homeTeam.name}</TableCell>
                   <TableCell>{g.awayTeam.name}</TableCell>
-                  <TableCell>
-                    <Link href={`/games/${g.id}`}>
-                      {g.homeScore} - {g.awayScore}
-                    </Link>
+                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                    {g.homeScore} - {g.awayScore}
                   </TableCell>
                 </TableRow>
               ))

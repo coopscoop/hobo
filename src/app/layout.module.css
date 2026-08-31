@@ -5,10 +5,11 @@
 .layout {
   display: flex;
   min-height: 100vh;
+  background: #ffffff;
 }
 
 .main {
   flex: 1;
-  padding: 2rem;
+  min-width: 0;
   overflow-y: auto;
 }

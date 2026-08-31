@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getTeams, createTeam } from '@/lib/db/queries/teams'
 
-export async function GET() {
-  const data = await getTeams()
+export async function GET(req: NextRequest) {
+  const leagueId = req.nextUrl.searchParams.get('leagueId')
+  const data = await getTeams(leagueId)
   return NextResponse.json(data)
 }
 

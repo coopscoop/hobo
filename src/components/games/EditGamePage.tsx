@@ -5,8 +5,8 @@ import { LineScore } from "@/components/games/LineScore";
 import { ScorecardTeam } from "@/components/games/ScorecardTeam";
 import { InningModal } from "@/components/games/InningModal";
 import { AddSubstitute } from "@/components/games/AddSubstitute"
-import { PlayerName } from "@/lib/types/types"
-import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA, isPAFilled, computeAutoRunsForInning } from "@/lib/types/constants";
+import { PlayerName } from "@/lib/types"
+import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA, isPAFilled, computeAutoRunsForInning } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 
 import type {
@@ -15,7 +15,7 @@ import type {
     PlateAppearance,
     TeamGameData,
     TeamKey,
-} from "@/lib/types/types";
+} from "@/lib/types";
 import { Typography } from "@mui/material";
 
 interface Props {

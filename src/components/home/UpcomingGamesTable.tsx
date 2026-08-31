@@ -29,7 +29,11 @@ export function UpcomingGamesTable({ games }: { games: GameListItem[] }) {
               </TableRow>
             ) : (
               games.map((g) => (
-                <TableRow key={g.id} onClick={() => router.push(`/games/${g.id}`)} sx={{ cursor: 'pointer' }} >
+                <TableRow
+                  key={g.id}
+                  onClick={() => router.push(`/games/${g.id}`)}
+                  sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}
+                >
                   <TableCell>{g.date}</TableCell>
                   <TableCell>{g.homeTeam.name}</TableCell>
                   <TableCell>{g.awayTeam.name}</TableCell>

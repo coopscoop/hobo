@@ -1,10 +1,10 @@
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
-import { 
-  announcements, games, batting, innings, pitching, substitutes,
-  leagues, teams, players, rosters, executives, pages, fields
+import {
+    announcements, games, batting, innings, pitching, substitutes,
+    leagues, teams, players, rosters, executives, pages, fields
 } from "@/lib/db/schema";
 import { getGames, getGameById } from '@/lib/db/queries/games';
-import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames, getPlayersWithStats } from '@/lib/db/queries/players';
+import { getPlayerById, getPlayerGameLog, getPlayerNames, getPlayersWithStats } from '@/lib/db/queries/players';
 import { getTeams, getTeamById } from '@/lib/db/queries/teams';
 
 // ---- Base types from schema ----
@@ -56,6 +56,7 @@ export type PlayerGameLog = Awaited<ReturnType<typeof getPlayerGameLog>>;
 export type TeamWithPlayers = Awaited<ReturnType<typeof getTeams>>[number];
 export type TeamDetail = Awaited<ReturnType<typeof getTeamById>>;
 export type PlayerName = Awaited<ReturnType<typeof getPlayerNames>>[number];
+export type TeamById = Awaited<ReturnType<typeof getTeamById>>;
 
 // ---- Score Sheet types ----
 export type ResultCode = "OUT" | "K" | "BB" | "HBP" | "1B" | "2B" | "3B" | "HR";
@@ -63,14 +64,14 @@ export type ResultCode = "OUT" | "K" | "BB" | "HBP" | "1B" | "2B" | "3B" | "HR";
 export type ResultGroup = "out" | "reach" | "hit" | "homer";
 
 export interface PlateAppearance {
-  result: ResultCode | null;
-  sac: boolean;
-  fc: boolean;
-  rbi: 0 | 1 | 2 | 3 | 4;
-  sb2: boolean;
-  sb3: boolean;
-  sbHome: boolean;
-  scored: boolean;
+    result: ResultCode | null;
+    sac: boolean;
+    fc: boolean;
+    rbi: 0 | 1 | 2 | 3 | 4;
+    sb2: boolean;
+    sb3: boolean;
+    sbHome: boolean;
+    scored: boolean;
 }
 
 /** Keyed by inning number (1-9+), not array index, so gaps and extra innings are cheap.
@@ -78,27 +79,27 @@ export interface PlateAppearance {
 export type InningMap = Record<number, PlateAppearance[]>;
 
 export interface PlayerGameData {
-  playerId: string;
-  name: string;
-  innings: InningMap;
+    playerId: string;
+    name: string;
+    innings: InningMap;
 }
 
 export interface TeamGameData {
-  teamId: string;
-  name: string;
-  players: PlayerGameData[];
+    teamId: string;
+    name: string;
+    players: PlayerGameData[];
 }
 
 export type TeamKey = "home" | "away";
 
 export interface PlayerTotals {
-  ab: number;
-  h: number;
-  r: number;
-  rbi: number;
-  bb: number;
-  k: number;
-  sb: number;
+    ab: number;
+    h: number;
+    r: number;
+    rbi: number;
+    bb: number;
+    k: number;
+    sb: number;
 }
 
 /** undefined = auto-calculated from batting data; a number = manually locked in
@@ -106,30 +107,30 @@ export interface PlayerTotals {
 export type LineScoreOverrides = Record<number, number | undefined>;
 
 export interface ModalTarget {
-  team: TeamKey;
-  playerId: string;
-  inning: number;
+    team: TeamKey;
+    playerId: string;
+    inning: number;
 }
 
 export interface BattingRow {
-  atBat: number;
-  run: number;
-  walk: number;
-  strikeout: number;
-  hitByPitch: number;
-  stolenBase: number;
-  runsBattedIn: number;
-  sacrifice: number;
-  singleHit: number;
-  doubleHit: number;
-  tripleHit: number;
-  homeRun: number;
+    atBat: number;
+    run: number;
+    walk: number;
+    strikeout: number;
+    hitByPitch: number;
+    stolenBase: number;
+    runsBattedIn: number;
+    sacrifice: number;
+    singleHit: number;
+    doubleHit: number;
+    tripleHit: number;
+    homeRun: number;
 }
 
 export interface PlayerGameData {
-  playerId: string;
-  name: string;
-  innings: InningMap;
-  isSubstitute?: boolean;
-  subId?: number; // Substitutes.id — only present when isSubstitute is true, used for the remove-button DELETE call
+    playerId: string;
+    name: string;
+    innings: InningMap;
+    isSubstitute?: boolean;
+    subId?: number; // Substitutes.id — only present when isSubstitute is true, used for the remove-button DELETE call
 }

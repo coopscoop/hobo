@@ -119,8 +119,8 @@ export async function getGameById(idString: string) {
 export async function getGameYearRange() {
     const [result] = await db
         .select({
-            minYear: sql<number>`extract(year from min(${games.date}))::int`,
-            maxYear: sql<number>`extract(year from max(${games.date}))::int`,
+            minYear: sql<number>`min(extract(year from ${games.date}))::int`,
+            maxYear: sql<number>`max(extract(year from ${games.date}))::int`,
         })
         .from(games);
 

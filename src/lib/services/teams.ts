@@ -1,4 +1,5 @@
 import type { TeamWithPlayers } from '@/lib/types'
+import type { getTeamById } from '@/lib/db/queries/teams';
 
 function baseUrl() {
   if (typeof window !== 'undefined') return ''
@@ -15,8 +16,18 @@ export async function fetchTeams(leagueId?: string | null): Promise<TeamWithPlay
   return res.json()
 }
 
-export async function fetchTeamById(id: number) {
-  const res = await fetch(`${baseUrl()}/api/teams/${id}`, { cache: 'no-store' })
-  if (!res.ok) throw new Error('Failed to fetch team')
-  return res.json()
+export async function fetchTeamById(
+    id: number,
+): Promise<Awaited<ReturnType<typeof getTeamById>>> {
+    const url = `${baseUrl()}/api/teams/${id}`;
+
+    const res = await fetch(url, {
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch team');
+    }
+
+    return res.json();
 }

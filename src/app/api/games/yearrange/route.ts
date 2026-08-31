@@ -2,29 +2,16 @@ import { getGameYearRange } from '@/lib/db/queries/games';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-
     try {
-        const yearRange = getGameYearRange();
+        const yearRange = await getGameYearRange();
 
-        // worst case return a 404 if no announcements are found
-        if (!yearRange) {
-            return new Response(JSON.stringify({ message: "No range found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-        }
-
-        return NextResponse.json(yearRange, { status: 200 });
+        return NextResponse.json(yearRange);
     } catch (error) {
-        // on error, return a 400/500 with the error message
-        if (error instanceof Error && error.message === 'Invalid resource ID format.') {
-            return NextResponse.json(
-                { error: 'Invalid resource ID format.' },
-                { status: 400 }
-            );
-        }
+        console.error('Failed to fetch game year range:', error);
 
-        console.error("API Error:", error);
         return NextResponse.json(
-            { error: 'Internal server error while retrieving year range.' },
-            { status: 500 }
+            { message: 'Failed to fetch game year range' },
+            { status: 500 },
         );
     }
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CELL_BADGE_STYLE, buildInningsArray, computePlayerTotals, paLabel } from "@/types/constants";
-import type { TeamGameData, TeamKey } from "@/types/types";
+import { CELL_BADGE_STYLE, buildInningsArray, computePlayerTotals, paLabel } from "@/lib/types/constants";
+import type { TeamGameData, TeamKey } from "@/lib/types/types";
 
 interface Props {
     teamKey: TeamKey;

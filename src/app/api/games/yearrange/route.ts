@@ -1,4 +1,4 @@
-import { getGameYearRange } from '@/db/queries/games';
+import { getGameYearRange } from '@/lib/db/queries/games';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

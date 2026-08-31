@@ -1,4 +1,4 @@
-import { getCurrentExecutives } from '@/db/queries/executives';
+import { getCurrentExecutives } from '@/lib/db/queries/executives';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

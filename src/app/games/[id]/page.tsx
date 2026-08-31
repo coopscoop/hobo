@@ -2,7 +2,7 @@ import { GameDetail } from '@/components/games/GameDetail';
 import EditGamePage from '@/components/games/EditGamePage';
 import { notFound } from 'next/navigation';
 import { BackButton } from '@/components/BackButton';
-import { getGameEditData } from '@/db/queries/games';
+import { getGameEditData } from '@/lib/db/queries/games';
 
 export default async function GamePage({
     params,

@@ -1,4 +1,4 @@
-import { updatePageContent } from '@/db/queries/pageContent'
+import { updatePageContent } from '@/lib/db/queries/pageContent'
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {

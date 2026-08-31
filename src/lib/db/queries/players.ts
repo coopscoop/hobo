@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { players, batting, games, teams, rosters, homeTeam, awayTeam } from '@/db/schema';
+import { db } from '@/lib/db';
+import { players, batting, games, teams, rosters, homeTeam, awayTeam } from '@/lib/db/schema';
 import { eq, sql, and, gte, lte, desc, between } from 'drizzle-orm';
 
 export interface PlayerFilters {

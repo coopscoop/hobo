@@ -1,4 +1,4 @@
-import { getPinnedAnnouncements } from '@/db/queries/announcements';
+import { getPinnedAnnouncements } from '@/lib/db/queries/announcements';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

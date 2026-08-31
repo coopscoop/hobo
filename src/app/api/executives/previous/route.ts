@@ -1,4 +1,4 @@
-import { getPreviousExecutives } from '@/db/queries/executives';
+import { getPreviousExecutives } from '@/lib/db/queries/executives';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

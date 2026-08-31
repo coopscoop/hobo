@@ -1,7 +1,7 @@
-import { getGames } from '@/db/queries/games';
+import { getGames } from '@/lib/db/queries/games';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { games } from '@/db/schema';
+import { db } from '@/lib/db';
+import { games } from '@/lib/db/schema';
 
 export async function GET(req: NextRequest) {
 

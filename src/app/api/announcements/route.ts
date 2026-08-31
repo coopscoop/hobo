@@ -1,10 +1,10 @@
-import { getAnnouncements } from '@/db/queries/announcements';
+import { getAllAnnouncements } from '@/lib/db/queries/announcements';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
 
     try {
-        const announcements = await getAnnouncements();
+        const announcements = await getAllAnnouncements();
 
         // worst case return a 404 if no announcements are found
         if (!announcements) {

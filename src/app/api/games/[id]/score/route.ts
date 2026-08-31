@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { games, innings } from '@/db/schema';
+import { db } from '@/lib/db';
+import { games, innings } from '@/lib/db/schema';
 import { eq, and, gt } from 'drizzle-orm';
 
 export async function POST(

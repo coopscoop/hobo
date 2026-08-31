@@ -1,4 +1,4 @@
-import { getPlayerNames } from '@/db/queries/players';
+import { getPlayerNames } from '@/lib/db/queries/players';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

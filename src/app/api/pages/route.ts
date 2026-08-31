@@ -1,4 +1,4 @@
-import { getPageContent } from '@/db/queries/pageContent';
+import { getPageContent } from '@/lib/db/queries/pageContent';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

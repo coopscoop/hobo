@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { teams, games, players, batting, rosters } from '@/db/schema';
+import { db } from '@/lib/db';
+import { teams, games, players, batting, rosters } from '@/lib/db/schema';
 import { eq, or, sql, and, isNotNull } from 'drizzle-orm';
 
 export async function getTeams() {

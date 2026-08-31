@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { AtBatFields } from "@/components/games/AtBatFields";
-import { emptyPA } from "@/types/constants";
-import type { ModalTarget, PlateAppearance } from "@/types/types";
+import { emptyPA } from "@/lib/types/constants";
+import type { ModalTarget, PlateAppearance } from "@/lib/types/types";
 
 interface Props {
     target: ModalTarget;

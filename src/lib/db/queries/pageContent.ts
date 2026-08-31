@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { pages } from '@/db/schema';
+import { db } from '@/lib/db';
+import { pages } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
 export async function getPageContent() {

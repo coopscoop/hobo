@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { substitutes, batting } from '@/db/schema';
+import { db } from '@/lib/db';
+import { substitutes, batting } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function DELETE(

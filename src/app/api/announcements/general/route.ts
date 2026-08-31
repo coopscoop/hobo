@@ -1,4 +1,4 @@
-import { getGeneralAnnouncements } from '@/db/queries/announcements';
+import { getGeneralAnnouncements } from '@/lib/db/queries/announcements';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

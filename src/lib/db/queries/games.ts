@@ -1,10 +1,10 @@
-import { db } from '@/db';
-import { games, leagues, innings, batting, players, rosters } from '@/db/schema';
-import { homeTeam, awayTeam } from '@/db/schema';
+import { db } from '@/lib/db';
+import { games, leagues, innings, batting, players, rosters } from '@/lib/db/schema';
+import { homeTeam, awayTeam } from '@/lib/db/schema';
 import { eq, and, or, gte, lt, lte, desc, sql, type SQL } from 'drizzle-orm';
-import { substitutes } from '@/db/schema';
+import { substitutes } from '@/lib/db/schema';
 import { inArray } from 'drizzle-orm';
-import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/types/types';
+import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/lib/types/types';
 
 // ---- Types ----
 

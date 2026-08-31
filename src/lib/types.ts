@@ -1,9 +1,9 @@
 import { InferSelectModel } from "drizzle-orm";
-import { announcements, games, batting, innings } from "@/db/schema";
-import { getGames, getGameById } from '@/db/queries/games';
-import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames } from '@/db/queries/players';
-import { getTeams, getTeamById } from '@/db/queries/teams';
-import { executives } from '@/db/schema';
+import { announcements, games, batting, innings } from "@/lib/db/schema";
+import { getGames, getGameById } from '@/lib/db/queries/games';
+import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames } from '@/lib/db/queries/players';
+import { getTeams, getTeamById } from '@/lib/db/queries/teams';
+import { executives } from '@/lib/db/schema';
 
 // ---- Mirrors the schema ----
 export type Announcement = InferSelectModel<typeof announcements>;

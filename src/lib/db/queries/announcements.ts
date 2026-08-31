@@ -47,3 +47,7 @@ export async function getLastAnnouncements() {
         .orderBy(desc(announcements.date))
         .limit(10);
 }
+
+export async function createAnnouncement() {
+
+}  

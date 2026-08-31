@@ -1,4 +1,4 @@
-import { getPlayerById, getPlayerGameLog } from '@/db/queries/players';
+import { getPlayerById, getPlayerGameLog } from '@/lib/db/queries/players';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

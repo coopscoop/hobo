@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { executives } from '@/db/schema';
+import { db } from '@/lib/db';
+import { executives } from '@/lib/db/schema';
 import { not, eq } from 'drizzle-orm';
 
 export async function getExecutives() {

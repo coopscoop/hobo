@@ -1,7 +1,7 @@
-import { getGameById } from '@/db/queries/games';
+import { getGameById } from '@/lib/db/queries/games';
 import { NextResponse, NextRequest } from 'next/server';
-import { db } from '@/db';
-import { games, batting, substitutes } from '@/db/schema';
+import { db } from '@/lib/db';
+import { games, batting, substitutes } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

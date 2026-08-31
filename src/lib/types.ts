@@ -1,26 +1,60 @@
-import { InferSelectModel } from "drizzle-orm";
-import { announcements, games, batting, innings } from "@/lib/db/schema";
+import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { 
+  announcements, games, batting, innings, pitching, substitutes,
+  leagues, teams, players, rosters, executives, pages, fields
+} from "@/lib/db/schema";
 import { getGames, getGameById } from '@/lib/db/queries/games';
 import { getPlayers, getPlayerById, getPlayerGameLog, getPlayerNames } from '@/lib/db/queries/players';
 import { getTeams, getTeamById } from '@/lib/db/queries/teams';
-import { executives } from '@/lib/db/schema';
 
-// ---- Mirrors the schema ----
+// ---- Base types from schema ----
 export type Announcement = InferSelectModel<typeof announcements>;
-export type Game = InferSelectModel<typeof games>;
-export type Batting = InferSelectModel<typeof batting>;
-export type Inning = InferSelectModel<typeof innings>;
-export type Executive = InferSelectModel<typeof executives>;
+export type NewAnnouncement = InferInsertModel<typeof announcements>;
 
-// ---- Custom types ----
+export type Game = InferSelectModel<typeof games>;
+export type NewGame = InferInsertModel<typeof games>;
+
+export type Batting = InferSelectModel<typeof batting>;
+export type NewBatting = InferInsertModel<typeof batting>;
+
+export type Inning = InferSelectModel<typeof innings>;
+export type NewInning = InferInsertModel<typeof innings>;
+
+export type Pitching = InferSelectModel<typeof pitching>;
+export type NewPitching = InferInsertModel<typeof pitching>;
+
+export type Substitute = InferSelectModel<typeof substitutes>;
+export type NewSubstitute = InferInsertModel<typeof substitutes>;
+
+export type League = InferSelectModel<typeof leagues>;
+export type NewLeague = InferInsertModel<typeof leagues>;
+
+export type Team = InferSelectModel<typeof teams>;
+export type NewTeam = InferInsertModel<typeof teams>;
+
+export type Player = InferSelectModel<typeof players>;
+export type NewPlayer = InferInsertModel<typeof players>;
+
+export type Roster = InferSelectModel<typeof rosters>;
+export type NewRoster = InferInsertModel<typeof rosters>;
+
+export type Executive = InferSelectModel<typeof executives>;
+export type NewExecutive = InferInsertModel<typeof executives>;
+
+export type Page = InferSelectModel<typeof pages>;
+export type NewPage = InferInsertModel<typeof pages>;
+
+export type Field = InferSelectModel<typeof fields>;
+export type NewField = InferInsertModel<typeof fields>;
+
+// ---- Custom types from queries ----
 export type GameListItem = Awaited<ReturnType<typeof getGames>>[number];
 export type GameDetail = Awaited<ReturnType<typeof getGameById>>;
 export type PlayerWithStats = Awaited<ReturnType<typeof getPlayers>>[number];
 export type PlayerById = Awaited<ReturnType<typeof getPlayerById>>;
 export type PlayerGameLog = Awaited<ReturnType<typeof getPlayerGameLog>>;
-export type Team = Awaited<ReturnType<typeof getTeams>>[number];
+export type TeamWithPlayers = Awaited<ReturnType<typeof getTeams>>[number];
 export type TeamDetail = Awaited<ReturnType<typeof getTeamById>>;
-export type Player = Awaited<ReturnType<typeof getPlayers>>[number];
 export type PlayerName = Awaited<ReturnType<typeof getPlayerNames>>[number];
 
 // ---- Score Sheet types ----

@@ -1,30 +1,18 @@
-import { getAllAnnouncements } from '@/lib/db/queries/announcements';
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
+import { getAnnouncements, createAnnouncement } from '@/lib/db/queries/announcements'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const pinned = searchParams.get('pinned') === 'true' ? true : 
+                 searchParams.get('pinned') === 'false' ? false : undefined
+  const type = searchParams.get('type') || undefined
+  
+  const data = await getAnnouncements({ pinned, type })
+  return NextResponse.json(data)
+}
 
-    try {
-        const announcements = await getAllAnnouncements();
-
-        // worst case return a 404 if no announcements are found
-        if (!announcements) {
-            return new Response(JSON.stringify({ message: "No announcements found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-        }
-
-        return NextResponse.json(announcements, { status: 200 });
-    } catch (error) {
-        // on error, return a 400/500 with the error message
-        if (error instanceof Error && error.message === 'Invalid resource ID format.') {
-            return NextResponse.json(
-                { error: 'Invalid resource ID format.' },
-                { status: 400 }
-            );
-        }
-
-        console.error("API Error:", error);
-        return NextResponse.json(
-            { error: 'Internal server error while retrieving announcements.' },
-            { status: 500 }
-        );
-    }
+export async function POST(request: Request) {
+  const body = await request.json()
+  const [announcement] = await createAnnouncement(body)
+  return NextResponse.json(announcement, { status: 201 })
 }

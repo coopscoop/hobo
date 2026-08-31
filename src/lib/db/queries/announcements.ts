@@ -1,53 +1,37 @@
-import { db } from '@/lib/db';
-import { announcements } from '@/lib/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import 'server-only'
+import { db } from '@/lib/db'
+import { announcements } from '@/lib/db/schema'
+import { eq, desc, and } from 'drizzle-orm'
+import type { NewAnnouncement } from '@/lib/types'
 
-export async function getAllAnnouncements() {
-    return db
-        .select()
-        .from(announcements)
-        .orderBy(desc(announcements.date));
+export async function getAnnouncements(options?: { pinned?: boolean; type?: string }) {
+  const query = db.select().from(announcements)
+  
+  if (options?.pinned !== undefined) {
+    // @ts-ignore - drizzle types
+    query.where(eq(announcements.pinned, options.pinned))
+  }
+  if (options?.type) {
+    // @ts-ignore - drizzle types
+    query.where(eq(announcements.type, options.type))
+  }
+  
+  return query.orderBy(desc(announcements.pinned), desc(announcements.date))
 }
 
-export async function getAnnouncementById(idString: string) {
-    const id = parseInt(idString, 10);
-
-    if (isNaN(id)) {
-        throw new Error('Invalid resource ID format.');
-    }
-
-    const results = await db
-        .select()
-        .from(announcements)
-        .where(eq(announcements.id, id));
-
-    return results[0] ?? null; // return single record or null if it doesn't exist
+export async function getAnnouncementById(id: number) {
+  const [result] = await db.select().from(announcements).where(eq(announcements.id, id))
+  return result
 }
 
-export async function getPinnedAnnouncements() {
-    return db
-        .select()
-        .from(announcements)
-        .where(eq(announcements.pinned, true))
-        .orderBy(desc(announcements.date));
+export async function createAnnouncement(data: NewAnnouncement) {
+  return db.insert(announcements).values(data).returning()
 }
 
-export async function getGeneralAnnouncements() {
-    return db
-        .select()
-        .from(announcements)
-        .where(eq(announcements.pinned, false))
-        .orderBy(desc(announcements.date))
+export async function updateAnnouncement(id: number, data: Partial<NewAnnouncement>) {
+  return db.update(announcements).set(data).where(eq(announcements.id, id)).returning()
 }
 
-export async function getLastAnnouncements() {
-    return db
-        .select()
-        .from(announcements)
-        .orderBy(desc(announcements.date))
-        .limit(10);
+export async function deleteAnnouncement(id: number) {
+  return db.delete(announcements).where(eq(announcements.id, id))
 }
-
-export async function createAnnouncement() {
-
-}  

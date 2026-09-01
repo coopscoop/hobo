@@ -25,6 +25,18 @@ nuqs -> URL params, useful for filtering/bookmarking
   - new items/pages?
     - fields
 
+☐ Auth + Deploy (tomorrow)
+☐ Clean up `any` types
+☐ Add Zod validation
+☐ Standardize service layer
+☐ Skeleton loading states
+☐ Complete CRUD operations
+☐ Google Cloud Storage
+☐ Tournament view
+☐ Draft system
+☐ Testing setup
+☐ Documentation
+
 ### old pages
 
 - home/welcome

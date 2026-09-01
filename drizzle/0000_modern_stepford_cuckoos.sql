@@ -1,10 +1,18 @@
-CREATE TYPE "public"."announcement_type" AS ENUM('news', 'event', 'update');--> statement-breakpoint
+CREATE TABLE "Admins" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"password_hash" text NOT NULL,
+	"role" text DEFAULT 'admin' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "Admins_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
 CREATE TABLE "Announcements" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"date" date DEFAULT now() NOT NULL,
 	"content" text,
-	"type" "announcement_type" DEFAULT 'news' NOT NULL,
+	"type" text DEFAULT 'news' NOT NULL,
 	"pinned" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
@@ -21,7 +29,6 @@ CREATE TABLE "Batting" (
 	"run" integer DEFAULT 0,
 	"walk" integer DEFAULT 0,
 	"strikeout" integer DEFAULT 0,
-	"second_base" integer DEFAULT 0,
 	"hit_by_pitch" integer DEFAULT 0,
 	"stolen_base" integer DEFAULT 0,
 	"runs_batted_in" integer DEFAULT 0,
@@ -30,7 +37,9 @@ CREATE TABLE "Batting" (
 	"double_hit" integer DEFAULT 0,
 	"triple_hit" integer DEFAULT 0,
 	"home_run" integer DEFAULT 0,
-	"roe" integer DEFAULT 0
+	"roe" integer DEFAULT 0,
+	"per_inning" jsonb,
+	CONSTRAINT "Batting_game_id_player_id_unique" UNIQUE("game_id","player_id")
 );
 --> statement-breakpoint
 CREATE TABLE "Executives" (
@@ -41,17 +50,25 @@ CREATE TABLE "Executives" (
 	"year" integer NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "Fields" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" varchar NOT NULL,
+	"address" varchar
+);
+--> statement-breakpoint
 CREATE TABLE "Games" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"date" date NOT NULL,
+	"date" date DEFAULT now() NOT NULL,
 	"location" text NOT NULL,
+	"field_id" integer DEFAULT 1 NOT NULL,
 	"home_team_id" integer NOT NULL,
 	"away_team_id" integer NOT NULL,
 	"league_id" integer NOT NULL,
 	"is_playoff" boolean DEFAULT false NOT NULL,
 	"notes" text,
 	"home_score" integer,
-	"away_score" integer
+	"away_score" integer,
+	"start_time" time DEFAULT '09:00:00' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "home_team" (
@@ -77,7 +94,7 @@ CREATE TABLE "PageContent" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"page_name" varchar(255) NOT NULL,
 	"content" text DEFAULT '' NOT NULL,
-	CONSTRAINT "pages_page_name_unique" UNIQUE("page_name")
+	CONSTRAINT "PageContent_page_name_unique" UNIQUE("page_name")
 );
 --> statement-breakpoint
 CREATE TABLE "Pitching" (
@@ -105,7 +122,7 @@ CREATE TABLE "Substitutes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"game_id" integer NOT NULL,
 	"player_id" integer NOT NULL,
-	"from_team_id" integer NOT NULL,
+	"from_team_id" integer,
 	"new_team_id" integer NOT NULL
 );
 --> statement-breakpoint
@@ -116,6 +133,7 @@ CREATE TABLE "Teams" (
 --> statement-breakpoint
 ALTER TABLE "Batting" ADD CONSTRAINT "Batting_game_id_Games_id_fk" FOREIGN KEY ("game_id") REFERENCES "public"."Games"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "Batting" ADD CONSTRAINT "Batting_player_id_Players_id_fk" FOREIGN KEY ("player_id") REFERENCES "public"."Players"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "Games" ADD CONSTRAINT "Games_field_id_Fields_id_fk" FOREIGN KEY ("field_id") REFERENCES "public"."Fields"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "Games" ADD CONSTRAINT "Games_home_team_id_Teams_id_fk" FOREIGN KEY ("home_team_id") REFERENCES "public"."Teams"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "Games" ADD CONSTRAINT "Games_away_team_id_Teams_id_fk" FOREIGN KEY ("away_team_id") REFERENCES "public"."Teams"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "Games" ADD CONSTRAINT "Games_league_id_Leagues_id_fk" FOREIGN KEY ("league_id") REFERENCES "public"."Leagues"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

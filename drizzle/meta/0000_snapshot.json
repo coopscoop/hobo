@@ -1,9 +1,62 @@
 {
-  "id": "e0adc5a1-4479-4cb0-ab8f-ecf907010193",
+  "id": "cd0ac9e3-ab91-435b-b8f7-f30f9f335a92",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.Admins": {
+      "name": "Admins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_hash": {
+          "name": "password_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'admin'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Admins_email_unique": {
+          "name": "Admins_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.Announcements": {
       "name": "Announcements",
       "schema": "",
@@ -35,8 +88,7 @@
         },
         "type": {
           "name": "type",
-          "type": "announcement_type",
-          "typeSchema": "public",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "default": "'news'"
@@ -132,13 +184,6 @@
           "notNull": false,
           "default": 0
         },
-        "second_base": {
-          "name": "second_base",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
         "hit_by_pitch": {
           "name": "hit_by_pitch",
           "type": "integer",
@@ -201,6 +246,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": 0
+        },
+        "per_inning": {
+          "name": "per_inning",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -233,7 +284,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "Batting_game_id_player_id_unique": {
+          "name": "Batting_game_id_player_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "game_id",
+            "player_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -281,6 +341,37 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.Fields": {
+      "name": "Fields",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.Games": {
       "name": "Games",
       "schema": "",
@@ -295,13 +386,21 @@
           "name": "date",
           "type": "date",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "location": {
           "name": "location",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "field_id": {
+          "name": "field_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
         },
         "home_team_id": {
           "name": "home_team_id",
@@ -345,10 +444,30 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'09:00:00'"
         }
       },
       "indexes": {},
       "foreignKeys": {
+        "Games_field_id_Fields_id_fk": {
+          "name": "Games_field_id_Fields_id_fk",
+          "tableFrom": "Games",
+          "tableTo": "Fields",
+          "columnsFrom": [
+            "field_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "Games_home_team_id_Teams_id_fk": {
           "name": "Games_home_team_id_Teams_id_fk",
           "tableFrom": "Games",
@@ -513,8 +632,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.pages": {
-      "name": "pages",
+    "public.PageContent": {
+      "name": "PageContent",
       "schema": "",
       "columns": {
         "id": {
@@ -541,8 +660,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "pages_page_name_unique": {
-          "name": "pages_page_name_unique",
+        "PageContent_page_name_unique": {
+          "name": "PageContent_page_name_unique",
           "nullsNotDistinct": false,
           "columns": [
             "page_name"
@@ -758,7 +877,7 @@
           "name": "from_team_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "new_team_id": {
           "name": "new_team_id",
@@ -854,17 +973,7 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {
-    "public.announcement_type": {
-      "name": "announcement_type",
-      "schema": "public",
-      "values": [
-        "news",
-        "event",
-        "update"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "roles": {},

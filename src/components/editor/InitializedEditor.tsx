@@ -19,6 +19,9 @@ import {
     InsertThematicBreak,
     InsertTable,
     Separator,
+    HighlightToggle,
+    InsertImage,
+    KitchenSinkToolbar,
 } from '@mdxeditor/editor';
 interface Props {
     markdown: string;
@@ -57,6 +60,8 @@ export default function InitializedMDXEditor({ markdown, readOnly, onChange }: P
                                     <CreateLink />
                                     <InsertThematicBreak />
                                     <InsertTable />
+                                    <HighlightToggle />
+                                    <InsertImage />
                                 </>
                             ),
                         }),

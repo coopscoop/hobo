@@ -1,11 +1,7 @@
 import {
     pgTable, pgEnum, serial, varchar, text, date, customType,
-    integer, boolean, alias, unique, time, jsonb
+    integer, boolean, alias, unique, time, jsonb, timestamp
 } from 'drizzle-orm/pg-core';
-
-// ---- Enums ----
-
-export const announcementTypeEnum = pgEnum('announcement_type', ['news', 'event', 'update']);
 
 // ---- CustomType - daterange ----
 
@@ -22,7 +18,7 @@ export const announcements = pgTable('Announcements', {
     title: varchar('title', { length: 255 }).notNull(),
     date: date('date').notNull().defaultNow(),
     content: text('content'),
-    type: announcementTypeEnum('type').notNull().default('news'),
+    type: text('type').notNull().default('news'),
     pinned: boolean('pinned').notNull().default(false),
 });
 
@@ -130,6 +126,14 @@ export const fields = pgTable('Fields', {
     id: serial('id').primaryKey(),
     name: varchar('name').notNull(),
     address: varchar('address'),
+});
+
+export const admins = pgTable("Admins", {
+    id: serial("id").primaryKey(),
+    email: text("email").notNull().unique(),
+    passwordHash: text("password_hash").notNull(),
+    role: text("role").notNull().default("admin"), // future: 'admin' | 'scorer'
+    createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // ---- Aliases (for self-referencing joins on games) ----

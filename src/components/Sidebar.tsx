@@ -41,12 +41,12 @@ const NAV_GROUPS: NavGroup[] = [
             { href: '/leagueChampions', label: 'League Champs' },
             { href: '/hallOfFame', label: 'Hall of Fame' },
             { href: '/edBrilAward', label: 'Ed Bril Award' },
-            { href: '/executives', label: 'Executives' },
+            // { href: '/executives', label: 'Executives' },
         ],
     },
     {
         label: 'Contact Us',
-        links: [{ href: '/contact', label: 'Contact Us' }],
+        links: [{ href: '/contact', label: 'Contact Info' }],
     },
     {
         label: 'Admin',

@@ -4,7 +4,6 @@ import EditablePage from '@/components/editor/EditablePage'
 export default async function HallOfFamePage() {
     return (
         <>
-            <BackButton />
             <EditablePage pageName="edBrilAward" />
         </>
     );

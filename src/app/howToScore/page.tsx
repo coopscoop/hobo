@@ -9,6 +9,7 @@ export default async function HowToScorePage() {
             <Box sx={{ px: 4, py: 3, borderBottom: '4px solid', borderColor: 'primary.main', backgroundColor: '#ffffff' }}>
                 <Typography variant="h4">How to Score</Typography>
             </Box>
+
             <EditablePage pageName="howToScore" />
         </>
     );

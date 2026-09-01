@@ -6,7 +6,6 @@ export default async function ExecutivesPage() {
   const data = await getExecutives();
   return (
     <>
-      <BackButton />
       <ExecutivesTable executives={data} />
     </>
   );

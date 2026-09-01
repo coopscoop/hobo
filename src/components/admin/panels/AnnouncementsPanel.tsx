@@ -1,7 +1,7 @@
 // src/components/admin/panels/AnnouncementsPanel.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminEntityPanel from "@/components/admin/panels/AdminEntityPanel";
 import MdxEditModal from "@/components/admin/MdxEditModal";
 import { GridColDef } from "@mui/x-data-grid";
@@ -12,9 +12,25 @@ const columns: GridColDef[] = [
   { field: "createdAt", headerName: "Posted", width: 160 },
 ];
 
+interface AnnouncementRow {
+    id: number,
+    title: number,
+    date: string,
+    content: string
+    type: string,
+    pinned: boolean
+}
+
 export default function AnnouncementsPanel() {
-  const rows: any[] = [];
+  const [rows, setRows] = useState<AnnouncementRow[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
+
+  useEffect(() => {
+    fetch("/api/announcements")
+      .then((res) => res.json())
+      .then(setRows)
+      .catch((err) => console.error("Failed to load pages", err));
+  }, []);
 
   return (
     <>

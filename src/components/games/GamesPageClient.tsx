@@ -22,15 +22,6 @@ export function GamesPageClient({ initialGames, minYear, maxYear }: GamesPageCli
     const [startDate, setStartDate] = useState<Dayjs | null>(null);
     const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-    // useEffect(() => {
-    //     if (leagueId === 'all') {
-    //         setGames(initialGames);
-    //         return;
-    //     }
-    //     const params = new URLSearchParams({ leagueId });
-    //     fetch(`/api/games?${params}`).then((r) => r.json()).then(setGames);
-    // }, [leagueId]);
-
     const filteredGames = useMemo(() => {
         return games.filter((g) => {
             if (search) {

@@ -31,3 +31,38 @@ export async function fetchTeamById(
 
     return res.json();
 }
+
+export async function createTeam(teamName: string) {
+    const res = await fetch(`${baseUrl()}/api/teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamName }),
+    })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to create team')
+    }
+    return res.json()
+}
+
+export async function updateTeam(id: number, teamName: string) {
+    const res = await fetch(`${baseUrl()}/api/teams/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamName }),
+    })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to update team')
+    }
+    return res.json()
+}
+
+export async function deleteTeam(id: number) {
+    const res = await fetch(`${baseUrl()}/api/teams/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to delete team')
+    }
+    return res.json()
+}

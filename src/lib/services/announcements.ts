@@ -32,7 +32,7 @@ export async function createAnnouncement(data: any) {
 
 export async function updateAnnouncement(id: number, data: any) {
   const res = await fetch(`${baseUrl()}/api/announcements/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })

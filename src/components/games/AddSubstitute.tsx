@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import type { PlayerName } from "@/lib/types";
+import { fetchPlayers } from "@/lib/services/players";
 
 interface Props {
-    excludePlayerIds: Set<string>;
-    onAdd: (player: PlayerName) => void;
+  excludePlayerIds: Set<string>;
+  onAdd: (player: PlayerName) => void;
 }
 
 export function AddSubstitute({ excludePlayerIds, onAdd }: Props) {
@@ -18,15 +19,10 @@ export function AddSubstitute({ excludePlayerIds, onAdd }: Props) {
     useEffect(() => {
         if (!open || players !== null) return;
         setLoading(true);
-        fetch("/api/players")
-            .then((r) => r.json())
-            .then((data: PlayerName[]) => {
-                console.log("players fetched:", data.length);
-                setPlayers(data);
-            })
+        fetchPlayers()
+            .then((data: PlayerName[]) => setPlayers(data))
             .catch((err) => console.error("Failed to load players", err))
             .finally(() => setLoading(false));
-
     }, [open, players]);
 
     const filtered = useMemo(() => {

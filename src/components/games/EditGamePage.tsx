@@ -1,3 +1,4 @@
+// src/components/games/EditGamePage.tsx — only imports + the four functions change
 "use client";
 
 import { useState } from "react";
@@ -8,6 +9,12 @@ import { AddSubstitute } from "@/components/games/AddSubstitute"
 import { PlayerName } from "@/lib/types"
 import { DEFAULT_MAX_INNING, buildInningsArray, deriveInitialMaxInning, computePlayerTotals, emptyPA, isPAFilled, computeAutoRunsForInning } from "@/lib/constants";
 import { useRouter } from "next/navigation";
+import {
+    saveBattingRow as saveBattingRowService,
+    saveGameScore as saveGameScoreService,
+    addSubstitute as addSubstituteService,
+    removeSubstitute as removeSubstituteService,
+} from "@/lib/services/games";
 
 import type {
     LineScoreOverrides,
@@ -21,7 +28,7 @@ import { Typography } from "@mui/material";
 interface Props {
     gameId: string;
     initialTeams: Record<TeamKey, TeamGameData>;
-    onSaved?: () => void; // when provided (e.g. modal context), called instead of navigating
+    onSaved?: () => void;
 }
 
 export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
@@ -46,23 +53,14 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
     }
 
     async function saveBattingRow(teamKey: TeamKey, playerId: string) {
-        // disabled players never get a row pushed — this is the actual enforcement
-        // point for "skip pushing 0-stat rows", not just a visual toggle
         if (disabledPlayers[teamKey].has(playerId)) return;
         const player = teams[teamKey].players.find((p) => p.playerId === playerId);
         if (!player) return;
         try {
-            const res = await fetch(`/api/games/${gameId}/batting`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ playerId: Number(playerId), innings: player.innings }),
-            });
-            if (!res.ok) throw new Error(`save failed: ${res.status}`);
+            await saveBattingRowService(gameId, Number(playerId), player.innings);
             flashSaved();
         } catch (err) {
             console.error("Failed to save batting row", err);
-            // TODO: surface a real error state instead of failing silently — worth
-            // revisiting once there's a UX pattern elsewhere in the app for this
         }
     }
 
@@ -76,12 +74,7 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
         const awayScore = innings.reduce((sum, i) => sum + i.awayRuns, 0);
 
         try {
-            const res = await fetch(`/api/games/${gameId}/score`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ innings, homeScore, awayScore }),
-            });
-            if (!res.ok) throw new Error(`save failed: ${res.status}`);
+            await saveGameScoreService(gameId, innings, homeScore, awayScore);
             if (onSaved) onSaved();
             else router.push(`/games/${gameId}`);
         } catch (err) {
@@ -89,10 +82,10 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
             alert("Failed to save final score — check console");
         }
     }
+
     async function removeSubstitute(teamKey: TeamKey, playerId: string, subId: number) {
         try {
-            const res = await fetch(`/api/games/${gameId}/substitutes/${subId}`, { method: "DELETE" });
-            if (!res.ok) throw new Error(`remove failed: ${res.status}`);
+            await removeSubstituteService(gameId, subId);
             setTeams((prev) => {
                 const next = structuredClone(prev);
                 next[teamKey].players = next[teamKey].players.filter((p) => p.playerId !== playerId);
@@ -119,7 +112,6 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
         setMaxInning((m) => m - 1);
     }
 
-    // stub for auto saving
     function flashSaved() {
         setSavedFlash(true);
         setTimeout(() => setSavedFlash(false), 900);
@@ -127,17 +119,7 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
 
     async function addSubstitute(teamKey: TeamKey, player: PlayerName) {
         try {
-            const res = await fetch(`/api/games/${gameId}/substitutes`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ playerId: player.id, newTeamId: Number(teams[teamKey].teamId) }),
-            });
-            if (!res.ok) {
-                const body = await res.json().catch(() => ({}));
-                alert(body.error ?? "Failed to add substitute");
-                return;
-            }
-            const sub = await res.json();
+            const sub = await addSubstituteService(gameId, player.id, Number(teams[teamKey].teamId));
             setTeams((prev) => {
                 const next = structuredClone(prev);
                 next[teamKey].players.push({
@@ -149,8 +131,9 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                 });
                 return next;
             });
-        } catch (err) {
+        } catch (err: any) {
             console.error("Failed to add substitute", err);
+            alert(err.message ?? "Failed to add substitute");
         }
     }
 
@@ -285,7 +268,7 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
                 <div className="px-1">
-                        {/* excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))} */}
+                    {/* excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))} */}
                     <AddSubstitute
                         excludePlayerIds={new Set()}
                         onAdd={(p) => addSubstitute("home", p)}

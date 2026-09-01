@@ -14,7 +14,6 @@ export default async function TeamsPage() {
                 <Typography variant="h4">Teams</Typography>
             </Box>
             <TeamsPageClient teams={teams} />
-            )
         </div>
     )
 }

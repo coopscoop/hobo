@@ -18,17 +18,12 @@ nuqs -> URL params, useful for filtering/bookmarking
     - add profile picture url column to players table
       - use google buckets for this (locally just make some dummy urls + images for now)
     - add a view on any games displayed for what league they are
-- add pages
 - add user sign up/sign in
-  - jwt tokens for auth is the easiest
+  - use nextjs auth
 - admin page notes
   - blob storage management
-  - new admin page
-  - email list
-  - all players + display their contact info here
-  - access sign up forums data here
-  - some excel/csv export options?
-    - useful for moving data to other programs
+  - new items/pages?
+    - fields
 
 ### old pages
 

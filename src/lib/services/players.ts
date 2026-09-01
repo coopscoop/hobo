@@ -85,3 +85,52 @@ export async function fetchPlayerGameLog(
 
     return res.json();
 }
+
+export async function fetchPlayers(): Promise<any[]> {
+    const res = await fetch(`${baseUrl()}/api/players`, { cache: 'no-store' })
+    if (!res.ok) throw new Error('Failed to fetch players')
+    return res.json()
+}
+
+export async function createPlayer(data: {
+    firstName: string
+    lastName: string
+    currentTeam: number | null
+}) {
+    const res = await fetch(`${baseUrl()}/api/players`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to create player')
+    }
+    return res.json()
+}
+
+export async function updatePlayer(id: number, data: Partial<{
+    firstName: string
+    lastName: string
+    currentTeam: number | null
+}>) {
+    const res = await fetch(`${baseUrl()}/api/players/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to update player')
+    }
+    return res.json()
+}
+
+export async function deletePlayer(id: number) {
+    const res = await fetch(`${baseUrl()}/api/players/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Failed to delete player')
+    }
+    return res.json()
+}

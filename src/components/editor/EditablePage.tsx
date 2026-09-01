@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import '@mdxeditor/editor/style.css';
 import styles from './EditablePage.module.css';
+import { fetchPageByName, updatePageContent } from '@/lib/services/pages';
 
 const Editor = dynamic(() => import('./InitializedEditor'), { ssr: false });
 
@@ -22,11 +23,7 @@ export default function EditablePage({ pageName }: { pageName: string }) {
 
     useEffect(() => {
         let cancelled = false;
-        fetch(`/api/pages/name/${pageName}`)
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to load page content.');
-                return res.json();
-            })
+        fetchPageByName(pageName)
             .then((data: PageContent) => {
                 if (!cancelled) {
                     setPage(data);
@@ -44,13 +41,7 @@ export default function EditablePage({ pageName }: { pageName: string }) {
         setIsSaving(true);
         setError(null);
         try {
-            const res = await fetch(`/api/pages/${page.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: draft }),
-            });
-            if (!res.ok) throw new Error('Failed to save changes.');
-            const updated: PageContent = await res.json();
+            const updated: PageContent = await updatePageContent(page.id, draft);
             setPage(updated);
             setIsEditing(false);
         } catch (err) {

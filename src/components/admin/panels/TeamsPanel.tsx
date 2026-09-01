@@ -1,17 +1,15 @@
 // src/components/admin/panels/TeamsPanel.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AdminEntityPanel from "@/components/admin/panels/AdminEntityPanel";
 import FormEditModal, { FormFieldConfig } from "@/components/admin/FormEditModal";
 import { GridColDef } from "@mui/x-data-grid";
+import { createTeam, updateTeam, deleteTeam } from "@/lib/services/teams";
 
-interface TeamRow {
-    id: number;
-    teamName: string;
-    wins: number;
-    losses: number;
-    ties: number;
+interface Props {
+    initialData: any[];
 }
 
 const columns: GridColDef[] = [
@@ -24,42 +22,26 @@ const columns: GridColDef[] = [
 
 const fields: FormFieldConfig[] = [{ name: "teamName", label: "Team Name" }];
 
-export default function TeamsPanel() {
-    const [rows, setRows] = useState<TeamRow[]>([]);
+export default function TeamsPanel({ initialData }: Props) {
+    const router = useRouter();
     const [editing, setEditing] = useState<any | null>(null);
-
-    const fetchTeams = () => {
-        fetch("/api/teams")
-            .then((res) => res.json())
-            .then(setRows)
-            .catch((err) => console.error("Failed to load teams", err));
-    };
-
-    useEffect(() => {
-        fetchTeams();
-    }, []);
 
     return (
         <>
             <AdminEntityPanel
                 title="Teams"
-                rows={rows}
+                rows={initialData}
                 columns={columns}
                 onAdd={() => setEditing({ id: null, teamName: "" })}
                 onEdit={(row) => setEditing({ id: row.id, teamName: row.teamName })}
                 onDelete={async (row) => {
                     if (!confirm(`Delete team ${row.teamName}?`)) return;
                     try {
-                        const res = await fetch(`/api/teams/${row.id}`, { method: "DELETE" });
-                        if (!res.ok) {
-                            const body = await res.json().catch(() => ({}));
-                            alert(body.error ?? "Failed to delete team");
-                            return;
-                        }
-                        fetchTeams();
-                    } catch (err) {
+                        await deleteTeam(row.id);
+                        router.refresh();
+                    } catch (err: any) {
                         console.error("Failed to delete team", err);
-                        alert("Failed to delete team — check console");
+                        alert(err.message ?? "Failed to delete team");
                     }
                 }}
             />
@@ -76,31 +58,14 @@ export default function TeamsPanel() {
                             alert("Team name is required");
                             return;
                         }
-
                         try {
-                            const res = editing.id
-                                ? await fetch(`/api/teams/${editing.id}`, {
-                                    method: "PATCH",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ teamName: values.teamName }),
-                                })
-                                : await fetch("/api/teams", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ teamName: values.teamName }),
-                                });
-
-                            if (!res.ok) {
-                                const body = await res.json().catch(() => ({}));
-                                alert(body.error ?? "Failed to save team");
-                                return;
-                            }
-
-                            fetchTeams();
+                            if (editing.id) await updateTeam(editing.id, values.teamName);
+                            else await createTeam(values.teamName);
+                            router.refresh();
                             setEditing(null);
-                        } catch (err) {
+                        } catch (err: any) {
                             console.error("Failed to save team", err);
-                            alert("Failed to save team — check console");
+                            alert(err.message ?? "Failed to save team");
                         }
                     }}
                 />

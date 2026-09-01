@@ -1,9 +1,11 @@
+// app/announcements/page.tsx
 import { AnnouncementsTable } from '@/components/announcements/AnnouncementsTable';
+import { fetchAnnouncements } from '@/lib/services/announcements';
 
 export default async function AnnouncementsPage() {
     const [pinned, general] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/pinned`).then((r) => r.json()),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/general`).then((r) => r.json()),
+        fetchAnnouncements({ pinned: true }),
+        fetchAnnouncements({ pinned: false }),
     ]);
 
     return (

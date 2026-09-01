@@ -9,6 +9,7 @@ import { BattingSection } from './BattingSection';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { deleteGame } from "@/lib/services/games";
 
 type GameData = NonNullable<GameDetail>;
 
@@ -24,22 +25,15 @@ export function GameDetail({ data }: GameDetailProps) {
     const homeBatting = batting.filter((b) => b.teamId === game.homeTeam.id);
     const awayBatting = batting.filter((b) => b.teamId === game.awayTeam.id);
 
-    // TODO: SWAP TO SERVICE
     async function handleDelete() {
         if (!confirm('Delete this game? This cannot be undone.')) return;
         setDeleting(true);
         try {
-            const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE' });
-            const body = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                alert(body.error ?? 'Failed to delete game');
-                setDeleting(false);
-                return;
-            }
+            await deleteGame(game.id);
             router.push('/games');
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to delete game', err);
-            alert('Failed to delete game');
+            alert(err.message ?? 'Failed to delete game');
             setDeleting(false);
         }
     }
@@ -116,15 +110,15 @@ export function GameDetail({ data }: GameDetailProps) {
             {/* Batting — side by side */}
             <Stack direction="row" spacing={2} sx={{ alignItems: 'flex-start' }}>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <BattingSection 
-                        title={`${game.homeTeam.name} Batting`} 
-                        batting={homeBatting} 
+                    <BattingSection
+                        title={`${game.homeTeam.name} Batting`}
+                        batting={homeBatting}
                     />
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <BattingSection 
-                        title={`${game.awayTeam.name} Batting`} 
-                        batting={awayBatting} 
+                    <BattingSection
+                        title={`${game.awayTeam.name} Batting`}
+                        batting={awayBatting}
                     />
                 </Box>
             </Stack>

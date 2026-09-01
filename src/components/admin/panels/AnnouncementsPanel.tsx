@@ -1,18 +1,15 @@
 // src/components/admin/panels/AnnouncementsPanel.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AdminEntityPanel from "@/components/admin/panels/AdminEntityPanel";
 import MdxEditModal from "@/components/admin/MdxEditModal";
 import { GridColDef } from "@mui/x-data-grid";
+import { createAnnouncement, updateAnnouncement, deleteAnnouncement } from "@/lib/services/announcements";
 
-interface AnnouncementRow {
-    id: number;
-    title: string;
-    date: string;
-    content: string;
-    type: string;
-    pinned: boolean;
+interface Props {
+    initialData: any[];
 }
 
 const columns: GridColDef[] = [
@@ -23,44 +20,26 @@ const columns: GridColDef[] = [
     { field: "date", headerName: "Posted", width: 130 },
 ];
 
-export default function AnnouncementsPanel() {
-    const [rows, setRows] = useState<AnnouncementRow[]>([]);
-    const [editing, setEditing] = useState<AnnouncementRow | null>(null);
-
-    const fetchAnnouncements = () => {
-        fetch("/api/announcements")
-            .then((res) => res.json())
-            .then(setRows)
-            .catch((err) => console.error("Failed to load announcements", err));
-    };
-
-    useEffect(() => {
-        fetchAnnouncements();
-    }, []);
+export default function AnnouncementsPanel({ initialData }: Props) {
+    const router = useRouter();
+    const [editing, setEditing] = useState<any | null>(null);
 
     return (
         <>
             <AdminEntityPanel
                 title="Announcements"
-                rows={rows}
+                rows={initialData}
                 columns={columns}
-                onAdd={() =>
-                    setEditing({ id: 0, title: "New Announcement", date: "", content: "", type: "news", pinned: false })
-                }
+                onAdd={() => setEditing({ id: 0, title: "", date: "", content: "", type: "news", pinned: false })}
                 onEdit={(row) => setEditing(row)}
                 onDelete={async (row) => {
                     if (!confirm(`Delete announcement "${row.title}"?`)) return;
                     try {
-                        const res = await fetch(`/api/announcements/${row.id}`, { method: "DELETE" });
-                        if (!res.ok) {
-                            const body = await res.json().catch(() => ({}));
-                            alert(body.error ?? "Failed to delete announcement");
-                            return;
-                        }
-                        fetchAnnouncements();
-                    } catch (err) {
+                        await deleteAnnouncement(row.id);
+                        router.refresh();
+                    } catch (err: any) {
                         console.error("Failed to delete announcement", err);
-                        alert("Failed to delete announcement — check console");
+                        alert(err.message ?? "Failed to delete announcement");
                     }
                 }}
             />
@@ -75,29 +54,13 @@ export default function AnnouncementsPanel() {
                     onClose={() => setEditing(null)}
                     onSave={async ({ title, content, pinned }) => {
                         try {
-                            const res = editing.id
-                                ? await fetch(`/api/announcements/${editing.id}`, {
-                                    method: "PATCH",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ title, content, pinned }),
-                                })
-                                : await fetch("/api/announcements", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ title, content, pinned }),
-                                });
-
-                            if (!res.ok) {
-                                const body = await res.json().catch(() => ({}));
-                                alert(body.error ?? "Failed to save announcement");
-                                return;
-                            }
-
-                            fetchAnnouncements();
+                            if (editing.id) await updateAnnouncement(editing.id, { title, content, pinned });
+                            else await createAnnouncement({ title, content, pinned });
+                            router.refresh();
                             setEditing(null);
-                        } catch (err) {
+                        } catch (err: any) {
                             console.error("Failed to save announcement", err);
-                            alert("Failed to save announcement — check console");
+                            alert(err.message ?? "Failed to save announcement");
                         }
                     }}
                 />

@@ -1,12 +1,18 @@
-import { getAnnouncementById } from '@/lib/db/queries/announcements';
+// app/announcements/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { Box, Chip, Typography } from '@mui/material';
 import { BackButton } from '@/components/BackButton';
+import { fetchAnnouncementById } from '@/lib/services/announcements';
 
 export default async function AnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    const announcement = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/announcements/${id}`).then((r) => r.json());
+    let announcement;
+    try {
+        announcement = await fetchAnnouncementById(Number(id));
+    } catch {
+        return notFound();
+    }
 
     return (
         <>
@@ -17,9 +23,6 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
                     <Typography variant="body2" color="text.secondary">{announcement.date}</Typography>
                     <Chip label={announcement.type} size="small" />
                 </Box>
-                {/* Rendered as plain text (no dangerouslySetInnerHTML) to close the stored-XSS
-                    risk until the admin panel is behind auth. Old HTML-content announcements
-                    will show raw tags until the content migration/cleanup pass. */}
                 <Typography component="div" sx={{ whiteSpace: 'pre-wrap' }}>
                     {announcement.content ?? ''}
                 </Typography>

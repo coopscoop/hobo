@@ -9,32 +9,44 @@ import PlayersPanel from "@/components/admin/panels/PlayersPanel";
 import TeamsPanel from "@/components/admin/panels/TeamsPanel";
 import PageContentsPanel from "@/components/admin/panels/PageContentsPanel";
 
-const TABS = [
-  { value: "announcements", label: "Announcements", Component: AnnouncementsPanel },
-  { value: "games", label: "Games", Component: GamesPanel },
-  { value: "players", label: "Players", Component: PlayersPanel },
-  { value: "teams", label: "Teams", Component: TeamsPanel },
-  { value: "page-contents", label: "Page Contents", Component: PageContentsPanel },
-] as const;
+interface Props {
+    initialAnnouncements: any[];
+    initialGames: any[];
+    initialPlayers: any[];
+    initialTeams: any[];
+    initialFields: any[];
+    initialPages: any[];
+}
 
-export default function AdminPageClient() {
-  const [tab, setTab] = useQueryState("tab", { defaultValue: "announcements" });
-  const active = TABS.find((t) => t.value === tab) ?? TABS[0];
-  const ActivePanel = active.Component;
+export default function AdminPageClient({
+    initialAnnouncements,
+    initialGames,
+    initialPlayers,
+    initialTeams,
+    initialFields,
+    initialPages,
+}: Props) {
+    const [tab, setTab] = useQueryState("tab", { defaultValue: "announcements" });
 
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
-      <Paper elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={active.value} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
-          {TABS.map((t) => (
-            <Tab key={t.value} value={t.value} label={t.label} />
-          ))}
-        </Tabs>
-      </Paper>
+    return (
+        <Box sx={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+            <Paper elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
+                    <Tab value="announcements" label="Announcements" />
+                    <Tab value="games" label="Games" />
+                    <Tab value="players" label="Players" />
+                    <Tab value="teams" label="Teams" />
+                    <Tab value="page-contents" label="Page Contents" />
+                </Tabs>
+            </Paper>
 
-      <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden", p: 2 }}>
-        <ActivePanel />
-      </Box>
-    </Box>
-  );
+            <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden", p: 2 }}>
+                {tab === "announcements" && <AnnouncementsPanel initialData={initialAnnouncements} />}
+                {tab === "games" && <GamesPanel initialData={initialGames} teams={initialTeams} fields={initialFields} />}
+                {tab === "players" && <PlayersPanel initialData={initialPlayers} teams={initialTeams} />}
+                {tab === "teams" && <TeamsPanel initialData={initialTeams} />}
+                {tab === "page-contents" && <PageContentsPanel initialData={initialPages} />}
+            </Box>
+        </Box>
+    );
 }

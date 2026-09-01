@@ -1,22 +1,16 @@
 // src/components/admin/panels/PlayersPanel.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AdminEntityPanel from "@/components/admin/panels/AdminEntityPanel";
 import FormEditModal, { FormFieldConfig } from "@/components/admin/FormEditModal";
 import { GridColDef } from "@mui/x-data-grid";
+import { createPlayer, updatePlayer, deletePlayer } from "@/lib/services/players";
 
-interface PlayerRow {
-    id: number;
-    firstName: string;
-    lastName: string;
-    currentTeamId: number | null;
-    team: string;
-}
-
-interface Option {
-    id: number;
-    name: string;
+interface Props {
+    initialData: any[];
+    teams: any[];
 }
 
 const columns: GridColDef[] = [
@@ -26,35 +20,21 @@ const columns: GridColDef[] = [
     { field: "team", headerName: "Team", width: 160 },
 ];
 
-export default function PlayersPanel() {
-    const [rows, setRows] = useState<PlayerRow[]>([]);
-    const [teams, setTeams] = useState<Option[]>([]);
+export default function PlayersPanel({ initialData, teams }: Props) {
+    const router = useRouter();
     const [editing, setEditing] = useState<any | null>(null);
 
-    const fetchPlayers = () => {
-        fetch("/api/players")
-            .then((res) => res.json())
-            .then((players: any[]) => {
-                setRows(
-                    players.map((p) => ({
-                        id: p.id,
-                        firstName: p.firstName ?? "",
-                        lastName: p.lastName ?? "",
-                        currentTeamId: p.currentTeam?.id ?? null,
-                        team: p.team?.name ?? "—",
-                    }))
-                );
-            })
-            .catch((err) => console.error("Failed to load players", err));
-    };
-
-    useEffect(() => {
-        fetchPlayers();
-        fetch("/api/teams")
-            .then((res) => res.json())
-            .then((teams: any[]) => setTeams(teams.map((t) => ({ id: t.id, name: t.teamName }))))
-            .catch((err) => console.error("Failed to load teams", err));
-    }, []);
+    const rows = useMemo(
+        () =>
+            initialData.map((p) => ({
+                id: p.id,
+                firstName: p.firstName ?? "",
+                lastName: p.lastName ?? "",
+                currentTeamId: p.team?.id ?? null,
+                team: p.team?.name ?? "—",
+            })),
+        [initialData]
+    );
 
     const fields: FormFieldConfig[] = useMemo(
         () => [
@@ -64,14 +44,12 @@ export default function PlayersPanel() {
                 name: "currentTeam",
                 label: "Team",
                 type: "select",
-                options: [
-                    { value: "none", label: "— No Team —" },
-                    ...teams.map((t) => ({ value: t.id, label: t.name })),
-                ],
+                options: [{ value: "none", label: "— No Team —" }, ...teams.map((t) => ({ value: t.id, label: t.teamName }))],
             },
         ],
         [teams]
     );
+
     return (
         <>
             <AdminEntityPanel
@@ -80,26 +58,16 @@ export default function PlayersPanel() {
                 columns={columns}
                 onAdd={() => setEditing({ id: null, firstName: "", lastName: "", currentTeam: "none" })}
                 onEdit={(row) =>
-                    setEditing({
-                        id: row.id,
-                        firstName: row.firstName,
-                        lastName: row.lastName,
-                        currentTeam: row.currentTeamId ?? "none",
-                    })
+                    setEditing({ id: row.id, firstName: row.firstName, lastName: row.lastName, currentTeam: row.currentTeamId ?? "none" })
                 }
                 onDelete={async (row) => {
                     if (!confirm(`Delete player ${row.firstName} ${row.lastName}? This also removes their roster, batting, and substitute history.`)) return;
                     try {
-                        const res = await fetch(`/api/players/${row.id}`, { method: "DELETE" });
-                        if (!res.ok) {
-                            const body = await res.json().catch(() => ({}));
-                            alert(body.error ?? "Failed to delete player");
-                            return;
-                        }
-                        fetchPlayers();
-                    } catch (err) {
+                        await deletePlayer(row.id);
+                        router.refresh();
+                    } catch (err: any) {
                         console.error("Failed to delete player", err);
-                        alert("Failed to delete player — check console");
+                        alert(err.message ?? "Failed to delete player");
                     }
                 }}
             />
@@ -116,39 +84,19 @@ export default function PlayersPanel() {
                             alert("First and last name are required");
                             return;
                         }
-
-                        // onSave payload — was: values.currentTeam ? Number(values.currentTeam) : null
                         const payload = {
                             firstName: values.firstName,
                             lastName: values.lastName,
-                            currentTeam:
-                                values.currentTeam && values.currentTeam !== "none" ? Number(values.currentTeam) : null,
+                            currentTeam: values.currentTeam && values.currentTeam !== "none" ? Number(values.currentTeam) : null,
                         };
-
                         try {
-                            const res = editing.id
-                                ? await fetch(`/api/players/${editing.id}`, {
-                                    method: "PATCH",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify(payload),
-                                })
-                                : await fetch("/api/players", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify(payload),
-                                });
-
-                            if (!res.ok) {
-                                const body = await res.json().catch(() => ({}));
-                                alert(body.error ?? "Failed to save player");
-                                return;
-                            }
-
-                            fetchPlayers();
+                            if (editing.id) await updatePlayer(editing.id, payload);
+                            else await createPlayer(payload);
+                            router.refresh();
                             setEditing(null);
-                        } catch (err) {
+                        } catch (err: any) {
                             console.error("Failed to save player", err);
-                            alert("Failed to save player — check console");
+                            alert(err.message ?? "Failed to save player");
                         }
                     }}
                 />

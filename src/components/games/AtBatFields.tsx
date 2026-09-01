@@ -1,3 +1,4 @@
+// src/components/games/AtBatFields.tsx
 import { X } from "lucide-react";
 import { RESULTS, RESULT_CHIP_STYLE } from "@/lib/constants";
 import type { PlateAppearance } from "@/lib/types";
@@ -11,11 +12,11 @@ interface Props {
 
 export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
   return (
-    <div className="space-y-3 rounded-lg border border-neutral-700 bg-neutral-800/50 p-3">
+    <div className="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wide text-neutral-400">{label}</span>
+        <span className="text-xs font-bold uppercase tracking-wide text-gray-500">{label}</span>
         {onRemove && (
-          <button onClick={onRemove} className="text-neutral-500 hover:text-neutral-200" title="Remove this at-bat">
+          <button onClick={onRemove} className="text-gray-400 hover:text-gray-700" title="Remove this at-bat">
             <X size={16} />
           </button>
         )}
@@ -48,7 +49,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
               key={key}
               onClick={() => onChange({ [key]: !pa[key] })}
               className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold ${
-                pa[key] ? "border-neutral-400 bg-neutral-500 text-white" : "border-neutral-600 text-neutral-300"
+                pa[key] ? "border-red-600 bg-red-600 text-white" : "border-gray-300 text-gray-600 hover:border-gray-400"
               }`}
             >
               {flagLabel}
@@ -64,7 +65,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
               key={n}
               onClick={() => onChange({ rbi: n })}
               className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
-                pa.rbi === n ? "border-neutral-400 bg-neutral-500 text-white" : "border-neutral-600 text-neutral-300"
+                pa.rbi === n ? "border-red-600 bg-red-600 text-white" : "border-gray-300 text-gray-600 hover:border-gray-400"
               }`}
             >
               {n}
@@ -86,7 +87,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
               key={key}
               onClick={() => onChange({ [key]: !pa[key] })}
               className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
-                pa[key] ? "border-neutral-400 bg-neutral-500 text-white" : "border-neutral-600 text-neutral-300"
+                pa[key] ? "border-red-600 bg-red-600 text-white" : "border-gray-300 text-gray-600 hover:border-gray-400"
               }`}
             >
               {sbLabel}
@@ -95,11 +96,11 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
         </div>
       </Section>
 
-      <div className="flex items-center justify-between border-t border-neutral-700 pt-3">
-        <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Scored</span>
+      <div className="flex items-center justify-between border-t border-gray-200 pt-3">
+        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Scored</span>
         <button
           onClick={() => onChange({ scored: !pa.scored })}
-          className={`relative h-6 w-11 rounded-full transition-colors ${pa.scored ? "bg-emerald-500" : "bg-neutral-600"}`}
+          className={`relative h-6 w-11 rounded-full transition-colors ${pa.scored ? "bg-emerald-500" : "bg-gray-300"}`}
         >
           <span
             className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
@@ -115,7 +116,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400">{label}</div>
+      <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</div>
       {children}
     </div>
   );

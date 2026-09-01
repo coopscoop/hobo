@@ -30,20 +30,18 @@ export const RESULTS: { code: ResultCode; label: string; group: ResultGroup }[] 
   { code: "HR", label: "Home Run", group: "homer" },
 ];
 
-// Dark-theme chip styling per result group — the one place color-coding lives.
-// Everything else in the UI stays neutral slate/grey per current direction.
 export const RESULT_CHIP_STYLE: Record<ResultGroup, string> = {
-  out: "border-neutral-600 text-neutral-300 data-[on=true]:bg-neutral-500 data-[on=true]:text-white data-[on=true]:border-neutral-500",
+  out: "border-red-300 text-red-700 data-[on=true]:bg-red-600 data-[on=true]:text-white data-[on=true]:border-red-600",
   reach:
-    "border-amber-700 text-amber-400 data-[on=true]:bg-amber-500 data-[on=true]:text-neutral-950 data-[on=true]:border-amber-500",
+    "border-amber-700 text-amber-400 data-[on=true]:bg-amber-500 data-[on=true]:text-white data-[on=true]:border-amber-500",
   hit: "border-emerald-700 text-emerald-400 data-[on=true]:bg-emerald-600 data-[on=true]:text-white data-[on=true]:border-emerald-600",
   homer:
     "border-indigo-700 text-indigo-400 data-[on=true]:bg-indigo-600 data-[on=true]:text-white data-[on=true]:border-indigo-600",
 };
 
 export const CELL_BADGE_STYLE: Record<ResultCode, string> = {
-  OUT: "bg-neutral-800 text-neutral-400",
-  K: "bg-neutral-700 text-neutral-200",
+  OUT: "border-red-600 bg-red-600 text-white",
+  K: "border-red-600 bg-red-600 text-white",
   BB: "bg-amber-900/50 text-amber-300",
   HBP: "bg-amber-900/50 text-amber-300",
   "1B": "bg-emerald-900/50 text-emerald-300",

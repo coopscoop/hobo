@@ -230,35 +230,35 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
     return (
         <div className="min-h-screen bg-[var(--background)] p-6 text-[var(--foreground)]">
             <div className="mx-auto max-w-6xl space-y-8">
-                <header className="flex items-center justify-between border-b-4 border-neutral-700 pb-3">
+                <header className="flex items-center justify-between border-b-4 border-red-600 pb-3">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-neutral-100">Game Data Entry</h1>
-                        <p className="text-sm text-neutral-400">
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Game Data Entry</h1>
+                        <p className="text-sm text-gray-600">
                             {teams.home.name} vs {teams.away.name}
                         </p>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-neutral-400">
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
                         <span>{maxInning} innings</span>
                         <button
                             onClick={removeInning}
                             disabled={maxInning <= DEFAULT_MAX_INNING}
-                            className="rounded border border-neutral-700 px-2 py-0.5 hover:bg-neutral-800 disabled:opacity-30"
+                            className="rounded border border-gray-300 px-2 py-0.5 text-gray-700 hover:bg-gray-100 disabled:opacity-30"
                         >
                             −
                         </button>
                         <button
                             onClick={addInning}
-                            className="rounded border border-neutral-700 px-2 py-0.5 hover:bg-neutral-800"
+                            className="rounded border border-gray-300 px-2 py-0.5 text-gray-700 hover:bg-gray-100"
                         >
                             + Extra Inning
                         </button>
                     </div>
-                    <div className={`text-xs font-medium transition-opacity duration-500 ${savedFlash ? "opacity-100 text-emerald-400" : "opacity-0"}`}>
+                    <div className={`text-xs font-medium transition-opacity duration-500 ${savedFlash ? "opacity-100 text-emerald-600" : "opacity-0"}`}>
                         Saved
                     </div>
                     <button
                         onClick={saveGameScore}
-                        className="rounded bg-emerald-700 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-600"
+                        className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-700"
                     >
                         Save Final Score
                     </button>
@@ -285,8 +285,9 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
                 <div className="px-1">
+                        {/* excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))} */}
                     <AddSubstitute
-                        excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))}
+                        excludePlayerIds={new Set()}
                         onAdd={(p) => addSubstitute("home", p)}
                     />
                 </div>

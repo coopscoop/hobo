@@ -17,8 +17,13 @@ export async function getPlayerNames() {
             id: players.id,
             firstName: players.firstName,
             lastName: players.lastName,
+            team: {
+                id: teams.id,
+                name: teams.teamName,
+            },
         })
         .from(players)
+        .leftJoin(teams, eq(players.currentTeam, teams.id))
         .orderBy(players.lastName, players.firstName);
 }
 

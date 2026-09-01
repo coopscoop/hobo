@@ -1,3 +1,4 @@
+// src/components/games/InningModal.tsx
 "use client";
 
 import { useState } from "react";
@@ -46,9 +47,9 @@ export function InningModal({
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/80 p-4 backdrop-blur-sm">
-            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-neutral-700 bg-neutral-900 shadow-2xl">
-                <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-neutral-700 bg-neutral-800 px-4 py-3 text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-2xl">
+                <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-gray-200 bg-red-600 px-4 py-3 text-white">
                     <button
                         onClick={() => onMoveInning(-1)}
                         disabled={target.inning <= minInning}
@@ -59,7 +60,7 @@ export function InningModal({
                     </button>
                     <div className="text-center">
                         <div className="text-sm font-semibold">{playerName}</div>
-                        <div className="text-xs text-neutral-400">Inning {target.inning}</div>
+                        <div className="text-xs text-red-100">Inning {target.inning}</div>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -70,7 +71,7 @@ export function InningModal({
                         >
                             <ChevronRight size={20} />
                         </button>
-                        <button onClick={onClose} className="ml-1 text-neutral-400 hover:text-white" aria-label="Close">
+                        <button onClick={onClose} className="ml-1 text-red-100 hover:text-white" aria-label="Close">
                             <X size={18} />
                         </button>
                     </div>
@@ -91,32 +92,32 @@ export function InningModal({
                             onRemove={handleRemove}
                         />
                     ) : justRemoved ? (
-                        <div className="flex items-center justify-between rounded-md border border-dashed border-neutral-600 px-3 py-2 text-xs text-neutral-400">
+                        <div className="flex items-center justify-between rounded-md border border-dashed border-gray-300 px-3 py-2 text-xs text-gray-500">
                             <span>At-bat 2 removed</span>
-                            <button onClick={handleUndo} className="font-semibold text-neutral-200 hover:underline">
+                            <button onClick={handleUndo} className="font-semibold text-gray-800 hover:underline">
                                 Undo
                             </button>
                         </div>
                     ) : (
                         <button
                             onClick={() => onAddSecondPA()}
-                            className="flex w-full items-center justify-center gap-1 rounded-md border border-dashed border-neutral-600 py-2 text-xs font-medium text-neutral-400 hover:border-neutral-400 hover:text-neutral-200"
+                            className="flex w-full items-center justify-center gap-1 rounded-md border border-dashed border-gray-300 py-2 text-xs font-medium text-gray-500 hover:border-red-400 hover:text-red-600"
                         >
                             <Plus size={14} /> Add 2nd at-bat this inning
                         </button>
                     )}
                 </div>
 
-                <div className="sticky bottom-0 rounded-b-xl border-t border-neutral-700 bg-neutral-800 px-5 py-3 text-right">
+                <div className="sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-gray-50 px-5 py-3 text-right">
                     <button
                         onClick={() => onChangePA(0, emptyPA())}
-                        className="rounded-md border border-neutral-600 px-3 py-1.5 text-sm font-medium text-neutral-300 hover:border-neutral-400 hover:text-white px-4 mx-4"
+                        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900 px-4 mx-4"
                     >
                         Clear
                     </button>
                     <button
                         onClick={onClose}
-                        className="rounded-md bg-neutral-100 px-4 py-1.5 text-sm font-semibold text-neutral-900 hover:bg-white"
+                        className="rounded-md bg-red-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-red-700"
                     >
                         Done
                     </button>

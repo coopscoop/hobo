@@ -1,3 +1,4 @@
+// src/components/games/LineScore.tsx
 "use client";
 
 import { useState } from "react";
@@ -22,15 +23,15 @@ export function LineScore({ teams, overrides, maxInning, onSetOverride }: Props)
     }
 
     return (
-        <section className="overflow-hidden rounded-lg border border-neutral-700 bg-neutral-900 shadow-sm">
-            <div className="bg-neutral-800 px-4 py-2">
-                <h2 className="text-sm font-semibold text-neutral-100">Line Score</h2>
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div className="bg-red-600 px-4 py-2">
+                <h2 className="text-sm font-semibold text-white">Line Score</h2>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
                     <thead>
-                        <tr className="border-b border-neutral-700 bg-neutral-800/60 text-neutral-400">
-                            <th className="sticky left-0 z-10 min-w-[140px] bg-neutral-800/60 px-3 py-2 text-left font-medium">
+                        <tr className="border-b border-gray-200 bg-gray-50 text-gray-500">
+                            <th className="sticky left-0 z-10 min-w-[140px] bg-gray-50 px-3 py-2 text-left font-medium">
                                 Team
                             </th>
                             {innings.map((i) => (
@@ -45,8 +46,8 @@ export function LineScore({ teams, overrides, maxInning, onSetOverride }: Props)
                         {(Object.keys(teams) as TeamKey[]).map((teamKey) => {
                             const values = innings.map((inning) => valueFor(teamKey, inning));
                             return (
-                                <tr key={teamKey} className="border-b border-neutral-800 last:border-b-0">
-                                    <td className="sticky left-0 z-10 bg-neutral-900 px-3 py-1.5 font-medium text-neutral-200">
+                                <tr key={teamKey} className="border-b border-gray-100 last:border-b-0">
+                                    <td className="sticky left-0 z-10 bg-white px-3 py-1.5 font-medium text-gray-900">
                                         {teams[teamKey].name}
                                     </td>
                                     {innings.map((inning, idx) => {
@@ -67,12 +68,12 @@ export function LineScore({ teams, overrides, maxInning, onSetOverride }: Props)
                                                             onSetOverride(teamKey, inning, raw === "" ? undefined : Number(raw));
                                                             setEditing(null);
                                                         }}
-                                                        className="w-10 rounded border border-neutral-500 bg-neutral-800 text-center text-sm text-neutral-100"
+                                                        className="w-10 rounded border border-gray-400 bg-white text-center text-sm text-gray-900"
                                                     />
                                                 ) : (
                                                     <button
                                                         onClick={() => setEditing({ team: teamKey, inning })}
-                                                        className={`group inline-flex w-10 items-center justify-center gap-0.5 rounded px-1 py-0.5 text-sm font-semibold ${isOverridden ? "bg-amber-900/50 text-amber-300" : "text-neutral-200"
+                                                        className={`group inline-flex w-10 items-center justify-center gap-0.5 rounded px-1 py-0.5 text-sm font-semibold ${isOverridden ? "bg-amber-100 text-amber-700" : "text-gray-800"
                                                             }`}
                                                         title={isOverridden ? "Manually set — locked to this value" : "Auto-filled — click to edit"}
                                                     >
@@ -83,7 +84,7 @@ export function LineScore({ teams, overrides, maxInning, onSetOverride }: Props)
                                             </td>
                                         );
                                     })}
-                                    <td className="text-center text-sm font-bold text-neutral-200">
+                                    <td className="text-center text-sm font-bold text-gray-900">
                                         {values.reduce((a, b) => a + b, 0)}
                                     </td>
                                 </tr>
@@ -92,7 +93,7 @@ export function LineScore({ teams, overrides, maxInning, onSetOverride }: Props)
                     </tbody>
                 </table>
             </div>
-            <p className="border-t border-neutral-800 px-4 py-2 text-xs text-neutral-500">
+            <p className="border-t border-gray-100 px-4 py-2 text-xs text-gray-500">
                 Auto-filled from batter entries below. Click a cell to set it manually — once edited it stays as entered even
                 if the batter data changes later.
             </p>

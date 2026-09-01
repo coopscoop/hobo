@@ -12,20 +12,8 @@ export default async function GamePage({
     searchParams: Promise<{ edit?: string }>;
 }) {
     const { id } = await params;
-    const { edit } = await searchParams;
-
-    if (edit === 'true') {
-        const editData = await getGameEditData(id);
-        if (!editData) return notFound();
-        return (
-            <>
-                <BackButton />
-                <EditGamePage gameId={id} initialTeams={editData.teams} />
-            </>
-        );
-    }
-
     const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/${id}`).then((r) => r.json());
+
     if ('error' in data) return notFound();
 
     return (

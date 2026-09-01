@@ -230,6 +230,28 @@ export async function getLeagueStandings(leagueId?: number) {
   });
 }
 
-export async function createTeam(data: NewTeam) {
-    return db.insert(teams).values(data).returning();
+export async function createTeam(teamName: string) {
+    return db.insert(teams).values({ teamName }).returning();
+}
+
+export async function updateTeam(id: number, teamName: string) {
+    return db.update(teams).set({ teamName }).where(eq(teams.id, id)).returning();
+}
+
+// Hard block on delete if the team has ever appeared in a game (home or away) —
+// unlike players, this is a real guard, not a cascade. A team's game history
+// is the actual season record; wiping it out from under a delete would corrupt
+// standings/results for every other team that played them, which is a much
+// bigger blast radius than deleting a single player's own rows.
+export async function teamHasGames(id: number) {
+    const [row] = await db
+        .select({ id: games.id })
+        .from(games)
+        .where(or(eq(games.homeTeamId, id), eq(games.awayTeamId, id)))
+        .limit(1);
+    return !!row;
+}
+
+export async function deleteTeam(id: number) {
+    return db.delete(teams).where(eq(teams.id, id)).returning();
 }

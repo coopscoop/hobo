@@ -53,19 +53,8 @@ export function GameDetail({ data }: GameDetailProps) {
                 <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                     <Chip label={game.date} size="small" />
                     <Chip label={game.location} size="small" />
-                    <Chip label={game.league.name} size="small" />
+                    {/* <Chip label={game.league.name} size="small" /> */}
                     {game.isPlayoff && <Chip label="Playoff" size="small" color="primary" />}
-                    <Link href={`/games/${game.id}?edit=true`}>
-                        <Chip label="Edit Score Sheet" size="small" color="secondary" clickable />
-                    </Link>
-                    <Chip
-                        label={deleting ? 'Deleting…' : 'Delete Game'}
-                        size="small"
-                        color="error"
-                        clickable
-                        disabled={deleting}
-                        onClick={handleDelete}
-                    />
                 </Stack>
             </Box>
             {/* Score */}

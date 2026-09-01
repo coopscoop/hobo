@@ -8,6 +8,7 @@ import {
     rosters,
     homeTeam,
     awayTeam,
+    substitutes
 } from '@/lib/db/schema';
 import { NewPlayer } from '@/lib/types'
 
@@ -33,13 +34,11 @@ export async function getPlayerById(id: number) {
             id: players.id,
             firstName: players.firstName,
             lastName: players.lastName,
-            currentTeamId: players.currentTeam,
             currentTeamName: teams.teamName,
         })
         .from(players)
         .leftJoin(teams, eq(players.currentTeam, teams.id))
         .where(eq(players.id, id));
-
     return result;
 }
 
@@ -553,13 +552,22 @@ export async function getPlayersWithStats(
 }
 
 export async function createPlayer(data: NewPlayer) {
-    return db.insert(players).values(data).returning()
+    return db.insert(players).values(data).returning();
 }
 
 export async function updatePlayer(id: number, data: Partial<NewPlayer>) {
-    return db.update(players).set(data).where(eq(players.id, id)).returning()
+    return db.update(players).set(data).where(eq(players.id, id)).returning();
 }
 
+// Deleting a player wipes their dependent rows first (rosters, substitute
+// appearances, batting stats) rather than blocking on FK constraints — the
+// preference here is "let old players actually go away cleanly" rather than
+// keeping them stuck because deleting would otherwise 500/409.
 export async function deletePlayer(id: number) {
-    return db.delete(players).where(eq(players.id, id))
+    return db.transaction(async (tx) => {
+        await tx.delete(batting).where(eq(batting.playerId, id));
+        await tx.delete(substitutes).where(eq(substitutes.playerId, id));
+        await tx.delete(rosters).where(eq(rosters.playerId, id));
+        return tx.delete(players).where(eq(players.id, id)).returning();
+    });
 }

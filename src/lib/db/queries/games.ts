@@ -131,9 +131,8 @@ export async function getUpcomingGames(leagueId?: string | null) {
     return gameJoins(db.select(gameSelect).from(games))
         .where(
             and(
-                // NOTE: remove the 1 year to make these accurate to the current date
-                gte(games.date, sql`current_date - interval '1 year'`),
-                lte(games.date, sql`current_date - interval '1 year' + interval '7 days'`),
+                gte(games.date, sql`current_date`),
+                lte(games.date, sql`current_date + interval '7 days'`),
                 leagueId && leagueId !== 'all'
                     ? eq(games.leagueId, parseInt(leagueId))
                     : undefined

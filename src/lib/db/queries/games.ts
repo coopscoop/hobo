@@ -4,7 +4,7 @@ import { homeTeam, awayTeam } from '@/lib/db/schema';
 import { eq, and, or, gte, lt, lte, desc, sql, type SQL } from 'drizzle-orm';
 import { substitutes } from '@/lib/db/schema';
 import { inArray } from 'drizzle-orm';
-import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/lib/types/types';
+import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/lib/types';
 
 // ---- Types ----
 

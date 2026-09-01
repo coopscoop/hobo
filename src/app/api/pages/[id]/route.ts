@@ -1,4 +1,4 @@
-import { updatePageContent } from '@/lib/db/queries/pageContent'
+import { updatePage } from '@/lib/db/queries/pages'
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -15,7 +15,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
             );
         }
 
-        const updated = await updatePageContent(id, content);
+        const updated = await updatePage(Number(id), { content });
 
         if (!updated) {
             return NextResponse.json({ error: 'No page found' }, { status: 404 });

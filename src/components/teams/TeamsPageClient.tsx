@@ -26,7 +26,6 @@ export default function TeamsPageClient({ teams }: TeamsPageClientProps) {
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography variant="h4" gutterBottom>Teams</Typography>
             <OutlinedInput
                 size="small"
                 placeholder="Search players..."

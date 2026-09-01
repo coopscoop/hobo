@@ -1,5 +1,7 @@
 import { PlayersPageClient } from '@/components/players/PlayersPageClient';
 import { fetchPlayersWithStats } from '@/lib/services/players';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 interface PlayersPageProps {
     searchParams: Promise<{
@@ -27,10 +29,15 @@ export default async function PlayersPage({
     );
 
     return (
-        <PlayersPageClient
-            players={players}
-            yearFrom={yearFrom ?? ''}
-            yearTo={yearTo ?? ''}
-        />
+        <div>
+            <Box sx={{ px: 4, py: 3, mb: 3, borderBottom: '4px solid', borderColor: 'primary.main', backgroundColor: '#ffffff' }}>
+                <Typography variant="h4">Players</Typography>
+            </Box>
+            <PlayersPageClient
+                players={players}
+                yearFrom={yearFrom ?? ''}
+                yearTo={yearTo ?? ''}
+            />
+        </div>
     );
 }

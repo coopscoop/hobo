@@ -50,3 +50,9 @@ export async function fetchGameYearRange(): Promise<{
 
     return res.json();
 }
+
+export async function getGameEditData(id: string) {
+  const res = await fetch(`/api/games/${id}/edit-data`);
+  if (!res.ok) throw new Error(`Failed to load game edit data: ${res.status}`);
+  return res.json();
+}

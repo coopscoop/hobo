@@ -12,7 +12,7 @@ export default async function GamesPage() {
     return (
         <div>
             <Box sx={{ px: 4, py: 3, mb: 3, borderBottom: '4px solid', borderColor: 'primary.main', backgroundColor: '#ffffff' }}>
-                <Typography variant="h4">Hamilton Oldtimers Baseball</Typography>
+                <Typography variant="h4">Games & Results</Typography>
             </Box>
             <GamesPageClient
                 initialGames={games}

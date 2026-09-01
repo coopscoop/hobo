@@ -72,23 +72,6 @@ export default function EditablePage({ pageName }: { pageName: string }) {
 
     return (
         <div>
-            {isEditing ? (
-                <div className={styles.buttonGroup}>
-                    <button onClick={handleSave} disabled={isSaving} className={styles.saveButton}>
-                        {isSaving ? 'Saving…' : 'Save'}
-                    </button>
-                    <button onClick={handleCancel} disabled={isSaving} className={styles.secondaryButton}>
-                        Cancel
-                    </button>
-                </div>
-            ) : (
-                <button onClick={() => setIsEditing(true)} className={styles.secondaryButton}>
-                    Edit
-                </button>
-            )}
-
-            {error && <p>{error}</p>}
-
             <Editor
                 key={isEditing ? 'edit' : 'view'}
                 markdown={isEditing ? draft : page.content}

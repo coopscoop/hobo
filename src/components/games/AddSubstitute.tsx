@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import type { PlayerName } from "@/types/types";
+import type { PlayerName } from "@/lib/types";
 
 interface Props {
   excludePlayerIds: Set<string>; // current team's roster + already-added subs — filtered client-side only, backend enforces the real rule

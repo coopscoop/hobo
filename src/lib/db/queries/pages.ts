@@ -17,8 +17,8 @@ export async function createPage(data: NewPage) {
   return db.insert(pages).values(data).returning()
 }
 
-export async function updatePage(pageName: string, data: Partial<NewPage>) {
-  return db.update(pages).set(data).where(eq(pages.pageName, pageName)).returning()
+export async function updatePage(pageId: number, data: Partial<NewPage>) {
+  return db.update(pages).set(data).where(eq(pages.id, pageId)).returning()
 }
 
 export async function deletePage(pageName: string) {

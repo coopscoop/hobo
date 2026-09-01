@@ -34,26 +34,6 @@ export function HomePageClient({
     const [pinnedNews] = useState<Announcement[]>(initialPinned);
     const [seasonNews] = useState<Announcement[]>(initialSeason);
 
-    // useEffect(() => {
-    //     // News isn't league-filtered, so only games/standings need to refetch.
-    //     if (leagueId === 'all') {
-    //         setUpcomingGames(initialUpcoming);
-    //         setRecentGames(initialRecent);
-    //         setStandings(initialStandings);
-    //         return;
-    //     }
-    //
-    //     Promise.all([
-    //         fetchUpcomingGames(leagueId),
-    //         fetchRecentGames(leagueId),
-    //         fetchStandings(leagueId),
-    //     ]).then(([upcoming, recent, teams]) => {
-    //         setUpcomingGames(upcoming);
-    //         setRecentGames(recent);
-    //         setStandings(teams);
-    //     });
-    // }, [leagueId]);
-
     return (
         <Box>
             <Box sx={{ px: 4, py: 3, borderBottom: '4px solid', borderColor: 'primary.main', backgroundColor: '#ffffff' }}>
@@ -63,9 +43,9 @@ export function HomePageClient({
             <Box sx={{ p: 4 }}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ alignItems: 'flex-start' }}>
                     <Box sx={{ flex: 2, minWidth: 0, width: '100%' }}>
-                        <NewsList title="Pinned" announcements={pinnedNews} />
+                        <NewsList title="Headlines" announcements={pinnedNews} />
                         <Box sx={{ mt: 4 }}>
-                            <NewsList title="Season News" announcements={seasonNews} />
+                            <NewsList title="Announcements" announcements={seasonNews} />
                         </Box>
                     </Box>
                     <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>

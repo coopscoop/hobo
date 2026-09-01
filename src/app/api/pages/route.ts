@@ -1,9 +1,9 @@
-import { getPageContent } from '@/lib/db/queries/pageContent';
+import { getPages } from '@/lib/db/queries/pages';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        const content = await getPageContent();
+        const content = await getPages();
         return NextResponse.json(content, { status: 200 });
     } catch (error) {
         console.error("API Error:", error);

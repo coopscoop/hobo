@@ -30,22 +30,6 @@ nuqs -> URL params, useful for filtering/bookmarking
   - some excel/csv export options?
     - useful for moving data to other programs
 
-## standardize API calls
-
-db query > API > service > server page > client component
-
-- [ ] announcments
-- [ ] fields
-- [ ] games
-    - [ ] batting
-    - [ ] inning
-- [ ] players
-- [ ] teams
-- [ ] rosters
-- [ ] substitutes
-- [ ] leagues
-
-
 ### old pages
 
 - home/welcome

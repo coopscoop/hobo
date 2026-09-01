@@ -21,9 +21,10 @@ import { Typography } from "@mui/material";
 interface Props {
     gameId: string;
     initialTeams: Record<TeamKey, TeamGameData>;
+    onSaved?: () => void; // when provided (e.g. modal context), called instead of navigating
 }
 
-export default function EditGamePage({ gameId, initialTeams }: Props) {
+export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
     const [teams, setTeams] = useState<Record<TeamKey, TeamGameData>>(initialTeams);
     const [overrides, setOverrides] = useState<Record<TeamKey, LineScoreOverrides>>({ home: {}, away: {} });
     const [modal, setModal] = useState<ModalTarget | null>(null);
@@ -81,13 +82,13 @@ export default function EditGamePage({ gameId, initialTeams }: Props) {
                 body: JSON.stringify({ innings, homeScore, awayScore }),
             });
             if (!res.ok) throw new Error(`save failed: ${res.status}`);
-            router.push(`/games/${gameId}`);
+            if (onSaved) onSaved();
+            else router.push(`/games/${gameId}`);
         } catch (err) {
             console.error("Failed to save game score", err);
             alert("Failed to save final score — check console");
         }
     }
-
     async function removeSubstitute(teamKey: TeamKey, playerId: string, subId: number) {
         try {
             const res = await fetch(`/api/games/${gameId}/substitutes/${subId}`, { method: "DELETE" });

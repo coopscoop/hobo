@@ -31,12 +31,12 @@ const NAV_GROUPS: NavGroup[] = [
         links: [
             { href: '/rules', label: 'Rules' },
             { href: '/howToScore', label: 'How to Score' },
-            { href: '/101', label: '101: For new players' },
-            { href: '/201', label: '201: For returning players' },
+            { href: '/101', label: '101: For New Players' },
+            { href: '/201', label: '201: For Returning Players' },
         ],
     },
     {
-        label: 'Awards',
+        label: 'Extras',
         links: [
             { href: '/leagueChampions', label: 'League Champs' },
             { href: '/hallOfFame', label: 'Hall of Fame' },
@@ -50,7 +50,7 @@ const NAV_GROUPS: NavGroup[] = [
     },
     {
         label: 'Admin',
-        links: [{ href: '/contact', label: 'Control Panel' }],
+        links: [{ href: '/admin', label: 'Admin Panel' }],
     },
 ];
 

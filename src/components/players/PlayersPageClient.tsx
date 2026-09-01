@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQueryStates } from 'nuqs';
+import { parseAsString, useQueryStates } from 'nuqs';
 import {
     Box,
     Stack,
@@ -23,8 +23,6 @@ interface PlayersPageClientProps {
     players: PlayerWithStats[];
     yearFrom: string;
     yearTo: string;
-    minYear: number;
-    maxYear: number;
 }
 
 export function PlayersPageClient({
@@ -35,8 +33,8 @@ export function PlayersPageClient({
     const [{ yearFrom: queryYearFrom, yearTo: queryYearTo }, setYears] =
         useQueryStates(
             {
-                yearFrom: { defaultValue: yearFrom || null },
-                yearTo: { defaultValue: yearTo || null },
+                yearFrom: parseAsString,
+                yearTo: parseAsString,
             },
             {
                 shallow: false,
@@ -107,8 +105,8 @@ export function PlayersPageClient({
                         endDate={endDate}
                         onStartChange={handleStartDateChange}
                         onEndChange={handleEndDateChange}
-                        minYear={yearFrom}
-                        maxYear={yearTo}
+                        minYear={Number(yearFrom)}
+                        maxYear={Number(yearTo)}
                         yearOnly
                     />
                 </FormControl>

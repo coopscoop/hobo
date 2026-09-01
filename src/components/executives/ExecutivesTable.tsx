@@ -3,7 +3,7 @@
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import type { InferSelectModel } from 'drizzle-orm';
-import { executives } from '@/db/schema';
+import { executives } from '@/lib/db/schema';
 
 type Executive = InferSelectModel<typeof executives>;
 

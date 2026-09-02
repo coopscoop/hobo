@@ -20,7 +20,7 @@ const columns: GridColDef[] = [
     { field: "date", headerName: "Date", width: 120 },
     { field: "homeTeam", headerName: "Home", flex: 1 },
     { field: "awayTeam", headerName: "Away", flex: 1 },
-    { field: "location", headerName: "Location", width: 140 },
+    // { field: "location", headerName: "Location", width: 140 },
 ];
 
 export default function GamesPanel({ initialData, teams, fields }: Props) {

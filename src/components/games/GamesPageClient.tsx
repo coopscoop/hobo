@@ -40,17 +40,16 @@ export function GamesPageClient({ initialGames, minYear, maxYear }: GamesPageCli
 
     return (
         <Box sx={{ p: 2 }}>
-            <h1>Games & Results</h1>
             <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
-                <DateRange
-                    startDate={startDate}
-                    endDate={endDate}
-                    onStartChange={setStartDate}
-                    onEndChange={setEndDate}
-                    minYear={minYear}
-                    maxYear={maxYear}
-                    yearOnly
-                />
+                {/* <DateRange */}
+                {/*     startDate={startDate} */}
+                {/*     endDate={endDate} */}
+                {/*     onStartChange={setStartDate} */}
+                {/*     onEndChange={setEndDate} */}
+                {/*     minYear={minYear} */}
+                {/*     maxYear={maxYear} */}
+                {/*     yearOnly */}
+                {/* /> */}
                 <OutlinedInput
                     size="small"
                     placeholder="Search..."

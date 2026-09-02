@@ -16,11 +16,6 @@ CREATE TABLE "Announcements" (
 	"pinned" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "away_team" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"team_name" varchar(32) NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "Batting" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"game_id" integer NOT NULL,
@@ -69,11 +64,6 @@ CREATE TABLE "Games" (
 	"home_score" integer,
 	"away_score" integer,
 	"start_time" time DEFAULT '09:00:00' NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "home_team" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"team_name" varchar(32) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "Innings" (

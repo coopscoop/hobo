@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styles from './Sidebar.module.css';
-import { Select, MenuItem, FormControl } from '@mui/material';
+import { Select, MenuItem, FormControl, Button, Typography, Box } from '@mui/material';
 import { useLeague } from '@/context/LeagueContext';
+import { getCurrentAdmin, logout } from '@/lib/services/auth';
 
 interface NavGroup {
     label: string;
@@ -57,6 +59,25 @@ const NAV_GROUPS: NavGroup[] = [
 export default function Sidebar() {
     const { leagueId, setLeagueId } = useLeague();
     const pathname = usePathname();
+    const router = useRouter();
+    const [admin, setAdmin] = useState<{ email: string; role: string } | null>(null);
+    const [checkedAuth, setCheckedAuth] = useState(false);
+
+    useEffect(() => {
+        getCurrentAdmin()
+            .then(setAdmin)
+            .finally(() => setCheckedAuth(true));
+    }, [pathname]); // re-checks on navigation, which is what picks up a fresh login after the /login page redirects to /admin
+
+    async function handleLogout() {
+        await logout();
+        setAdmin(null);
+        router.push('/');
+    }
+
+    const visibleGroups = admin
+        ? NAV_GROUPS
+        : NAV_GROUPS.filter((g) => g.label !== 'Admin');
 
     return (
         <aside className={styles.sidebar}>
@@ -64,19 +85,29 @@ export default function Sidebar() {
                 <span className={styles.wordmark}>
                     HO<span className={styles.wordmarkAccent}>BO</span>
                 </span>
-                {/* <FormControl size="small" fullWidth> */}
-                {/*   <Select */}
-                {/*     value={leagueId} */}
-                {/*     onChange={(e) => setLeagueId(e.target.value)} */}
-                {/*   > */}
-                {/*     <MenuItem value="all">All Leagues</MenuItem> */}
-                {/*     <MenuItem value="2">33+</MenuItem> */}
-                {/*     <MenuItem value="1">55+</MenuItem> */}
-                {/*   </Select> */}
-                {/* </FormControl> */}
             </div>
+
+            <Box sx={{ px: 2, py: 1 }}>
+                {checkedAuth && (
+                    admin ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                            <Typography variant="caption" sx={{ wordBreak: 'break-all', opacity: 0.7 }}>
+                                {admin.email}
+                            </Typography>
+                            <Button size="small" onClick={handleLogout} sx={{ alignSelf: 'flex-start' }}>
+                                Log Out
+                            </Button>
+                        </Box>
+                    ) : (
+                        <Button size="small" component={Link} href="/login">
+                            Sign In
+                        </Button>
+                    )
+                )}
+            </Box>
+
             <nav className={styles.nav}>
-                {NAV_GROUPS.map((group) => (
+                {visibleGroups.map((group) => (
                     <div className={styles.navGroup} key={group.label}>
                         <p className={styles.groupLabel}>{group.label}</p>
                         <ul className={styles.navList}>

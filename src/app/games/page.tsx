@@ -1,4 +1,3 @@
-// app/games/page.tsx
 import { GamesPageClient } from '@/components/games/GamesPageClient';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';

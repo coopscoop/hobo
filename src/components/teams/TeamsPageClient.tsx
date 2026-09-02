@@ -28,7 +28,7 @@ export default function TeamsPageClient({ teams }: TeamsPageClientProps) {
         <Box sx={{ p: 2 }}>
             <OutlinedInput
                 size="small"
-                placeholder="Search players..."
+                placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 sx={{ width: 300, ml: 2 }}

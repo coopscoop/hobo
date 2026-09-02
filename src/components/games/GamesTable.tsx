@@ -27,8 +27,8 @@ export function GamesTable({ games }: GamesTableProps) {
     { field: 'homeTeam',  headerName: 'Home',     flex: 1 },
     { field: 'awayTeam',  headerName: 'Away',     flex: 1 },
     { field: 'score',     headerName: 'Score',    width: 100 },
-    { field: 'league',    headerName: 'League',   flex: 1 },
-    { field: 'location',  headerName: 'Location', flex: 1 },
+    // { field: 'league',    headerName: 'League',   flex: 1 },
+    // { field: 'location',  headerName: 'Location', flex: 1 },
     { field: 'isPlayoff', headerName: 'Playoff',  width: 90, type: 'boolean' },
   ];
 

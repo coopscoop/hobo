@@ -89,8 +89,6 @@ export function PlayersPageClient({
 
     return (
         <Box sx={{ p: 2 }}>
-            <h1>Players</h1>
-
             <Stack
                 direction="row"
                 spacing={2}
@@ -99,17 +97,30 @@ export function PlayersPageClient({
                     alignItems: 'center',
                 }}
             >
-                <FormControl size="small" sx={{ minWidth: 100 }}>
-                    <DateRange
-                        startDate={startDate}
-                        endDate={endDate}
-                        onStartChange={handleStartDateChange}
-                        onEndChange={handleEndDateChange}
-                        minYear={Number(yearFrom)}
-                        maxYear={Number(yearTo)}
-                        yearOnly
-                    />
-                </FormControl>
+                {/* <FormControl size="small" sx={{ minWidth: 100 }}> */}
+                {/*     <DateRange */}
+                {/*         startDate={startDate} */}
+                {/*         endDate={endDate} */}
+                {/*         onStartChange={handleStartDateChange} */}
+                {/*         onEndChange={handleEndDateChange} */}
+                {/*         minYear={Number(yearFrom)} */}
+                {/*         maxYear={Number(yearTo)} */}
+                {/*         yearOnly */}
+                {/*     /> */}
+                {/* </FormControl> */}
+
+                <OutlinedInput
+                    size="small"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    sx={{ width: 300 }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <Search fontSize="small" />
+                        </InputAdornment>
+                    }
+                />
 
                 <FormControlLabel
                     control={
@@ -121,19 +132,6 @@ export function PlayersPageClient({
                         />
                     }
                     label="Active players only"
-                />
-
-                <OutlinedInput
-                    size="small"
-                    placeholder="Search players..."
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    sx={{ width: 300 }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <Search fontSize="small" />
-                        </InputAdornment>
-                    }
                 />
             </Stack>
 

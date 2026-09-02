@@ -1,5 +1,5 @@
 {
-  "id": "cd0ac9e3-ab91-435b-b8f7-f30f9f335a92",
+  "id": "2f01530f-6a99-49dd-8dd1-1560efeff09d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -99,31 +99,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.away_team": {
-      "name": "away_team",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "team_name": {
-          "name": "team_name",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
@@ -508,31 +483,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.home_team": {
-      "name": "home_team",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "team_name": {
-          "name": "team_name",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

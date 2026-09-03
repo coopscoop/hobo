@@ -41,8 +41,10 @@ yarn-error.log*
 next-env.d.ts
 .aider*
 
-# aider context
+# AI context stuff
 CONVENTIONS.md
+CLAUDE.md
+AGENTS.md
 
 # todo
 TODO.md

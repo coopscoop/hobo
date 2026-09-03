@@ -9,7 +9,7 @@ const pool = instanceConnectionName
       // when you attach the Cloud SQL instance in the console. No host/port.
       host: `/cloudsql/${instanceConnectionName}`,
       user: process.env.DB_USER,
-      password: process.env.DB_PASS,
+      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       max: 5, // keep this small — db-f1-micro caps out around 25 connections
     })

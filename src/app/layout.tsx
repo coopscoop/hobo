@@ -6,6 +6,8 @@ import styles from './layout.module.css';
 import './globals.css';
 import DateLocalizationProvider from '@/components/DateLocalizationProvider';
 
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">

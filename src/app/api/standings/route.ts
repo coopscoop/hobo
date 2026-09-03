@@ -7,6 +7,6 @@ export async function GET(request: Request) {
     ? Number(searchParams.get('leagueId')) 
     : 2
   
-  const standings = await getLeagueStandings(leagueId)
+  const standings = await getLeagueStandings(1)
   return NextResponse.json(standings)
 }

@@ -9,8 +9,6 @@ export function UpcomingGamesTable({ games }: { games: GameListItem[] }) {
 
     const router = useRouter();
 
-    console.log(games);
-
     return (
         <div className="mt-8">
             <Typography variant="h6" gutterBottom>Upcoming Games</Typography>

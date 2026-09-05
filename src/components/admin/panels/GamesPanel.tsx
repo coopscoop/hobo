@@ -40,8 +40,6 @@ export default function GamesPanel({ initialData, teams, fields }: Props) {
         [initialData]
     );
 
-    console.log(initialData);
-
     const createFields: FormFieldConfig[] = useMemo(
         () => [
             { name: "homeTeamId", label: "Home Team", type: "select", options: teams.map((t) => ({ value: t.id, label: t.teamName })) },

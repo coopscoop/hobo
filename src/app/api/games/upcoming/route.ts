@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
     try {
         const leagueId = req.nextUrl.searchParams.get('leagueId');
         const games = await getUpcomingGames(leagueId);
-        console.log(games);
 
         // worst case return a 404 if no announcements are found
         if (!games) {

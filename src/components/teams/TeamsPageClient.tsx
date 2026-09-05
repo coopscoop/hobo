@@ -1,6 +1,5 @@
 'use client';
 
-import { getTeams } from '@/lib/db/queries/teams';
 import { TeamsTable } from '@/components/teams/TeamsTable';
 import { Search } from '@mui/icons-material';
 import { Box, InputAdornment, OutlinedInput, Typography } from '@mui/material';
@@ -25,7 +24,7 @@ export default function TeamsPageClient({ teams }: TeamsPageClientProps) {
     }, [search]);
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box>
             <OutlinedInput
                 size="small"
                 placeholder="Search..."

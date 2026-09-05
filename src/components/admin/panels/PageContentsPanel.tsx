@@ -13,7 +13,7 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: "id", headerName: "ID", width: 100 },
     { field: "pageName", headerName: "Page", flex: 1 },
 ];
 

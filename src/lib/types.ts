@@ -67,7 +67,8 @@ export interface PlateAppearance {
     result: ResultCode | null;
     sac: boolean;
     fc: boolean;
-    rbi: 0 | 1 | 2 | 3 | 4;
+    roe: boolean;
+    rbi: null | 0 | 1 | 2 | 3 | 4;
     sb2: boolean;
     sb3: boolean;
     sbHome: boolean;
@@ -100,6 +101,7 @@ export interface PlayerTotals {
     bb: number;
     k: number;
     sb: number;
+    pa: number;
 }
 
 /** undefined = auto-calculated from batting data; a number = manually locked in
@@ -113,6 +115,7 @@ export interface ModalTarget {
 }
 
 export interface BattingRow {
+    plateAppearance: number;
     atBat: number;
     run: number;
     walk: number;

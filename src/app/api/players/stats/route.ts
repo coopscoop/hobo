@@ -8,13 +8,16 @@ export async function GET(request: Request) {
         const yearFromParam = searchParams.get('yearFrom');
         const yearToParam = searchParams.get('yearTo');
 
-        const yearFrom = yearFromParam
-            ? Number(yearFromParam)
-            : undefined;
+        // const yearFrom = yearFromParam
+        //     ? Number(yearFromParam)
+        //     : undefined;
+        //
+        // const yearTo = yearToParam
+        //     ? Number(yearToParam)
+        //     : undefined;
 
-        const yearTo = yearToParam
-            ? Number(yearToParam)
-            : undefined;
+        const yearFrom = 2026;
+        const yearTo = 2026;
 
         if (
             yearFrom !== undefined &&

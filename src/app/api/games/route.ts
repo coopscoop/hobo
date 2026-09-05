@@ -6,14 +6,16 @@ import { games } from '@/lib/db/schema';
 export async function GET(req: NextRequest) {
 
     try {
-        const p = req.nextUrl.searchParams;
-        const games = await getGames({
-            leagueId: p.get('leagueId'),
-            teamId: p.get('teamId'),
-            dateFrom: p.get('dateFrom'),
-            dateTo: p.get('dateTo'),
-            playoff: p.get('playoff'),
-        });
+        // const p = req.nextUrl.searchParams;
+        // const games = await getGames({
+        //     leagueId: p.get('leagueId'),
+        //     teamId: p.get('teamId'),
+        //     dateFrom: p.get('dateFrom'),
+        //     dateTo: p.get('dateTo'),
+        //     playoff: p.get('playoff'),
+        //     fieldName: p.get('fieldName')
+        // });
+        const games = await getGames();
 
         // worst case return a 404 if no announcements are found
         if (!games) {

@@ -35,9 +35,9 @@ export default async function PlayersPage({
             </Box>
             <PlayersPageClient
                 players={players}
-                yearFrom={yearFrom ?? ''}
-                yearTo={yearTo ?? ''}
             />
+            {/* yearFrom={yearFrom ?? ''} */}
+            {/* yearTo={yearTo ?? ''} */}
         </div>
     );
 }

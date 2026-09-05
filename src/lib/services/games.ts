@@ -29,7 +29,7 @@ export async function fetchAllGames(leagueId?: string | null): Promise<GameListI
     const params = new URLSearchParams()
     if (leagueId && leagueId !== 'all') params.append('leagueId', leagueId)
 
-    const url = `${baseUrl()}/api/games/all${params.toString() ? '?' + params.toString() : ''}`
+    const url = `${baseUrl()}/api/games/`
     const res = await fetch(url, { cache: 'no-store' })
     if (!res.ok) throw new Error('Failed to fetch all ')
     return res.json()

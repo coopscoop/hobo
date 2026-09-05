@@ -16,8 +16,6 @@ export default async function TeamPage({
         fetchGameYearRange(),
     ]);
 
-    console.log(yearRange);
-
     if (!data) {
         return null;
     }

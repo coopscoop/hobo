@@ -112,6 +112,15 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
         setMaxInning((m) => m - 1);
     }
 
+    function clearInning(teamKey: TeamKey, playerId: string, inning: number) {
+        setTeams((prev) => {
+            const next = structuredClone(prev);
+            const player = next[teamKey].players.find((p) => p.playerId === playerId)!;
+            delete player.innings[inning];
+            return next;
+        });
+    }
+
     function flashSaved() {
         setSavedFlash(true);
         setTimeout(() => setSavedFlash(false), 900);
@@ -304,6 +313,7 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     onChangePA={(paIndex, patch) => updatePA(modal.team, modal.playerId, modal.inning, paIndex, patch)}
                     onAddSecondPA={(restore) => addSecondPA(modal.team, modal.playerId, modal.inning, restore)}
                     onRemoveSecondPA={() => removeSecondPA(modal.team, modal.playerId, modal.inning)}
+                    onClearInning={() => clearInning(modal.team, modal.playerId, modal.inning)}
                     onMoveInning={moveInning}
                     onClose={closeModal}
                 />

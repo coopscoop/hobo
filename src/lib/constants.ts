@@ -110,7 +110,7 @@ export function computeAutoRunsForInning(team: TeamGameData, inning: number): nu
  *  recomputing display totals from persisted perInning data. */
 export function computeBattingRow(innings: InningMap): BattingRow {
     const row: BattingRow = {
-        atBat: 0, run: 0, walk: 0, strikeout: 0, hitByPitch: 0,
+        plateAppearance: 0, atBat: 0, run: 0, walk: 0, strikeout: 0, hitByPitch: 0,
         stolenBase: 0, runsBattedIn: 0, sacrifice: 0,
         singleHit: 0, doubleHit: 0, tripleHit: 0, homeRun: 0,
     };
@@ -128,6 +128,7 @@ export function computeBattingRow(innings: InningMap): BattingRow {
             if (pa.sac) row.sacrifice += 1;
             row.runsBattedIn += pa.rbi || 0;
             row.stolenBase += (pa.sb2 ? 1 : 0) + (pa.sb3 ? 1 : 0) + (pa.sbHome ? 1 : 0);
+            row.plateAppearance += 1;
         }
     }
     return row;

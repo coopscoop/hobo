@@ -16,6 +16,7 @@ interface Props {
     onChangePA: (paIndex: number, patch: Partial<PlateAppearance>) => void;
     onAddSecondPA: (restore?: PlateAppearance) => void;
     onRemoveSecondPA: () => PlateAppearance | null;
+    onClearInning: () => void;
     onMoveInning: (direction: 1 | -1) => void;
     onClose: () => void;
 }
@@ -29,6 +30,7 @@ export function InningModal({
     onChangePA,
     onAddSecondPA,
     onRemoveSecondPA,
+    onClearInning,
     onMoveInning,
     onClose,
 }: Props) {
@@ -110,7 +112,7 @@ export function InningModal({
 
                 <div className="sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-gray-50 px-5 py-3 text-right">
                     <button
-                        onClick={() => onChangePA(0, emptyPA())}
+                        onClick={onClearInning}
                         className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900 px-4 mx-4"
                     >
                         Clear

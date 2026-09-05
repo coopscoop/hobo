@@ -115,6 +115,7 @@ export interface ModalTarget {
 }
 
 export interface BattingRow {
+    plateAppearance: number;
     atBat: number;
     run: number;
     walk: number;

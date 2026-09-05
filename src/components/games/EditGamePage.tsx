@@ -268,9 +268,8 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
                 <div className="px-1">
-                    {/* excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))} */}
                     <AddSubstitute
-                        excludePlayerIds={new Set()}
+                        excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))}
                         onAdd={(p) => addSubstitute("home", p)}
                     />
                 </div>

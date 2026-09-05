@@ -13,11 +13,11 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: "id", headerName: "ID", width: 100 },
     { field: "teamName", headerName: "Team", flex: 1 },
-    { field: "wins", headerName: "W", width: 70 },
-    { field: "losses", headerName: "L", width: 70 },
-    { field: "ties", headerName: "T", width: 70 },
+    { field: "wins", headerName: "W", flex: 1 },
+    { field: "losses", headerName: "L", flex: 1 },
+    { field: "ties", headerName: "T", flex: 1 },
 ];
 
 const fields: FormFieldConfig[] = [{ name: "teamName", label: "Team Name" }];

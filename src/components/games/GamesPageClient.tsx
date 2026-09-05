@@ -39,7 +39,7 @@ export function GamesPageClient({ initialGames, minYear, maxYear }: GamesPageCli
     }, [games, search, startDate, endDate]);
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ px: 2 }}>
             <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
                 {/* <DateRange */}
                 {/*     startDate={startDate} */}

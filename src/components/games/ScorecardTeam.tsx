@@ -49,6 +49,7 @@ return (
               {innings.map((i) => (
                 <th key={i} className="w-16 px-1 py-2 text-center font-medium">{i}</th>
               ))}
+              <th className="w-12 px-1 py-2 text-center font-medium">PA</th>
               <th className="w-12 px-1 py-2 text-center font-medium">AB</th>
               <th className="w-12 px-1 py-2 text-center font-medium">H</th>
               <th className="w-12 px-1 py-2 text-center font-medium">R</th>
@@ -119,6 +120,7 @@ return (
                       </td>
                     );
                   })}
+                  <td className="text-center text-gray-700">{totals.pa}</td>
                   <td className="text-center text-gray-700">{totals.ab}</td>
                   <td className="text-center text-gray-700">{totals.h}</td>
                   <td className="text-center text-gray-700">{totals.r}</td>

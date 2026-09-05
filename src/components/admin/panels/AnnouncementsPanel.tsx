@@ -13,11 +13,11 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: "id", headerName: "ID", width: 100 },
     { field: "title", headerName: "Title", flex: 1 },
-    { field: "type", headerName: "Type", width: 120 },
-    { field: "pinned", headerName: "Headline", width: 90, type: "boolean" },
-    { field: "date", headerName: "Posted", width: 130 },
+    { field: "type", headerName: "Type", flex: 1 },
+    { field: "date", headerName: "Date Posted", flex: 1 },
+    { field: "pinned", headerName: "Headline", width: 100, type: "boolean" },
 ];
 
 export default function AnnouncementsPanel({ initialData }: Props) {

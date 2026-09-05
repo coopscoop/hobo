@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { games, leagues, innings, batting, players, rosters } from '@/lib/db/schema';
+import { games, leagues, innings, batting, players, rosters, fields } from '@/lib/db/schema';
 import { homeTeam, awayTeam } from '@/lib/db/schema';
 import { eq, and, or, gte, lt, lte, desc, sql, type SQL } from 'drizzle-orm';
 import { substitutes } from '@/lib/db/schema';
@@ -14,6 +14,7 @@ export interface GameFilters {
     dateFrom?: string | null;
     dateTo?: string | null;
     playoff?: string | null;
+    fieldName?: string | null;
 }
 
 // ---- Filter builder ----
@@ -74,13 +75,22 @@ const gameJoins = (query: any) =>
         .innerJoin(awayTeam, eq(games.awayTeamId, awayTeam.id))
         .innerJoin(leagues, eq(games.leagueId, leagues.id));
 
+
 // ---- Queries ----
 
-export async function getGames(filters: GameFilters = {}) {
+export async function getGames() {
     return gameJoins(
-        db.select(gameSelect).from(games)
-    )
-        .where(buildGameFilters(filters))
+        db.select({
+            ...gameSelect,
+            fieldName: fields.name,
+        }).from(games))
+        .leftJoin(fields, eq(games.fieldId, fields.id))
+        .where(
+            and(
+                gte(games.date, '2026-01-01'),
+                lte(games.date, '2027-01-01')
+            )
+        )
         .orderBy(desc(games.date));
 }
 
@@ -128,7 +138,13 @@ export async function getGameYearRange() {
 }
 
 export async function getUpcomingGames(leagueId?: string | null) {
-    return gameJoins(db.select(gameSelect).from(games))
+    return gameJoins(
+        db.select({
+            ...gameSelect,
+            fieldName: fields.name,
+        }).from(games)
+    )
+        .leftJoin(fields, eq(games.fieldId, fields.id))
         .where(
             and(
                 gte(games.date, sql`current_date`),
@@ -189,9 +205,9 @@ export async function getGameEditData(idString: string) {
     const subPlayerIds = subs.map((s) => s.playerId);
     const subPlayers = subPlayerIds.length
         ? await db
-              .select({ id: players.id, firstName: players.firstName, lastName: players.lastName })
-              .from(players)
-              .where(inArray(players.id, subPlayerIds))
+            .select({ id: players.id, firstName: players.firstName, lastName: players.lastName })
+            .from(players)
+            .where(inArray(players.id, subPlayerIds))
         : [];
     const subPlayerMap = new Map(subPlayers.map((p) => [p.id, p]));
 

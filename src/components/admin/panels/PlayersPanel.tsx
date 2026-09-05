@@ -14,10 +14,10 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: "id", headerName: "ID", width: 100 },
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
-    { field: "team", headerName: "Team", width: 160 },
+    { field: "team", headerName: "Team", flex: 1 },
 ];
 
 export default function PlayersPanel({ initialData, teams }: Props) {

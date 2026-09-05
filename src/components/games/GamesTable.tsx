@@ -18,18 +18,18 @@ export function GamesTable({ games }: GamesTableProps) {
     awayTeam:  g.awayTeam.name,
     score:     g.homeScore !== null ? `${g.homeScore} - ${g.awayScore}` : '—',
     league:    g.league.name,
-    location:  g.location,
+    location:  g.fieldName,
     isPlayoff: g.isPlayoff,
   }));
 
   const columns: GridColDef[] = [
-    { field: 'date',      headerName: 'Date',     width: 120 },
+    { field: 'date',      headerName: 'Date',     width: 100 },
     { field: 'homeTeam',  headerName: 'Home',     flex: 1 },
     { field: 'awayTeam',  headerName: 'Away',     flex: 1 },
-    { field: 'score',     headerName: 'Score',    width: 100 },
     // { field: 'league',    headerName: 'League',   flex: 1 },
-    // { field: 'location',  headerName: 'Location', flex: 1 },
-    { field: 'isPlayoff', headerName: 'Playoff',  width: 90, type: 'boolean' },
+    { field: 'location',  headerName: 'Location', flex: 1 },
+    { field: 'score',     headerName: 'Score',    width: 100 },
+    { field: 'isPlayoff', headerName: 'Playoff',  width: 100, type: 'boolean' },
   ];
 
   return (

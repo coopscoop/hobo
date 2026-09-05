@@ -21,36 +21,36 @@ import DateRange from '@/components/DateRange';
 
 interface PlayersPageClientProps {
     players: PlayerWithStats[];
-    yearFrom: string;
-    yearTo: string;
+    // yearFrom: string;
+    // yearTo: string;
 }
 
 export function PlayersPageClient({
     players,
-    yearFrom,
-    yearTo,
+    // yearFrom,
+    // yearTo,
 }: PlayersPageClientProps) {
-    const [{ yearFrom: queryYearFrom, yearTo: queryYearTo }, setYears] =
-        useQueryStates(
-            {
-                yearFrom: parseAsString,
-                yearTo: parseAsString,
-            },
-            {
-                shallow: false,
-            },
-        );
+    // const [{ yearFrom: queryYearFrom, yearTo: queryYearTo }, setYears] =
+    //     useQueryStates(
+    //         {
+    //             yearFrom: parseAsString,
+    //             yearTo: parseAsString,
+    //         },
+    //         {
+    //             shallow: false,
+    //         },
+    //     );
 
     const [search, setSearch] = useState('');
     const [activeOnly, setActiveOnly] = useState(false);
 
-    const startDate = queryYearFrom
-        ? dayjs().year(Number(queryYearFrom))
-        : null;
-
-    const endDate = queryYearTo
-        ? dayjs().year(Number(queryYearTo))
-        : null;
+    // const startDate = queryYearFrom
+    //     ? dayjs().year(Number(queryYearFrom))
+    //     : null;
+    //
+    // const endDate = queryYearTo
+    //     ? dayjs().year(Number(queryYearTo))
+    //     : null;
 
     const filteredPlayers = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase();
@@ -75,20 +75,20 @@ export function PlayersPageClient({
         });
     }, [players, activeOnly, search]);
 
-    const handleStartDateChange = async (date: Dayjs | null) => {
-        await setYears({
-            yearFrom: date ? String(date.year()) : null,
-        });
-    };
-
-    const handleEndDateChange = async (date: Dayjs | null) => {
-        await setYears({
-            yearTo: date ? String(date.year()) : null,
-        });
-    };
+    // const handleStartDateChange = async (date: Dayjs | null) => {
+    //     await setYears({
+    //         yearFrom: date ? String(date.year()) : null,
+    //     });
+    // };
+    //
+    // const handleEndDateChange = async (date: Dayjs | null) => {
+    //     await setYears({
+    //         yearTo: date ? String(date.year()) : null,
+    //     });
+    // };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{px: 2}}>
             <Stack
                 direction="row"
                 spacing={2}

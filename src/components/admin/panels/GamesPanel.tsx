@@ -16,11 +16,11 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "date", headerName: "Date", width: 120 },
+    { field: "id", headerName: "ID", width: 100 },
+    { field: "date", headerName: "Date", flex: 1 },
     { field: "homeTeam", headerName: "Home", flex: 1 },
     { field: "awayTeam", headerName: "Away", flex: 1 },
-    // { field: "location", headerName: "Location", width: 140 },
+    { field: "location", headerName: "Location", flex: 1 },
 ];
 
 export default function GamesPanel({ initialData, teams, fields }: Props) {
@@ -35,10 +35,12 @@ export default function GamesPanel({ initialData, teams, fields }: Props) {
                 date: g.date,
                 homeTeam: g.homeTeam?.name ?? "",
                 awayTeam: g.awayTeam?.name ?? "",
-                location: g.location ?? "",
+                location: g.fieldName ?? "",
             })),
         [initialData]
     );
+
+    console.log(initialData);
 
     const createFields: FormFieldConfig[] = useMemo(
         () => [

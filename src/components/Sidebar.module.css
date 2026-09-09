@@ -1,3 +1,6 @@
+/* Sidebar.module.css - Merged version */
+
+/* Base sidebar styles for desktop */
 .sidebar {
   width: 240px;
   flex-shrink: 0;
@@ -14,10 +17,14 @@
   gap: 1.75rem;
 }
 
+/* Logo styles */
 .logo {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e4e8;
+  margin-bottom: 0.25rem;
 }
 
 .wordmark {
@@ -32,12 +39,16 @@
   color: #c8102e;
 }
 
+/* Navigation styles */
 .nav {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .navGroup {
-  margin-bottom: 1.5rem;
+  /* No margin needed since we use gap on .nav */
 }
 
 .navGroup:last-child {
@@ -49,6 +60,8 @@
   font-weight: 700;
   color: #9aa0a6;
   margin: 0 0 0.5rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .navList {
@@ -81,4 +94,64 @@
   border-left-color: #c8102e;
   color: #c8102e;
   font-weight: 600;
+}
+
+/* MUI Drawer specific overrides - applied via className prop */
+/* These classes will be used in the MUI Drawer to match your styling */
+.drawerPaper {
+  background-color: #ffffff !important;
+  border-right: 1px solid #e2e4e8 !important;
+  width: 240px !important;
+  padding: 1.5rem 1.25rem !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.75rem !important;
+}
+
+/* For mobile AppBar */
+.mobileAppBar {
+  background-color: #ffffff !important;
+  color: #1c1e21 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+  border-bottom: 1px solid #e2e4e8 !important;
+}
+
+.mobileAppBarTitle {
+  font-weight: 600;
+  color: #1c1e21;
+}
+
+.mobileAppBarIcon {
+  color: #1c1e21 !important;
+}
+
+/* Mobile close button */
+.mobileCloseButton {
+  color: #1c1e21 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 999px) {
+  .sidebar {
+    display: none; /* Hide the static sidebar on mobile, drawer handles it */
+  }
+}
+
+/* Optional: Scrollbar styling for the drawer */
+.drawerPaper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.drawerPaper::-webkit-scrollbar-track {
+  background: #f4f5f7;
+}
+
+.drawerPaper::-webkit-scrollbar-thumb {
+  background: #d0d2d6;
+  border-radius: 2px;
+}
+
+.drawerPaper::-webkit-scrollbar-thumb:hover {
+  background: #b0b2b6;
 }

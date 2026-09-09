@@ -1,16 +1,24 @@
 .body {
-  margin: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #f8f9fa;
 }
 
 .layout {
-  display: flex;
-  min-height: 100vh;
-  background: #ffffff;
+    display: flex;
+    min-height: 100vh;
 }
 
 .main {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  background: var(--hobo-content-bg);
+    flex: 1;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    transition: margin 0.3s ease;
+}
+
+@media (max-width: 999px) {
+    .main {
+        margin-top: 64px;
+    }
 }

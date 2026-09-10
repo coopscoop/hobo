@@ -6,3 +6,5 @@ Notably instead of simply having a massive grid of boxes to input data, you foll
 
 >[!NOTE]
 > More to come in the readme once the documentation is more properly fleshed out.
+
+triggering rebuild on cloud run

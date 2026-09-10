@@ -70,7 +70,7 @@ export function paLabel(pa: PlateAppearance): string | null {
 export function isAB(pa: PlateAppearance): boolean {
     if (!pa.result) return false;
     if (pa.result === "BB" || pa.result === "HBP") return false;
-    if (pa.sac || pa.fc || pa.roe) return false;
+    if (pa.sac) return false;
     return true;
 }
 

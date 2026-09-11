@@ -190,9 +190,9 @@ export async function getLeagueStandings({
             and(
                 isNotNull(games.homeScore),
                 isNotNull(games.awayScore),
-                leagueId
-                    ? eq(games.leagueId, leagueId)
-                    : sql`1=1`,
+                // leagueId
+                //     ? eq(games.leagueId, leagueId)
+                //     : sql`1=1`,
                 gte(games.date, `${year}-01-01`),
                 lt(games.date, `${year + 1}-01-01`),
 
@@ -205,6 +205,22 @@ export async function getLeagueStandings({
         );
 
     const allGames = await gamesQuery;
+
+    console.log({
+        leagueId,
+        type,
+        year,
+        games: allGames.length,
+    });
+
+    console.log(
+        allGames.filter(
+            game =>
+                game.homeTeamId === 1 ||
+                game.awayTeamId === 1
+        )
+    );
+
     const allTeams = await db.select().from(teams);
 
     // Calculate overall standings.
@@ -241,7 +257,7 @@ export async function getLeagueStandings({
 
             const gamesPlayed = wins + losses + ties;
             const winPercentage = gamesPlayed > 0
-                ? wins / gamesPlayed
+                ? (wins + ties * 0.5) / gamesPlayed
                 : 0;
 
             return {
@@ -340,8 +356,7 @@ export async function getLeagueStandings({
 
         // Sort by:
         // 1. Head-to-head win percentage
-        // 2. Head-to-head wins
-        // 3. Head-to-head run differential
+        // 2. Head-to-head run differential
         //
         // Using H2H win percentage here also correctly handles
         // ties in the number of H2H games played.
@@ -353,11 +368,11 @@ export async function getLeagueStandings({
             const bGames = bH2H.wins + bH2H.losses + bH2H.ties;
 
             const aWinPct = aGames > 0
-                ? aH2H.wins / aGames
+                ? (aH2H.wins + aH2H.ties * 0.5) / aGames
                 : 0;
 
             const bWinPct = bGames > 0
-                ? bH2H.wins / bGames
+                ? (bH2H.wins + bH2H.ties * 0.5) / bGames
                 : 0;
 
             // 1. Head-to-head win percentage
@@ -365,12 +380,7 @@ export async function getLeagueStandings({
                 return bWinPct - aWinPct;
             }
 
-            // 2. Head-to-head wins
-            if (aH2H.wins !== bH2H.wins) {
-                return bH2H.wins - aH2H.wins;
-            }
-
-            // 3. Head-to-head run differential
+            // 2. Head-to-head run differential
             if (aH2H.runDiff !== bH2H.runDiff) {
                 return bH2H.runDiff - aH2H.runDiff;
             }

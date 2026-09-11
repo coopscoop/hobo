@@ -7,7 +7,7 @@ export default async function HomePage() {
     const [upcomingGames, recentGames, standings, pinnedNews, seasonNews] = await Promise.all([
         fetchUpcomingGames(),
         fetchRecentGames(),
-        fetchStandings({type: 'regular', year: 2026}),
+        fetchStandings({type: 'all', year: 2026}),
         fetchAnnouncements({ pinned: true }),
         fetchAnnouncements({ pinned: false }),
     ]);

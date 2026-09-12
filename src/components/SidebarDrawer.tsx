@@ -30,14 +30,8 @@ const sidebarItems: SidebarItem[] = [
 
 const SidebarDrawer = () => {
   const [open, setOpen] = useState(true);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDrawerToggle = () => setOpen((prev) => !prev);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorEl(event.currentTarget);
-
-  const handleMenuClose = () => setAnchorEl(null);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -75,7 +69,7 @@ const SidebarDrawer = () => {
         <List>
           {sidebarItems.map((item) => (
             <ListItem key={item.label} disablePadding>
-              <ListItemButton href={item.href || undefined}>
+              <ListItemButton>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.label} />
               </ListItemButton>

@@ -18,7 +18,7 @@ export function GamesTable({ games }: GamesTableProps) {
     awayTeam:  g.awayTeam.name,
     score:     g.homeScore !== null ? `${g.homeScore} - ${g.awayScore}` : '—',
     league:    g.league.name,
-    location:  g.fieldName,
+    location:  g.fieldName == "Historical / Unknown" ? "---" : g.fieldName,
     isPlayoff: g.isPlayoff,
   }));
 

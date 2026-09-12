@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { games, leagues, innings, batting, players, rosters, fields } from '@/lib/db/schema';
 import { homeTeam, awayTeam } from '@/lib/db/schema';
-import { eq, and, or, gte, lt, lte, desc, sql, type SQL } from 'drizzle-orm';
+import { eq, and, or, gte, lt, lte, desc, sql, type SQL, ne } from 'drizzle-orm';
 import { substitutes } from '@/lib/db/schema';
 import { inArray } from 'drizzle-orm';
 import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/lib/types';
@@ -98,8 +98,12 @@ export async function getGameById(idString: string) {
     const id = parseInt(idString, 10);
 
     const [game] = await gameJoins(
-        db.select(gameSelect).from(games)
-    ).where(eq(games.id, id));
+        db.select({
+            ...gameSelect,
+            fieldName: fields.name,
+        }).from(games))
+        .leftJoin(fields, eq(games.fieldId, fields.id))
+        .where(eq(games.id, id));
 
     if (!game) return null;
 
@@ -112,7 +116,7 @@ export async function getGameById(idString: string) {
                 rosters,
                 and(
                     eq(rosters.playerId, players.id),
-                    sql`${rosters.activePeriod} @> ${game.date}::date`  // range containment
+                    sql`${rosters.activePeriod} @> ${game.date}::date`
                 )
             )
             .where(eq(batting.gameId, id)),
@@ -163,9 +167,10 @@ export async function getRecentGames(leagueId?: string | null) {
             and(
                 gte(games.date, sql`current_date - interval '30 days'`),
                 lt(games.date, sql`current_date`),
-                leagueId && leagueId !== 'all'
-                    ? eq(games.leagueId, parseInt(leagueId))
-                    : undefined
+                or(
+                    ne(games.homeScore, 0),
+                    ne(games.awayScore, 0),
+                ),
             )
         )
         .orderBy(desc(games.date))

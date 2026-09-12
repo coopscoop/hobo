@@ -43,7 +43,7 @@ export function HomePageClient({
             <Box sx={{ p: 4 }}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ alignItems: 'flex-start' }}>
                     <Box sx={{ flex: 2, minWidth: 0, width: '100%' }}>
-                        <NewsList title="Headlines" announcements={pinnedNews} />
+                        <NewsList title="Headlines" showBody announcements={pinnedNews} />
                         <Box sx={{ mt: 4 }}>
                             <NewsList title="Announcements" announcements={seasonNews} />
                         </Box>

@@ -22,6 +22,8 @@ export function GameDetail({ data }: GameDetailProps) {
     const router = useRouter();
     const [deleting, setDeleting] = useState(false);
 
+    console.log(game);
+
     const homeBatting = batting.filter((b) => b.teamId === game.homeTeam.id);
     const awayBatting = batting.filter((b) => b.teamId === game.awayTeam.id);
 
@@ -46,7 +48,7 @@ export function GameDetail({ data }: GameDetailProps) {
                 </Typography>
                 <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                     <Chip label={game.date} size="small" />
-                    <Chip label={game.location} size="small" />
+                    <Chip label={game.fieldName} size="small" />
                     {/* <Chip label={game.league.name} size="small" /> */}
                     {game.isPlayoff && <Chip label="Playoff" size="small" color="primary" />}
                 </Stack>

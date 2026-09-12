@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { teams, games, players, batting, rosters } from '@/lib/db/schema';
-import { eq, or, sql, and, isNotNull, gte, lte } from 'drizzle-orm';
-import type { NewTeam } from '@/lib/types';
+import { eq, or, sql, and, isNotNull, gte, lte, lt } from 'drizzle-orm';
+import type { StandingType } from '@/lib/types';
 
 export async function getTeams(leagueId?: string | null) {
     const parsedLeagueId = leagueId ? parseInt(leagueId, 10) : undefined;
@@ -167,8 +167,17 @@ export async function getTeamById(idString: string) {
     return { team, recordByYear, rosterByYear };
 }
 
-export async function getLeagueStandings(leagueId?: number) {
-    // Get all games with scores for the specified league
+interface GetLeagueStandingsOptions {
+    leagueId?: number;
+    type?: StandingType;
+    year?: number;
+}
+
+export async function getLeagueStandings({
+    leagueId = 2,
+    type = 'all',
+    year = 2026,
+}: GetLeagueStandingsOptions = {}) {
     const gamesQuery = db
         .select({
             homeTeamId: games.homeTeamId,
@@ -181,55 +190,236 @@ export async function getLeagueStandings(leagueId?: number) {
             and(
                 isNotNull(games.homeScore),
                 isNotNull(games.awayScore),
-                leagueId ? eq(games.leagueId, leagueId) : sql`1=1`,
-                gte(games.date, '2026-01-01'),
-                lte(games.date, '2027-01-01')
+                // leagueId
+                //     ? eq(games.leagueId, leagueId)
+                //     : sql`1=1`,
+                gte(games.date, `${year}-01-01`),
+                lt(games.date, `${year + 1}-01-01`),
+
+                type === 'regular'
+                    ? eq(games.isPlayoff, false)
+                    : type === 'playoffs'
+                        ? eq(games.isPlayoff, true)
+                        : sql`1=1`,
             )
         );
 
     const allGames = await gamesQuery;
+
+    console.log({
+        leagueId,
+        type,
+        year,
+        games: allGames.length,
+    });
+
+    console.log(
+        allGames.filter(
+            game =>
+                game.homeTeamId === 1 ||
+                game.awayTeamId === 1
+        )
+    );
+
     const allTeams = await db.select().from(teams);
 
-    // Calculate standings
-    const standings = allTeams.map(team => {
-        let wins = 0, losses = 0, ties = 0;
+    // Calculate overall standings.
+    const standings = allTeams
+        .map(team => {
+            let wins = 0;
+            let losses = 0;
+            let ties = 0;
+
+            allGames.forEach(game => {
+                const isHome = game.homeTeamId === team.id;
+                const isAway = game.awayTeamId === team.id;
+
+                if (!isHome && !isAway) return;
+
+                const teamScore = isHome
+                    ? game.homeScore
+                    : game.awayScore;
+
+                const opponentScore = isHome
+                    ? game.awayScore
+                    : game.homeScore;
+
+                if (teamScore === null || opponentScore === null) return;
+
+                if (teamScore > opponentScore) {
+                    wins++;
+                } else if (teamScore < opponentScore) {
+                    losses++;
+                } else {
+                    ties++;
+                }
+            });
+
+            const gamesPlayed = wins + losses + ties;
+            const winPercentage = gamesPlayed > 0
+                ? (wins + ties * 0.5) / gamesPlayed
+                : 0;
+
+            return {
+                ...team,
+                wins,
+                losses,
+                ties,
+                gamesPlayed,
+                winPercentage,
+            };
+        })
+        .filter(team => team.gamesPlayed > 0);
+
+    /**
+     * Calculate a team's head-to-head record against a group of teams.
+     *
+     * Only games where BOTH teams are members of the tied group
+     * are considered.
+     */
+    const getHeadToHead = (
+        teamId: number,
+        tiedTeamIds: Set<number>
+    ) => {
+        let wins = 0;
+        let losses = 0;
+        let ties = 0;
+        let runDiff = 0;
 
         allGames.forEach(game => {
-            const isHome = game.homeTeamId === team.id;
-            const isAway = game.awayTeamId === team.id;
+            const isTeamHome = game.homeTeamId === teamId;
+            const isTeamAway = game.awayTeamId === teamId;
 
-            if (isHome || isAway) {
-                const teamScore = isHome ? game.homeScore : game.awayScore;
-                const opponentScore = isHome ? game.awayScore : game.homeScore;
+            if (!isTeamHome && !isTeamAway) return;
 
-                if (teamScore !== null && opponentScore !== null) {
-                    if (teamScore > opponentScore) wins++;
-                    else if (teamScore < opponentScore) losses++;
-                    else ties++;
-                }
+            const opponentId = isTeamHome
+                ? game.awayTeamId
+                : game.homeTeamId;
+
+            // Only consider games against another team in the tie.
+            if (!tiedTeamIds.has(opponentId)) return;
+
+            const teamScore = isTeamHome
+                ? game.homeScore
+                : game.awayScore;
+
+            const opponentScore = isTeamHome
+                ? game.awayScore
+                : game.homeScore;
+
+            if (teamScore === null || opponentScore === null) return;
+
+            runDiff += teamScore - opponentScore;
+
+            if (teamScore > opponentScore) {
+                wins++;
+            } else if (teamScore < opponentScore) {
+                losses++;
+            } else {
+                ties++;
             }
         });
 
-        const gamesPlayed = wins + losses + ties;
-        const winPercentage = gamesPlayed > 0 ? wins / gamesPlayed : 0;
-
         return {
-            ...team,
             wins,
             losses,
             ties,
-            gamesPlayed,
-            winPercentage,
+            runDiff,
         };
-    }).filter(team => team.gamesPlayed > 0);
+    };
 
-    // Sort by win% descending, then wins descending
-    return standings.sort((a, b) => {
+    /**
+     * Resolve a group of teams tied on overall win percentage.
+     */
+    const resolveTie = <T extends (typeof standings)[number]>(
+        tiedTeams: T[]
+    ): T[] => {
+        if (tiedTeams.length <= 1) {
+            return tiedTeams;
+        }
+
+        const tiedTeamIds = new Set(
+            tiedTeams.map(team => team.id)
+        );
+
+        const headToHead = new Map<
+            number,
+            ReturnType<typeof getHeadToHead>
+        >();
+
+        tiedTeams.forEach(team => {
+            headToHead.set(
+                team.id,
+                getHeadToHead(team.id, tiedTeamIds)
+            );
+        });
+
+        // Sort by:
+        // 1. Head-to-head win percentage
+        // 2. Head-to-head run differential
+        //
+        // Using H2H win percentage here also correctly handles
+        // ties in the number of H2H games played.
+        const sorted = [...tiedTeams].sort((a, b) => {
+            const aH2H = headToHead.get(a.id)!;
+            const bH2H = headToHead.get(b.id)!;
+
+            const aGames = aH2H.wins + aH2H.losses + aH2H.ties;
+            const bGames = bH2H.wins + bH2H.losses + bH2H.ties;
+
+            const aWinPct = aGames > 0
+                ? (aH2H.wins + aH2H.ties * 0.5) / aGames
+                : 0;
+
+            const bWinPct = bGames > 0
+                ? (bH2H.wins + bH2H.ties * 0.5) / bGames
+                : 0;
+
+            // 1. Head-to-head win percentage
+            if (aWinPct !== bWinPct) {
+                return bWinPct - aWinPct;
+            }
+
+            // 2. Head-to-head run differential
+            if (aH2H.runDiff !== bH2H.runDiff) {
+                return bH2H.runDiff - aH2H.runDiff;
+            }
+
+            return 0;
+        });
+
+        return sorted;
+    };
+
+    // First sort into overall win-percentage groups.
+    standings.sort((a, b) => {
         if (a.winPercentage !== b.winPercentage) {
             return b.winPercentage - a.winPercentage;
         }
-        return b.wins - a.wins;
+
+        return 0;
     });
+
+    // Resolve each group tied on overall win percentage.
+    const resolvedStandings: typeof standings = [];
+
+    for (let i = 0; i < standings.length;) {
+        const currentWinPercentage = standings[i].winPercentage;
+
+        const tiedTeams: typeof standings = [];
+
+        while (
+            i < standings.length &&
+            standings[i].winPercentage === currentWinPercentage
+        ) {
+            tiedTeams.push(standings[i]);
+            i++;
+        }
+
+        resolvedStandings.push(...resolveTie(tiedTeams));
+    }
+
+    return resolvedStandings;
 }
 
 export async function createTeam(teamName: string) {

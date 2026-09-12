@@ -137,3 +137,5 @@ export interface PlayerGameData {
     isSubstitute?: boolean;
     subId?: number; // Substitutes.id — only present when isSubstitute is true, used for the remove-button DELETE call
 }
+
+export type StandingType = 'all' | 'regular' | 'playoffs';

@@ -20,7 +20,7 @@ const columns: GridColDef[] = [
     { field: "date", headerName: "Date", flex: 1 },
     { field: "homeTeam", headerName: "Home", flex: 1 },
     { field: "awayTeam", headerName: "Away", flex: 1 },
-    { field: "location", headerName: "Location", flex: 1 },
+    { field: "fielName", headerName: "Location", flex: 1 },
 ];
 
 export default function GamesPanel({ initialData, teams, fields }: Props) {
@@ -39,6 +39,7 @@ export default function GamesPanel({ initialData, teams, fields }: Props) {
             })),
         [initialData]
     );
+
 
     const createFields: FormFieldConfig[] = useMemo(
         () => [

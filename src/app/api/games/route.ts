@@ -4,44 +4,20 @@ import { db } from '@/lib/db';
 import { games } from '@/lib/db/schema';
 
 export async function GET(req: NextRequest) {
-
     try {
-        // const p = req.nextUrl.searchParams;
-        // const games = await getGames({
-        //     leagueId: p.get('leagueId'),
-        //     teamId: p.get('teamId'),
-        //     dateFrom: p.get('dateFrom'),
-        //     dateTo: p.get('dateTo'),
-        //     playoff: p.get('playoff'),
-        //     fieldName: p.get('fieldName')
-        // });
-        const games = await getGames();
-
-        // worst case return a 404 if no announcements are found
-        if (!games) {
-            return new Response(JSON.stringify({ message: "No games found" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-        }
-
-        return NextResponse.json(games, { status: 200 });
+        const filters = loadGameFilters(req.nextUrl.searchParams)
+        const games = await getGames(filters)
+        return NextResponse.json(games, { status: 200 })
     } catch (error) {
-        // on error, return a 400/500 with the error message
-        if (error instanceof Error && error.message === 'Invalid resource ID format.') {
-            return NextResponse.json(
-                { error: 'Invalid resource ID format.' },
-                { status: 400 }
-            );
-        }
-
-        console.error("API Error:", error);
+        console.error('API Error:', error)
         return NextResponse.json(
             { error: 'Internal server error while retrieving games.' },
             { status: 500 }
-        );
+        )
     }
 }
 
 type CreateGameBody = {
-    location: string;
     fieldId: 1;
     homeTeamId: number;
     awayTeamId: number;
@@ -83,7 +59,6 @@ export async function POST(request: NextRequest) {
                 date,
                 // hardcoded until real support exists
                 leagueId: 2,
-                location: 'DEPRECIATED',
                 notes: '',
                 homeScore: 0,
                 awayScore: 0,

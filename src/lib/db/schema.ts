@@ -49,7 +49,6 @@ export const rosters = pgTable('Rosters', {
 export const games = pgTable('Games', {
     id: serial('id').primaryKey(),
     date: date('date').notNull().defaultNow(),
-    location: text('location').notNull(), // DEPRECIATED USE ID - TODO: MIGRATE ALL GAMES OVER TO ID OVER TEXT LOCATION
     fieldId: integer('field_id').notNull().references(() => fields.id).default(1),
     homeTeamId: integer('home_team_id').notNull().references(() => teams.id),
     awayTeamId: integer('away_team_id').notNull().references(() => teams.id),

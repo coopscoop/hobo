@@ -187,7 +187,6 @@ async function main() {
         try {
             const [inserted] = await db.insert(games).values({
                 date: parseDate(row.date),
-                location: '',
                 homeTeamId: homeTeamNewId,
                 awayTeamId: awayTeamNewId,
                 leagueId,

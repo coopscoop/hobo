@@ -1,4 +1,5 @@
 import type { GameListItem } from '@/lib/types'
+import { GameFilters, serializeGameFilters } from '../searchParams/games'
 
 function baseUrl() {
     if (typeof window !== 'undefined') return ''
@@ -10,9 +11,18 @@ export async function fetchUpcomingGames(leagueId?: string | null): Promise<Game
     if (leagueId && leagueId !== 'all') params.append('leagueId', leagueId)
 
     const url = `${baseUrl()}/api/games/upcoming${params.toString() ? '?' + params.toString() : ''}`
-    const res = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error('Failed to fetch upcoming games')
-    return res.json()
+
+    try {
+      const res = await fetch(url, { cache: 'no-store' })
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(`Failed to fetch upcoming games: ${res.status} ${res.statusText} - ${errorText}`)
+      }
+      return res.json()
+    } catch (error) {
+      console.error('Error fetching upcoming games:', error)
+      throw error
+    }
 }
 
 export async function fetchRecentGames(leagueId?: string | null): Promise<GameListItem[]> {
@@ -20,18 +30,28 @@ export async function fetchRecentGames(leagueId?: string | null): Promise<GameLi
     if (leagueId && leagueId !== 'all') params.append('leagueId', leagueId)
 
     const url = `${baseUrl()}/api/games/recent${params.toString() ? '?' + params.toString() : ''}`
+    console.log('Fetching recent games from:', url)
+
     const res = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error('Failed to fetch recent games')
-    return res.json()
+    console.log('Fetch response status:', res.status, 'response ok:', res.ok)
+    
+    if (!res.ok) {
+        const errorText = await res.text().catch(() => 'No error body available')
+        console.error('Failed to fetch recent games:', new Error(`HTTP Error ${res.status}: ${errorText}`))
+        throw new Error(`Failed to fetch recent games: HTTP ${res.status} - ${errorText}`)
+    }
+    
+    console.log('Parsing response JSON...')
+    const data = await res.json()
+    console.log('Successfully fetched recent games:', data)
+    return data
 }
 
-export async function fetchAllGames(leagueId?: string | null): Promise<GameListItem[]> {
-    const params = new URLSearchParams()
-    if (leagueId && leagueId !== 'all') params.append('leagueId', leagueId)
 
-    const url = `${baseUrl()}/api/games/`
+export async function fetchAllGames(filters: GameFilters = {}): Promise<GameListItem[]> {
+    const url = serializeGameFilters(`${baseUrl()}/api/games`, filters)
     const res = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error('Failed to fetch all ')
+    if (!res.ok) throw new Error('Failed to fetch games')
     return res.json()
 }
 

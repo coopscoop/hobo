@@ -1,45 +1,26 @@
 import { db } from '@/lib/db';
 import { games, leagues, innings, batting, players, rosters, fields } from '@/lib/db/schema';
 import { homeTeam, awayTeam } from '@/lib/db/schema';
-import { eq, and, or, gte, lt, lte, desc, sql, type SQL, ne } from 'drizzle-orm';
+import { eq, and, gte, lt, lte, desc, sql, or } from 'drizzle-orm';
 import { substitutes } from '@/lib/db/schema';
 import { inArray } from 'drizzle-orm';
 import type { InningMap, PlayerGameData, TeamGameData, TeamKey } from '@/lib/types';
+import { GameFilters } from '@/lib/searchParams/games';
+
+/// ---- Date ----
+const isIsoDate = (s?: string | null): s is string => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s)
+
+// cloud run runs in UTC, so a plain toISOString() flips to "tomorrow" in the evening
+const todayInToronto = () =>
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) // en-CA gives YYYY-MM-DD
 
 // ---- Types ----
-
-export interface GameFilters {
-    teamId?: string | null;
-    leagueId?: string | null;
-    dateFrom?: string | null;
-    dateTo?: string | null;
-    playoff?: string | null;
-    fieldName?: string | null;
-}
-
-// ---- Filter builder ----
-
-function buildGameFilters(params: GameFilters) {
-    const filters: SQL[] = [];
-
-    if (params.leagueId) filters.push(eq(games.leagueId, parseInt(params.leagueId)));
-    if (params.dateFrom) filters.push(gte(games.date, params.dateFrom));
-    if (params.dateTo) filters.push(lte(games.date, params.dateTo));
-    if (params.playoff) filters.push(eq(games.isPlayoff, params.playoff === 'true'));
-    if (params.teamId) {
-        const id = parseInt(params.teamId);
-        filters.push(or(eq(games.homeTeamId, id), eq(games.awayTeamId, id))!);
-    }
-
-    return filters.length ? and(...filters) : undefined;
-}
 
 // ---- Shared select shape ----
 
 const gameSelect = {
     id: games.id,
     date: games.date,
-    location: games.location,
     isPlayoff: games.isPlayoff,
     homeScore: games.homeScore,
     awayScore: games.awayScore,
@@ -78,20 +59,42 @@ const gameJoins = (query: any) =>
 
 // ---- Queries ----
 
-export async function getGames() {
+
+
+export async function getGames(filters: GameFilters = {}) {
+    const from = isIsoDate(filters.from) ? filters.from : undefined
+    const to = isIsoDate(filters.to) ? filters.to : todayInToronto()
+
+    const [t1, t2] = filters.teams ?? []
+    const teamFilter =
+        t1 != null && t2 != null
+            // two teams: only games between them, either side
+            ? and(
+                inArray(games.homeTeamId, [t1, t2]),
+                inArray(games.awayTeamId, [t1, t2]),
+            )
+            // one team: any game they're in
+            : t1 != null
+                ? or(eq(games.homeTeamId, t1), eq(games.awayTeamId, t1))
+                : undefined
+
     return gameJoins(
         db.select({
             ...gameSelect,
             fieldName: fields.name,
-        }).from(games))
+        }).from(games)
+    )
         .leftJoin(fields, eq(games.fieldId, fields.id))
         .where(
             and(
-                gte(games.date, '2026-01-01'),
-                lte(games.date, '2027-01-01')
+                from ? gte(games.date, from) : undefined,
+                lte(games.date, to),
+                filters.playoff != null ? eq(games.isPlayoff, filters.playoff) : undefined,
+                teamFilter,
+                filters.field != null ? eq(games.fieldId, filters.field) : undefined,
             )
         )
-        .orderBy(desc(games.date));
+        .orderBy(desc(games.date))
 }
 
 export async function getGameById(idString: string) {
@@ -161,16 +164,12 @@ export async function getUpcomingGames(leagueId?: string | null) {
         .orderBy(games.date);
 }
 
-export async function getRecentGames(leagueId?: string | null) {
+export async function getRecentGames() {
     return gameJoins(db.select(gameSelect).from(games))
         .where(
             and(
                 gte(games.date, sql`current_date - interval '30 days'`),
                 lt(games.date, sql`current_date`),
-                or(
-                    ne(games.homeScore, 0),
-                    ne(games.awayScore, 0),
-                ),
             )
         )
         .orderBy(desc(games.date))

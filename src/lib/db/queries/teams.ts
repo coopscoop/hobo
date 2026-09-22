@@ -2,39 +2,41 @@ import { db } from '@/lib/db';
 import { teams, games, players, batting, rosters } from '@/lib/db/schema';
 import { eq, or, sql, and, isNotNull, gte, lte, lt } from 'drizzle-orm';
 import type { StandingType } from '@/lib/types';
+import { TeamFilters } from '@/lib/searchParams/teams';
 
-export async function getTeams(leagueId?: string | null) {
-    const parsedLeagueId = leagueId ? parseInt(leagueId, 10) : undefined;
+export async function getTeams(leagueId?: string | null, filters: TeamFilters = {}) {
+    const parsedLeagueId = leagueId ? parseInt(leagueId, 10) : undefined
+    const year = filters.year === 'all' ? undefined : filters.year
 
-    const joinCondition = parsedLeagueId
-        ? and(
-            or(eq(games.homeTeamId, teams.id), eq(games.awayTeamId, teams.id)),
-            eq(games.leagueId, parsedLeagueId)
-        )
-        : or(eq(games.homeTeamId, teams.id), eq(games.awayTeamId, teams.id));
+    const joinCondition = and(
+        or(eq(games.homeTeamId, teams.id), eq(games.awayTeamId, teams.id)),
+        parsedLeagueId ? eq(games.leagueId, parsedLeagueId) : undefined,
+        year != null ? gte(games.date, `${year}-01-01`) : undefined,
+        year != null ? lte(games.date, `${year}-12-31`) : undefined,
+    )
 
     return db
         .select({
             id: teams.id,
             teamName: teams.teamName,
             wins: sql<number>`count(*) filter (where
-        (${games.homeTeamId} = ${teams.id} and ${games.homeScore} > ${games.awayScore}) or
-        (${games.awayTeamId} = ${teams.id} and ${games.awayScore} > ${games.homeScore})
-      )`,
+                (${games.homeTeamId} = ${teams.id} and ${games.homeScore} > ${games.awayScore}) or
+                (${games.awayTeamId} = ${teams.id} and ${games.awayScore} > ${games.homeScore})
+            )`,
             losses: sql<number>`count(*) filter (where
-        (${games.homeTeamId} = ${teams.id} and ${games.homeScore} < ${games.awayScore}) or
-        (${games.awayTeamId} = ${teams.id} and ${games.awayScore} < ${games.homeScore})
-      )`,
+                (${games.homeTeamId} = ${teams.id} and ${games.homeScore} < ${games.awayScore}) or
+                (${games.awayTeamId} = ${teams.id} and ${games.awayScore} < ${games.homeScore})
+            )`,
             ties: sql<number>`count(*) filter (where
-        ${games.homeScore} = ${games.awayScore} and
-        (${games.homeTeamId} = ${teams.id} or ${games.awayTeamId} = ${teams.id}) and
-        ${games.homeScore} is not null
-      )`,
+                ${games.homeScore} = ${games.awayScore} and
+                (${games.homeTeamId} = ${teams.id} or ${games.awayTeamId} = ${teams.id}) and
+                ${games.homeScore} is not null
+            )`,
         })
         .from(teams)
-        .leftJoin(games, joinCondition)
+        .innerJoin(games, joinCondition)
         .groupBy(teams.id, teams.teamName)
-        .orderBy(teams.teamName);
+        .orderBy(teams.teamName)
 }
 
 export async function getTeamById(idString: string) {

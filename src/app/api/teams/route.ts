@@ -1,15 +1,16 @@
-// app/api/teams/route.ts
 import { getTeams, createTeam } from '@/lib/db/queries/teams';
+import { loadTeamFilters } from '@/lib/searchParams/teams';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
     try {
-        const leagueId = req.nextUrl.searchParams.get('leagueId');
-        const teams = await getTeams(leagueId);
-        return NextResponse.json(teams, { status: 200 });
+        const leagueId = req.nextUrl.searchParams.get('leagueId')
+        const filters = loadTeamFilters(req.nextUrl.searchParams)
+        const teams = await getTeams(leagueId, filters)
+        return NextResponse.json(teams, { status: 200 })
     } catch (error) {
-        console.error('GET /api/teams failed:', error);
-        return NextResponse.json([], { status: 500 });
+        console.error('GET /api/teams failed:', error)
+        return NextResponse.json([], { status: 500 })
     }
 }
 

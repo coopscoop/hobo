@@ -42,6 +42,8 @@ export const RESULT_CHIP_STYLE: Record<ResultGroup, string> = {
 export const CELL_BADGE_STYLE: Record<ResultCode, string> = {
     OUT: "border-red-600 bg-red-600 text-white",
     K: "border-red-600 bg-red-600 text-white",
+    PO: "border-red-600 bg-red-600 text-white",
+    CS: "border-red-600 bg-red-600 text-white",
     BB: "bg-amber-900/50 text-amber-300",
     HBP: "bg-amber-900/50 text-amber-300",
     "1B": "bg-emerald-900/50 text-emerald-300",
@@ -51,7 +53,7 @@ export const CELL_BADGE_STYLE: Record<ResultCode, string> = {
 };
 
 export function emptyPA(): PlateAppearance {
-    return { result: null, sac: false, fc: false, roe: false, rbi: null, sb2: false, sb3: false, sbHome: false, scored: false };
+    return { result: null, sac: false, po: false, cs: false, fc: false, roe: false, rbi: null, sb2: false, sb3: false, sbHome: false, scored: false };
 }
 
 export function isPAFilled(pa: PlateAppearance): boolean {
@@ -64,7 +66,14 @@ export function paLabel(pa: PlateAppearance): string | null {
     if (pa.sac) label += " SAC";
     if (pa.fc) label += " FC";
     if (pa.roe) label += " ROE";
+    if (pa.po) label += " PO";
+    if (pa.cs) label += " CS";
     return label;
+}
+
+export function paBadgeStyle(pa: PlateAppearance): string {
+    if (pa.po || pa.cs) return CELL_BADGE_STYLE.OUT;
+    return pa.result ? CELL_BADGE_STYLE[pa.result] : "";
 }
 
 export function isAB(pa: PlateAppearance): boolean {

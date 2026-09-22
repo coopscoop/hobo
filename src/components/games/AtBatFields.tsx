@@ -38,12 +38,14 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
             </Section>
 
             <Section label="Flags">
-                <div className="flex gap-1.5">
+                <div className="flex flex-wrap gap-1.5">
                     {(
                         [
                             ["sac", "Sacrifice"],
                             ["fc", "Fielder's Choice"],
                             ["roe", "Run On Error"],
+                            ["po", "Picked Off"],
+                            ["cs", "Caught Stealing"],
                         ] as const
                     ).map(([key, flagLabel]) => (
                         <button
@@ -60,7 +62,7 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
 
             <Section label="RBI">
                 <div className="flex gap-1.5">
-                    {([0, 1, 2, 3, 4] as const).map((n) => (
+                    {([1, 2, 3, 4] as const).map((n) => (
                         <button
                             key={n}
                             onClick={() => onChange({ rbi: n })}
@@ -94,18 +96,14 @@ export function AtBatFields({ label, pa, onChange, onRemove }: Props) {
                 </div>
             </Section>
 
-            <div className="flex items-center justify-between border-t border-gray-200 pt-3">
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Scored</span>
+            <Section label="Scored">
                 <button
                     onClick={() => onChange({ scored: !pa.scored })}
-                    className={`relative h-6 w-11 rounded-full transition-colors ${pa.scored ? "bg-emerald-500" : "bg-gray-300"}`}
+                    className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${pa.scored ? "border-red-600 bg-red-600 text-white" : "border-gray-300 text-gray-600 hover:border-gray-400"}`}
                 >
-                    <span
-                        className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${pa.scored ? "translate-x-5" : "translate-x-0"
-                            }`}
-                    />
+                    Scored
                 </button>
-            </div>
+            </Section>
         </div>
     );
 }

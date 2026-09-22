@@ -59,7 +59,7 @@ export type PlayerName = Awaited<ReturnType<typeof getPlayerNames>>[number];
 export type TeamById = Awaited<ReturnType<typeof getTeamById>>;
 
 // ---- Score Sheet types ----
-export type ResultCode = "OUT" | "K" | "BB" | "HBP" | "1B" | "2B" | "3B" | "HR";
+export type ResultCode = "OUT" | "PO" | "CS" | "K" | "BB" | "HBP" | "1B" | "2B" | "3B" | "HR";
 
 export type ResultGroup = "out" | "reach" | "hit" | "homer";
 
@@ -68,11 +68,29 @@ export interface PlateAppearance {
     sac: boolean;
     fc: boolean;
     roe: boolean;
-    rbi: null | 0 | 1 | 2 | 3 | 4;
+    po: boolean;
+    cs: boolean;
+    rbi: null | 1 | 2 | 3 | 4;
     sb2: boolean;
     sb3: boolean;
     sbHome: boolean;
     scored: boolean;
+}
+
+export function emptyPA(): PlateAppearance {
+    return {
+        result: null,
+        sac: false,
+        fc: false,
+        roe: false,
+        po: false,
+        cs: false,
+        rbi: null,
+        sb2: false,
+        sb3: false,
+        sbHome: false,
+        scored: false,
+    };
 }
 
 /** Keyed by inning number (1-9+), not array index, so gaps and extra innings are cheap.

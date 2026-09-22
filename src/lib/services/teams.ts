@@ -1,6 +1,6 @@
 import type { TeamWithPlayers } from '@/lib/types'
 import type { getTeamById } from '@/lib/db/queries/teams';
-import { serializeTeamFilters } from '../searchParams/teams';
+import { serializeTeamFilters, TeamFilters } from '../searchParams/teams';
 
 function baseUrl() {
     if (typeof window !== 'undefined') return ''

@@ -11,8 +11,7 @@ import { GameFilters } from '@/lib/searchParams/games';
 const isIsoDate = (s?: string | null): s is string => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s)
 
 // cloud run runs in UTC, so a plain toISOString() flips to "tomorrow" in the evening
-const todayInToronto = () =>
-    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) // en-CA gives YYYY-MM-DD
+const todayInToronto = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' }) // en-CA gives YYYY-MM-DD
 
 // ---- Types ----
 
@@ -59,24 +58,29 @@ const gameJoins = (query: any) =>
 
 // ---- Queries ----
 
-
-
 export async function getGames(filters: GameFilters = {}) {
     const from = isIsoDate(filters.from) ? filters.from : undefined
-    const to = isIsoDate(filters.to) ? filters.to : todayInToronto()
+
+    const to =
+        filters.to === 'all'
+            ? undefined
+            : isIsoDate(filters.to) ? filters.to : todayInToronto()
 
     const [t1, t2] = filters.teams ?? []
     const teamFilter =
         t1 != null && t2 != null
-            // two teams: only games between them, either side
             ? and(
                 inArray(games.homeTeamId, [t1, t2]),
                 inArray(games.awayTeamId, [t1, t2]),
             )
-            // one team: any game they're in
             : t1 != null
                 ? or(eq(games.homeTeamId, t1), eq(games.awayTeamId, t1))
                 : undefined
+
+    const seasonFilter =
+        filters.season === 'regular' ? eq(games.isPlayoff, false)
+            : filters.season === 'playoffs' ? eq(games.isPlayoff, true)
+                : undefined // 'all'
 
     return gameJoins(
         db.select({
@@ -88,10 +92,8 @@ export async function getGames(filters: GameFilters = {}) {
         .where(
             and(
                 from ? gte(games.date, from) : undefined,
-                lte(games.date, to),
-                filters.season === 'regular' ? eq(games.isPlayoff, false)
-                    : filters.season === 'playoffs' ? eq(games.isPlayoff, true)
-                        : undefined, // 'all'
+                to ? lte(games.date, to) : undefined,
+                seasonFilter,
                 teamFilter,
                 filters.field != null ? eq(games.fieldId, filters.field) : undefined,
             )

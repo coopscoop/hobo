@@ -50,10 +50,7 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    const players = await getPlayersWithStats(
-        yearFrom,
-        yearTo,
-    );
+    const players = await getPlayersWithStats();
 
     return NextResponse.json(players);
 }

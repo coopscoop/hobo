@@ -56,13 +56,19 @@ export function GamesPageClient({ games, teams, fields }: GamesPageClientProps) 
                     label="From"
                     value={filters.from ? dayjs(filters.from) : null}
                     onChange={(d) => setFilters({ from: d ? d.format('YYYY-MM-DD') : null })}
-                    slotProps={{ textField: { size: 'small' } }}
+                    slotProps={{
+                        textField: { size: 'small' },
+                        field: { clearable: true, onClear: () => setFilters({ from: null }) },
+                    }}
                 />
                 <DatePicker
                     label="To"
-                    value={filters.to ? dayjs(filters.to) : null}
-                    onChange={(d) => setFilters({ to: d ? d.format('YYYY-MM-DD') : null })}
-                    slotProps={{ textField: { size: 'small' } }}
+                    value={filters.to === 'all' ? null : filters.to ? dayjs(filters.to) : dayjs()}
+                    onChange={(d) => setFilters({ to: d ? d.format('YYYY-MM-DD') : 'all' })}
+                    slotProps={{
+                        textField: { size: 'small' },
+                        field: { clearable: true, onClear: () => setFilters({ to: 'all' }) },
+                    }}
                 />
 
                 <ToggleButtonGroup

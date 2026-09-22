@@ -2,8 +2,11 @@ import { getGames } from '@/lib/db/queries/games';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { games } from '@/lib/db/schema';
+import { loadGameFilters } from '@/lib/searchParams/games';
+import * as GF from '@/lib/searchParams/games'
 
 export async function GET(req: NextRequest) {
+    console.log(Object.keys(GF))
     try {
         const filters = loadGameFilters(req.nextUrl.searchParams)
         const games = await getGames(filters)

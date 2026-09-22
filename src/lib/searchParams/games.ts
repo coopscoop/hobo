@@ -1,6 +1,7 @@
 import {
     createLoader, createSerializer, inferParserType,
     parseAsArrayOf, parseAsBoolean, parseAsInteger, parseAsString,
+    parseAsStringEnum
 } from 'nuqs/server'
 
 export const gameSearchParsers = {
@@ -10,6 +11,7 @@ export const gameSearchParsers = {
     teams: parseAsArrayOf(parseAsInteger),     // 1 or 2 team ids
     field: parseAsInteger,
     // status: parseAsInteger,                 // once the statuses table exists
+    season: parseAsStringEnum(['all', 'regular', 'playoffs']).withDefault('regular'),
 }
 
 export const loadGameFilters = createLoader(gameSearchParsers)          // for the API route

@@ -1,39 +1,18 @@
 import type {
     PlayerGameLog,
 } from '@/types';
+import { PlayerFilters, serializePlayerFilters } from '../searchParams/players';
 
 function baseUrl() {
     if (typeof window !== 'undefined') return '';
-
     return process.env.INTERNAL_BASE_URL ?? 'http://localhost:3000';
 }
 
-export async function fetchPlayersWithStats(
-    yearFrom?: number | null,
-    yearTo?: number | null,
-) {
-    const params = new URLSearchParams();
-
-    if (yearFrom != null) {
-        params.set('yearFrom', String(yearFrom));
-    }
-
-    if (yearTo != null) {
-        params.set('yearTo', String(yearTo));
-    }
-
-    const query = params.toString();
-
-    const res = await fetch(
-        `${baseUrl()}/api/players/stats${query ? `?${query}` : ''}`,
-        { cache: 'no-store' },
-    );
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch player stats');
-    }
-
-    return res.json();
+export async function fetchPlayersWithStats(filters: PlayerFilters = {}) {
+    const url = serializePlayerFilters(`${baseUrl()}/api/players/stats`, filters)
+    const res = await fetch(url, { cache: 'no-store' })
+    if (!res.ok) throw new Error('Failed to fetch player stats')
+    return res.json()
 }
 
 export async function fetchPlayerById(playerId: number) {

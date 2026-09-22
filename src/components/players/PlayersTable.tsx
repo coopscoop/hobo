@@ -26,7 +26,7 @@ const columns: GridColDef<PlayerWithStats>[] = [
         field: 'currentTeamName',
         headerName: 'Team',
         flex: 1,
-        valueGetter: (_, row) => row.currentTeamName ?? '--'
+        valueGetter: (_, row) => row.team ?? '--'
     },
     {
         field: 'gamesPlayed',

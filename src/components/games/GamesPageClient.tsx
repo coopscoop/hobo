@@ -1,69 +1,83 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useLeague } from '@/context/LeagueContext';
+import { useQueryStates } from 'nuqs';
+import { Autocomplete, TextField, ToggleButton, ToggleButtonGroup, Stack, Box } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { GamesTable } from '@/components/games/GamesTable';
-import { Box, OutlinedInput, InputAdornment, Stack } from '@mui/material';
-import { Search } from '@mui/icons-material';
-import DateRange from '@/components/DateRange';
-import type { GameListItem } from '@/types';
-import type { Dayjs } from 'dayjs';
+import { gameSearchParsers } from '@/lib/searchParams/games';
+import type { GameListItem, TeamWithPlayers } from '@/types';
 
 interface GamesPageClientProps {
-    initialGames: GameListItem[];
+    games: GameListItem[];
     minYear: number;
     maxYear: number;
+    teams: TeamWithPlayers[];
+    fields: { id: number; name: string }[];
 }
 
-export function GamesPageClient({ initialGames, minYear, maxYear }: GamesPageClientProps) {
-    // const { leagueId } = useLeague();
-    const [games, setGames] = useState<GameListItem[]>(initialGames);
-    const [search, setSearch] = useState('');
-    const [startDate, setStartDate] = useState<Dayjs | null>(null);
-    const [endDate, setEndDate] = useState<Dayjs | null>(null);
+export function GamesPageClient({ games, teams, fields }: GamesPageClientProps) {
+    const [filters, setFilters] = useQueryStates(gameSearchParsers, { shallow: false });
 
-    const filteredGames = useMemo(() => {
-        return games.filter((g) => {
-            if (search) {
-                const q = search.toLowerCase();
-                const matchesTeam =
-                    g.homeTeam.name.toLowerCase().includes(q) ||
-                    g.awayTeam.name.toLowerCase().includes(q);
-                const matchesVenue = g.location.toLowerCase().includes(q);
-                if (!matchesTeam && !matchesVenue) return false;
-            }
-            if (startDate && new Date(g.date) < startDate.toDate()) return false;
-            if (endDate && new Date(g.date) > endDate.toDate()) return false;
-            return true;
-        });
-    }, [games, search, startDate, endDate]);
+    const selectedTeams = teams.filter((t) => filters.teams?.includes(t.id));
+    const selectedField = fields.find((f) => f.id === filters.field) ?? null;
 
     return (
         <Box sx={{ px: 2 }}>
-            <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center' }}>
-                {/* <DateRange */}
-                {/*     startDate={startDate} */}
-                {/*     endDate={endDate} */}
-                {/*     onStartChange={setStartDate} */}
-                {/*     onEndChange={setEndDate} */}
-                {/*     minYear={minYear} */}
-                {/*     maxYear={maxYear} */}
-                {/*     yearOnly */}
-                {/* /> */}
-                <OutlinedInput
+            <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                <Autocomplete
+                    multiple
                     size="small"
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    sx={{ width: 300 }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <Search fontSize="small" />
-                        </InputAdornment>
-                    }
+                    sx={{ width: 320 }}
+                    options={teams}
+                    value={selectedTeams}
+                    getOptionLabel={(t) => t.teamName}
+                    isOptionEqualToValue={(a, b) => a.id === b.id}
+                    limitTags={2}
+                    onChange={(_, value) => {
+                        if (value.length > 2) return; // ignore a 3rd pick instead of dropping the oldest
+                        setFilters({ teams: value.length ? value.map((t) => t.id) : null });
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Teams" placeholder="Search teams" />}
                 />
+
+                <Autocomplete
+                    size="small"
+                    sx={{ width: 220 }}
+                    options={fields}
+                    value={selectedField}
+                    getOptionLabel={(f) => f.name}
+                    isOptionEqualToValue={(a, b) => a.id === b.id}
+                    onChange={(_, value) => setFilters({ field: value?.id ?? null })}
+                    renderInput={(params) => <TextField {...params} label="Field" placeholder="Search fields" />}
+                />
+
+                <DatePicker
+                    label="From"
+                    value={filters.from ? dayjs(filters.from) : null}
+                    onChange={(d) => setFilters({ from: d ? d.format('YYYY-MM-DD') : null })}
+                    slotProps={{ textField: { size: 'small' } }}
+                />
+                <DatePicker
+                    label="To"
+                    value={filters.to ? dayjs(filters.to) : null}
+                    onChange={(d) => setFilters({ to: d ? d.format('YYYY-MM-DD') : null })}
+                    slotProps={{ textField: { size: 'small' } }}
+                />
+
+                <ToggleButtonGroup
+                    size="small"
+                    exclusive
+                    value={filters.season}
+                    onChange={(_, value) => value && setFilters({ season: value })}
+                >
+                    <ToggleButton value="regular">Regular Season</ToggleButton>
+                    <ToggleButton value="playoffs">Playoffs</ToggleButton>
+                    <ToggleButton value="all">All</ToggleButton>
+                </ToggleButtonGroup>
             </Stack>
-            <GamesTable games={filteredGames} />
+
+            <GamesTable games={games} />
         </Box>
     );
 }

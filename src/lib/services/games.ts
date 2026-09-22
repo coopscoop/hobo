@@ -1,5 +1,5 @@
 import type { GameListItem } from '@/lib/types'
-import { GameFilters, serializeGameFilters } from '../searchParams/games'
+import { GameFilters, serializeGameFilters } from '@/lib/searchParams/games'
 
 function baseUrl() {
     if (typeof window !== 'undefined') return ''
@@ -13,15 +13,15 @@ export async function fetchUpcomingGames(leagueId?: string | null): Promise<Game
     const url = `${baseUrl()}/api/games/upcoming${params.toString() ? '?' + params.toString() : ''}`
 
     try {
-      const res = await fetch(url, { cache: 'no-store' })
-      if (!res.ok) {
-        const errorText = await res.text()
-        throw new Error(`Failed to fetch upcoming games: ${res.status} ${res.statusText} - ${errorText}`)
-      }
-      return res.json()
+        const res = await fetch(url, { cache: 'no-store' })
+        if (!res.ok) {
+            const errorText = await res.text()
+            throw new Error(`Failed to fetch upcoming games: ${res.status} ${res.statusText} - ${errorText}`)
+        }
+        return res.json()
     } catch (error) {
-      console.error('Error fetching upcoming games:', error)
-      throw error
+        console.error('Error fetching upcoming games:', error)
+        throw error
     }
 }
 
@@ -34,13 +34,13 @@ export async function fetchRecentGames(leagueId?: string | null): Promise<GameLi
 
     const res = await fetch(url, { cache: 'no-store' })
     console.log('Fetch response status:', res.status, 'response ok:', res.ok)
-    
+
     if (!res.ok) {
         const errorText = await res.text().catch(() => 'No error body available')
         console.error('Failed to fetch recent games:', new Error(`HTTP Error ${res.status}: ${errorText}`))
         throw new Error(`Failed to fetch recent games: HTTP ${res.status} - ${errorText}`)
     }
-    
+
     console.log('Parsing response JSON...')
     const data = await res.json()
     console.log('Successfully fetched recent games:', data)
@@ -72,9 +72,9 @@ export async function fetchGameYearRange(): Promise<{
 }
 
 export async function getGameEditData(id: string) {
-  const res = await fetch(`/api/games/${id}/edit-data`);
-  if (!res.ok) throw new Error(`Failed to load game edit data: ${res.status}`);
-  return res.json();
+    const res = await fetch(`/api/games/${id}/edit-data`);
+    if (!res.ok) throw new Error(`Failed to load game edit data: ${res.status}`);
+    return res.json();
 }
 
 export async function fetchGamesList(): Promise<any[]> {

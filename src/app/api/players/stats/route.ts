@@ -1,50 +1,17 @@
 import { getPlayersWithStats } from '@/lib/db/queries/players';
-import { NextResponse } from 'next/server';
+import { loadPlayerFilters } from '@/lib/searchParams/players';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
-
-        const yearFromParam = searchParams.get('yearFrom');
-        const yearToParam = searchParams.get('yearTo');
-
-        // const yearFrom = yearFromParam
-        //     ? Number(yearFromParam)
-        //     : undefined;
-        //
-        // const yearTo = yearToParam
-        //     ? Number(yearToParam)
-        //     : undefined;
-
-        const yearFrom = 2026;
-        const yearTo = 2026;
-
-        if (
-            yearFrom !== undefined &&
-            yearTo !== undefined &&
-            yearFrom > yearTo
-        ) {
-            return NextResponse.json(
-                {
-                    message:
-                        'yearFrom must be less than or equal to yearTo',
-                },
-                { status: 400 },
-            );
-        }
-
-        const players = await getPlayersWithStats(
-            yearFrom,
-            yearTo,
-        );
-
-        return NextResponse.json(players, { status: 200 });
+        const filters = loadPlayerFilters(req.nextUrl.searchParams)
+        const players = await getPlayersWithStats(filters)
+        return NextResponse.json(players, { status: 200 })
     } catch (error) {
-        console.error('Failed to fetch player stats:', error);
-
+        console.error('GET /api/players/stats failed:', error)
         return NextResponse.json(
-            { message: 'Failed to fetch player stats' },
+            { error: 'Internal server error while retrieving player stats.' },
             { status: 500 },
-        );
+        )
     }
 }

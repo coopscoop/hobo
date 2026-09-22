@@ -89,7 +89,9 @@ export async function getGames(filters: GameFilters = {}) {
             and(
                 from ? gte(games.date, from) : undefined,
                 lte(games.date, to),
-                filters.playoff != null ? eq(games.isPlayoff, filters.playoff) : undefined,
+                filters.season === 'regular' ? eq(games.isPlayoff, false)
+                    : filters.season === 'playoffs' ? eq(games.isPlayoff, true)
+                        : undefined, // 'all'
                 teamFilter,
                 filters.field != null ? eq(games.fieldId, filters.field) : undefined,
             )

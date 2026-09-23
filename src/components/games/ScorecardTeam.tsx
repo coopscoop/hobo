@@ -9,14 +9,13 @@ interface Props {
     teamKey: TeamKey;
     team: TeamGameData;
     maxInning: number;
-    disabledPlayers: Set<string>;
     onOpenCell: (playerId: string, inning: number) => void;
     onReorderPlayers: (orderedPlayerIds: string[]) => void;
-    onToggleDisabled: (playerId: string) => void;
+    onTogglePresent: (playerId: string) => void;
     onRemoveSubstitute: (playerId: string, subId: number) => void;
 }
 
-export function ScorecardTeam({ teamKey, team, maxInning, disabledPlayers, onOpenCell, onReorderPlayers, onToggleDisabled, onRemoveSubstitute }: Props) {
+export function ScorecardTeam({ teamKey, team, maxInning, onOpenCell, onReorderPlayers, onTogglePresent, onRemoveSubstitute }: Props) {
     const innings = buildInningsArray(maxInning);
     const [dragId, setDragId] = useState<string | null>(null);
     const [overId, setOverId] = useState<string | null>(null);
@@ -59,7 +58,7 @@ export function ScorecardTeam({ teamKey, team, maxInning, disabledPlayers, onOpe
                     <tbody>
                         {team.players.map((player) => {
                             const totals = computePlayerTotals(player);
-                            const isDisabled = disabledPlayers.has(player.playerId);
+                            const isDisabled = !player.isPresent;
                             const isDragging = dragId === player.playerId;
                             const isOver = overId === player.playerId && dragId !== player.playerId;
                             return (
@@ -85,9 +84,9 @@ export function ScorecardTeam({ teamKey, team, maxInning, disabledPlayers, onOpe
                                         ) : (
                                             <input
                                                 type="checkbox"
-                                                checked={!isDisabled}
-                                                onChange={() => onToggleDisabled(player.playerId)}
-                                                title={isDisabled ? "Not present — click to include" : "Present — click to exclude"}
+                                                checked={player.isPresent}
+                                                onChange={() => onTogglePresent(player.playerId)}
+                                                title={player.isPresent ? "Present — click to exclude" : "Not present — click to include"}
                                             />
                                         )}
                                     </td>

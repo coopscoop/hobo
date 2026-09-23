@@ -17,9 +17,11 @@ export async function POST(
         }
 
         const body = await request.json();
-        const { playerId, innings } = body as {
+        const { playerId, innings, isPresent, order } = body as {
             playerId?: number;
             innings?: InningMap;
+            isPresent?: boolean;
+            order?: number;
         };
 
         if (!playerId || Number.isNaN(Number(playerId))) {
@@ -33,6 +35,7 @@ export async function POST(
         // derived from it server-side rather than trusted from the client,
         // so a stray client-side bug can't silently write inconsistent totals
         const row = computeBattingRow(innings);
+        const perInning = { isPresent: isPresent ?? true, order: order ?? 0, innings };
 
         const [saved] = await db
             .insert(batting)
@@ -51,7 +54,7 @@ export async function POST(
                 doubleHit: row.doubleHit,
                 tripleHit: row.tripleHit,
                 homeRun: row.homeRun,
-                perInning: innings,
+                perInning,
             })
             .onConflictDoUpdate({
                 target: [batting.gameId, batting.playerId],
@@ -68,7 +71,7 @@ export async function POST(
                     doubleHit: row.doubleHit,
                     tripleHit: row.tripleHit,
                     homeRun: row.homeRun,
-                    perInning: innings,
+                    perInning,
                 },
             })
             .returning();

@@ -101,6 +101,10 @@ export interface PlayerGameData {
     playerId: string;
     name: string;
     innings: InningMap;
+    isPresent: boolean;
+    order: number;
+    isSubstitute?: boolean;
+    subId?: number;
 }
 
 export interface TeamGameData {

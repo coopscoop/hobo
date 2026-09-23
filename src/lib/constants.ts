@@ -83,6 +83,10 @@ export function isAB(pa: PlateAppearance): boolean {
     return true;
 }
 
+export function sortByOrder(players: PlayerGameData[]): PlayerGameData[] {
+    return [...players].sort((a, b) => a.order - b.order);
+}
+
 export function isHit(pa: PlateAppearance): boolean {
     return pa.result === "1B" || pa.result === "2B" || pa.result === "3B" || pa.result === "HR";
 }

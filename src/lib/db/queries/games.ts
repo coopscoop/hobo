@@ -219,22 +219,43 @@ export async function getGameEditData(idString: string) {
         : [];
     const subPlayerMap = new Map(subPlayers.map((p) => [p.id, p]));
 
-    function toPlayerData(p: { playerId: number; firstName: string | null; lastName: string | null }): PlayerGameData {
-        const existing = battingByPlayer.get(p.playerId);
+    type StoredPlayerJson = { isPresent?: boolean; order?: number; innings?: InningMap } | InningMap | null;
+
+    function unpackStored(stored: StoredPlayerJson, fallbackOrder: number) {
+        // legacy rows: perInning was the bare InningMap itself (numbered keys, no `.innings`)
+        const isLegacy = stored && typeof stored === "object" && !("innings" in stored);
         return {
-            playerId: String(p.playerId),
-            name: `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim(),
-            innings: (existing?.perInning as InningMap) ?? {},
+            innings: (isLegacy ? (stored as InningMap) : (stored as any)?.innings) ?? {},
+            isPresent: (stored as any)?.isPresent ?? true,
+            order: (stored as any)?.order ?? fallbackOrder,
         };
     }
 
-    function subToPlayerData(sub: typeof subs[number]): PlayerGameData {
+    function toPlayerData(
+        p: { playerId: number; firstName: string | null; lastName: string | null },
+        fallbackOrder: number
+    ): PlayerGameData {
+        const existing = battingByPlayer.get(p.playerId);
+        const { innings, isPresent, order } = unpackStored(existing?.perInning as StoredPlayerJson, fallbackOrder);
+        return {
+            playerId: String(p.playerId),
+            name: `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim(),
+            innings,
+            isPresent,
+            order,
+        };
+    }
+
+    function subToPlayerData(sub: typeof subs[number], fallbackOrder: number): PlayerGameData {
         const p = subPlayerMap.get(sub.playerId);
         const existing = battingByPlayer.get(sub.playerId);
+        const { innings, isPresent, order } = unpackStored(existing?.perInning as StoredPlayerJson, fallbackOrder);
         return {
             playerId: String(sub.playerId),
-            name: p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : 'Unknown Player',
-            innings: (existing?.perInning as InningMap) ?? {},
+            name: p ? `${p.firstName ?? ""} ${p.lastName ?? ""}`.trim() : "Unknown Player",
+            innings,
+            isPresent,
+            order,
             isSubstitute: true,
             subId: sub.id,
         };
@@ -242,10 +263,12 @@ export async function getGameEditData(idString: string) {
 
     function buildTeam(teamId: number, name: string, roster: typeof homeRoster): TeamGameData {
         const teamSubs = subs.filter((s) => s.newTeamId === teamId);
+        const rosterPlayers = roster.map((p, idx) => toPlayerData(p, idx));
+        const subPlayers = teamSubs.map((s, idx) => subToPlayerData(s, roster.length + idx));
         return {
             teamId: String(teamId),
             name,
-            players: [...roster.map(toPlayerData), ...teamSubs.map(subToPlayerData)],
+            players: [...rosterPlayers, ...subPlayers].sort((a, b) => a.order - b.order),
         };
     }
 

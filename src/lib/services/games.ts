@@ -111,11 +111,17 @@ export async function deleteGame(id: number) {
     return res.json()
 }
 
-export async function saveBattingRow(gameId: string, playerId: number, innings: any) {
+export async function saveBattingRow(
+    gameId: string,
+    playerId: number,
+    innings: any,
+    isPresent: boolean,
+    order: number
+) {
     const res = await fetch(`${baseUrl()}/api/games/${gameId}/batting`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId, innings }),
+        body: JSON.stringify({ playerId, innings, isPresent, order }),
     });
     if (!res.ok) throw new Error(`Failed to save batting row: ${res.status}`);
     return res.json();

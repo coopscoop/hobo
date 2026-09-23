@@ -37,31 +37,50 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
     const [modal, setModal] = useState<ModalTarget | null>(null);
     const [savedFlash, setSavedFlash] = useState(false);
     const [maxInning, setMaxInning] = useState(() => deriveInitialMaxInning(initialTeams));
-    const [disabledPlayers, setDisabledPlayers] = useState<Record<TeamKey, Set<string>>>({
-        home: new Set(),
-        away: new Set(),
-    });
     const router = useRouter();
 
-    function toggleDisabled(teamKey: TeamKey, playerId: string) {
-        setDisabledPlayers((prev) => {
-            const next = { ...prev, [teamKey]: new Set(prev[teamKey]) };
-            if (next[teamKey].has(playerId)) next[teamKey].delete(playerId);
-            else next[teamKey].add(playerId);
-            return next;
-        });
-    }
-
     async function saveBattingRow(teamKey: TeamKey, playerId: string) {
-        if (disabledPlayers[teamKey].has(playerId)) return;
         const player = teams[teamKey].players.find((p) => p.playerId === playerId);
         if (!player) return;
         try {
-            await saveBattingRowService(gameId, Number(playerId), player.innings);
+            await saveBattingRowService(gameId, Number(playerId), player.innings, player.isPresent, player.order);
             flashSaved();
         } catch (err) {
             console.error("Failed to save batting row", err);
         }
+    }
+
+    function togglePresent(teamKey: TeamKey, playerId: string) {
+        const player = teams[teamKey].players.find((p) => p.playerId === playerId);
+        if (!player) return;
+        const nextIsPresent = !player.isPresent;
+        setTeams((prev) => {
+            const next = structuredClone(prev);
+            next[teamKey].players.find((p) => p.playerId === playerId)!.isPresent = nextIsPresent;
+            return next;
+        });
+        saveBattingRowService(gameId, Number(playerId), player.innings, nextIsPresent, player.order)
+            .then(flashSaved)
+            .catch((err) => console.error("Failed to save presence", err));
+    }
+
+    function reorderPlayers(teamKey: TeamKey, orderedPlayerIds: string[]) {
+        const byId = new Map(teams[teamKey].players.map((p) => [p.playerId, p]));
+        const reordered = orderedPlayerIds.map((id, idx) => ({ ...byId.get(id)!, order: idx }));
+
+        setTeams((prev) => {
+            const next = structuredClone(prev);
+            next[teamKey].players = reordered;
+            return next;
+        });
+
+        // explicit for everyone once anyone's moved, not just the two that swapped
+        reordered.forEach((p) => {
+            saveBattingRowService(gameId, Number(p.playerId), p.innings, p.isPresent, p.order).catch((err) =>
+                console.error(`Failed to save order for player ${p.playerId}`, err)
+            );
+        });
+        flashSaved();
     }
 
     async function saveGameScore() {
@@ -137,6 +156,8 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     innings: {},
                     isSubstitute: true,
                     subId: sub.id,
+                    isPresent: true,
+                    order: next[teamKey].players.length
                 });
                 return next;
             });
@@ -186,15 +207,6 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
             return next;
         });
         return removed;
-    }
-
-    function reorderPlayers(teamKey: TeamKey, orderedPlayerIds: string[]) {
-        setTeams((prev) => {
-            const next = structuredClone(prev);
-            const byId = new Map(next[teamKey].players.map((p) => [p.playerId, p]));
-            next[teamKey].players = orderedPlayerIds.map((id) => byId.get(id)!);
-            return next;
-        });
     }
 
     function openCell(teamKey: TeamKey, playerId: string, inning: number) {
@@ -270,10 +282,9 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     teamKey="home"
                     team={teams.home}
                     maxInning={maxInning}
-                    disabledPlayers={disabledPlayers.home}
                     onOpenCell={(playerId, inning) => openCell("home", playerId, inning)}
                     onReorderPlayers={(ids) => reorderPlayers("home", ids)}
-                    onToggleDisabled={(playerId: string) => toggleDisabled("home", playerId)}
+                    onTogglePresent={(playerId: string) => togglePresent("home", playerId)}
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("home", playerId, subId)}
                 />
                 <div className="px-1">
@@ -289,16 +300,15 @@ export default function EditGamePage({ gameId, initialTeams, onSaved }: Props) {
                     teamKey="away"
                     team={teams.away}
                     maxInning={maxInning}
-                    disabledPlayers={disabledPlayers.away}
                     onOpenCell={(playerId, inning) => openCell("away", playerId, inning)}
                     onReorderPlayers={(ids) => reorderPlayers("away", ids)}
-                    onToggleDisabled={(playerId: string) => toggleDisabled("away", playerId)}
+                    onTogglePresent={(playerId: string) => togglePresent("away", playerId)}
                     onRemoveSubstitute={(playerId: string, subId: number) => removeSubstitute("away", playerId, subId)}
                 />
                 <div className="px-1">
                     <AddSubstitute
-                        excludePlayerIds={new Set(teams.home.players.map((p) => p.playerId))}
-                        onAdd={(p) => addSubstitute("home", p)}
+                        excludePlayerIds={new Set(teams.away.players.map((p) => p.playerId))}
+                        onAdd={(p) => addSubstitute("away", p)}
                     />
                 </div>
             </div>

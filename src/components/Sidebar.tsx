@@ -30,6 +30,8 @@ const NAV_GROUPS: NavGroup[] = [
         label: 'Home',
         links: [
             { href: '/', label: 'Home Page' },
+            { href: 'https://forms.gle/2A6ibVwsveUsnn1h7', label: '*New* 2027 Registration Form' },
+            { href: 'https://www.facebook.com/groups/115495778465224', label: 'HOBO Facebook' },
         ],
     },
     {
@@ -131,7 +133,7 @@ export default function Sidebar() {
                             onClick={handleNavigation}
                             sx={{ color: '#c8102e' }}
                         >
-                            Sign In
+                            Admin Login 
                         </Button>
                     )
                 )}

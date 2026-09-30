@@ -31,6 +31,7 @@ const NAV_GROUPS: NavGroup[] = [
         links: [
             { href: '/', label: 'Home Page' },
             { href: 'https://forms.gle/2A6ibVwsveUsnn1h7', label: '*New* 2027 Registration Form' },
+            { href: 'https://forms.gle/kLaxXy9iyUD9ryzQ6', label: '*New* 2027 Self Evaluation Form' },
             { href: 'https://www.facebook.com/groups/115495778465224', label: 'HOBO Facebook' },
         ],
     },
